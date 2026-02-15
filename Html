@@ -1,0 +1,24 @@
+#python 3.7.1
+
+import requests
+
+# Токен вашего Telegram-бота
+BOT_TOKEN = 8312314104:AAFGn3BU49S0sivS-QAwq84JOc-uvBgq59Y  # Замени на свой токен
+
+# Функция для отправки сообщения
+def send_message(chat_id, text):
+    url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
+    data = {
+        'chat_id': chat_id,
+        'text': text
+    }
+    response = requests.post(url, json=data)
+    if response.status_code != 200:
+        raise Exception(f'Ошибка отправки: {response.text}')
+    print('Сообщение успешно отправлено!')
+
+# Пример использования
+if __name__ == '__main__':
+    chat_id = input('https://t.me/TuningAutoWruu_bot: ')  # Введи вручную Chat ID получателя
+    message = input('Введите текст сообщения: ')  # Введи сам текст сообщения
+    send_message(chat_id, message)
