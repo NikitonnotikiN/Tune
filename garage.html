@@ -271,3 +271,15 @@
         cubes.forEach(function(cube) {
             cube.addEventListener('click', selectCube);
         });
+
+        var inventoryItems = document.querySelectorAll('.inventory-item');
+        var carInventoryItems = document.querySelectorAll('.car-inventory-item');
+        inventoryItems.forEach(function(item) {
+            item.addEventListener('click', moveCube);
+        });
+        carInventoryItems.forEach(function(item) {
+            item.addEventListener('click', moveCube);
+        });
+    </script>
+</body>
+            </html>
