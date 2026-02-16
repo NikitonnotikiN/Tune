@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Гараж</title>
+    <title>Миндками</title>
     <style>
         body {
             background-image: url('https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/aYekK43wStM.jpg');
@@ -118,26 +118,127 @@
 
     <!-- Основное содержание -->
     <section style="display:none;" id="content-section">
-        <h1>Гараж Чинить Соболь</h1>
+        <h1>Добро в ад</h1>
         <nav>
             <ul>
-                <li><a href="menu.html">Меню</a></li>
-                <li><a href="shop.html">Магазин</a></li>
-                <li><a href="garage.html">Гараж</a></li>
-                <li><a href="race.html">Заезд</a></li>
-                <li><a href="rating.html">Рейтинг</a></li>
+                <li><a href="#" onclick="openTab('menu')">Меню</a></li>
+                <li><a href="#" onclick="openTab('shop')">Магазин</a></li>
+                <li><a href="#" onclick="openTab('garage')">Гараж</a></li>
+                <li><a href="#" onclick="openTab('race')">Заезд</a></li>
+                <li><a href="#" onclick="openTab('rating')">Рейтинг</a></li>
             </ul>
         </nav>
+
+        <!-- Вкладки -->
+        <div id="menu" class="tab">
+            <h2>Меню</h2>
+            <p>Здесь будет информация о меню.</p>
+        </div>
+        <div id="shop" class="tab">
+            <h2>Магазин</h2>
+            <p>Здесь будет информация о магазине.</p>
+        </div>
+        <div id="garage" class="tab">
+            <h2>Гараж</h2>
+            <p>Здесь будет информация о гараже.</p>
+
+            <!-- Инвентарь -->
+            <div class="inventory">
+                <!-- Ячейки инвентаря -->
+                <div class="inventory-item" id="cell1"></div>
+                <div class="inventory-item" id="cell2"></div>
+                <div class="inventory-item" id="cell3"></div>
+                <div class="inventory-item" id="cell4"></div>
+                <div class="inventory-item" id="cell5"></div>
+                <div class="inventory-item" id="cell6"></div>
+                <div class="inventory-item" id="cell7"></div>
+                <div class="inventory-item" id="cell8"></div>
+                <div class="inventory-item" id="cell9"></div>
+                <div class="inventory-item" id="cell10"></div>
+                <div class="inventory-item" id="cell11"></div>
+                <div class="inventory-item" id="cell12"></div>
+                <div class="inventory-item" id="cell13"></div>
+                <div class="inventory-item" id="cell14"></div>
+                <div class="inventory-item" id="cell15"></div>
+                <div class="inventory-item" id="cell16"></div>
+                <div class="inventory-item" id="cell17"></div>
+                <div class="inventory-item" id="cell18"></div>
+                <div class="inventory-item" id="cell19"></div>
+                <div class="inventory-item" id="cell20"></div>
+                <div class="inventory-item" id="cell21"></div>
+                <div class="inventory-item" id="cell22"></div>
+                <div class="inventory-item" id="cell23"></div>
+                <div class="inventory-item" id="cell24"></div>
+                <div class="inventory-item" id="cell25"></div>
+                <div class="inventory-item" id="cell26"></div>
+                <div class="inventory-item" id="cell27"></div>
+                <div class="inventory-item" id="cell28"></div>
+                <div class="inventory-item" id="cell29"></div>
+                <div class="inventory-item" id="cell30"></div>
+                <div class="inventory-item" id="cell31"></div>
+                <div class="inventory-item" id="cell32"></div>
+                <div class="inventory-item" id="cell33"></div>
+                <div class="inventory-item" id="cell34"></div>
+                <div class="inventory-item" id="cell35"></div>
+                <div class="inventory-item" id="cell36"></div>
+                <div class="inventory-item" id="cell37"></div>
+                <div class="inventory-item" id="cell38"></div>
+                <div class="inventory-item" id="cell39"></div>
+                <div class="inventory-item" id="cell40"></div>
+            </div>
+
+            <!-- Куб -->
+            <div class="cube" id="cube"></div>
+        </div>
+        <div id="race" class="tab">
+            <h2>Заезд</h2>
+            <p>Здесь будет информация о заезде.</p>
+        </div>
+        <div id="rating" class="tab">
+            <h2>Рейтинг</h2>
+            <p>Здесь будет информация о рейтинге.</p>
+        </div>
     </section>
 
-    <!-- Скрипт для управления загрузкой -->
+    <!-- Скрипт для управления вкладками -->
     <script>
+        function openTab(tabName) {
+            var tabs = document.getElementsByClassName('tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            document.getElementById(tabName).classList.add('active');
+        }
+
         function startLoader() {
             setTimeout(function () {
                 document.querySelector('#loader-container').style.display = 'none';
                 document.querySelector('#content-section').style.display = 'block';
+                openTab('menu'); // Открываем первую вкладку по умолчанию
             }, 2000); // Время анимации (2 секунды)
         }
     </script>
+
+    <!-- Скрипт для перемещения куба -->
+    <script>
+        var cube = document.getElementById('cube');
+        var currentCell = null;
+
+        function moveCube(event) {
+            var target = event.target;
+            if (target.classList.contains('inventory-item')) {
+                if (currentCell) {
+                    currentCell.removeChild(cube);
+                }
+                target.appendChild(cube);
+                currentCell = target;
+            }
+        }
+
+        var inventoryItems = document.querySelectorAll('.inventory-item');
+        inventoryItems.forEach(function(item) {
+            item.addEventListener('click', moveCube);
+        });
+    </script>
 </body>
-                                                   </html>
+        </html>
