@@ -4,11 +4,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Инвентарь 5x6 с перетаскиванием кубов</title>
+<title>Инвентарь 5x6 с ограничением по цвету в слоты возле машины</title>
 <style>
   body {
     font-family: Arial, sans-serif;
-    background: #fafafa;
+    background: #fadafa;
     margin: 0; padding: 20px;
     display: flex;
     flex-direction: column;
@@ -130,7 +130,7 @@
 
 <div class="main-container">
 
-  <div class="slot-group" aria-label="Левые ячейки">
+  <div class="slot-group" aria-label="Левые слоты">
     <div class="slot" data-allowed-color="red" title="Красный слот"></div>
     <div class="slot" data-allowed-color="green" title="Зеленый слот"></div>
     <div class="slot" data-allowed-color="blue" title="Синий слот"></div>
@@ -140,9 +140,9 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/VAZ_2110_front_20100615.jpg/320px-VAZ_2110_front_20100615.jpg" alt="ВАЗ 2110" />
   </div>
 
-  <div class="slot-group" aria-label="Правые ячейки">
+  <div class="slot-group" aria-label="Правые слоты">
     <div class="slot" data-allowed-color="yellow" title="Жёлтый слот"></div>
-    <div class="slot" data-allowed-color="orange" title="Оранже�ый слот"></div>
+    <div class="slot" data-allowed-color="orange" title="Оранжевый слот"></div>
     <div class="slot" data-allowed-color="purple" title="Фиолетовый слот"></div>
   </div>
 
@@ -164,7 +164,7 @@
     inventory.appendChild(slot);
   }
 
-  // Разложим по ячейкам кубы — один экземпляр каждого цвета в первых 6 ячейках (на всякий случай)
+  // Разложим по ячейкам кубы — один экземпляр каждого цвета в первых 6 ячейках
   const invSlots = inventory.querySelectorAll('.slot');
   colors.forEach((color, index) => {
     const cube = createCube(color);
@@ -198,7 +198,17 @@
 
   function onDragOver(e){
     e.preventDefault();
-    this.classList.add('drag-over');
+    // Проверяем, можно ли ставить куб в этот слот по цвету (если указано)
+    if (!this.hasChildNodes()) {
+      const allowedColor = this.dataset.allowedColor;
+      const cubeColor = draggedCube?.dataset.color;
+      if (!allowedColor || allowedColor === cubeColor) {
+        this.classList.add('drag-over');
+        e.dataTransfer.dropEffect = 'move';
+      } else {
+        e.dataTransfer.dropEffect = 'none';
+      }
+    }
   }
 
   function onDragLeave(e){
@@ -213,22 +223,29 @@
     // Если в слоте уже есть куб — отменяем действие
     if(this.children.length > 0) return;
 
+    // Проверяем цвет куба и слота
+    const allowedColor = this.dataset.allowedColor;
+    const cubeColor = draggedCube.dataset.color;
+    if (allowedColor && allowedColor !== cubeColor) {
+      // Несовпадение цвета — запрещаем
+      return;
+    }
+
     // Перемещаем куб в новый слот
     draggedCube.parentElement.classList.remove('filled');
     this.appendChild(draggedCube);
     this.classList.add('filled');
 
-    // После перемещения куб перестает быть draggable если слот — это условие было в интерфейсе или оставляем draggable всегда
     draggedCube.setAttribute('draggable', 'true');
   }
 
-  // Навешиваем события на кубы (изначально в инвентаре)
+  // Навешиваем события на кубы
   function attachDragEvents(element){
     element.addEventListener('dragstart', onDragStart);
     element.addEventListener('dragend', onDragEnd);
   }
 
-  // Устанавливаем обработчики событий на все слоты (включая инвентарь и лев/прав ячейки)
+  // Устанавливаем обработчики событий на все слоты
   function enableSlots(){
     document.querySelectorAll('.slot').forEach(slot => {
       slot.addEventListener('dragover', onDragOver);
@@ -240,6 +257,17 @@
   // Инициализация
   document.querySelectorAll('.cube').forEach(attachDragEvents);
   enableSlots();
+
+  // Обработчик для динамически добавленных кубов (в случае)
+  new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      mutation.addedNodes.forEach(node => {
+        if(node.classList && node.classList.contains('cube')){
+          attachDragEvents(node);
+        }
+      });
+    });
+  }).observe(inventory, { childList: true, subtree: true });
 
 </script>
 
