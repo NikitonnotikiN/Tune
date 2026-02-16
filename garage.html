@@ -71,29 +71,6 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
 
-        /* Инвентарь */
-        .inventory {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(5, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .inventory-item {
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 1px solid #fff;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .cube {
-            width: 50px;
-            height: 50px;
-            position: absolute;
-            z-index: 100;
-        }
-
         /* Авто */
         .car {
             width: 300px;
@@ -116,6 +93,68 @@
             border: 1px solid #fff;
             padding: 10px;
             text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Инвентарь */
+        .inventory {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .inventory-item {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid #fff;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .cube {
+            width: 70px;
+            height: 70px;
+            position: absolute;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Адаптивные стили */
+        @media (max-width: 768px) {
+            .inventory {
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(10, 1fr);
+            }
+
+            .inventory-item {
+                padding: 5px;
+            }
+
+            .cube {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .inventory {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(20, 1fr);
+            }
+
+            .inventory-item {
+                padding: 3px;
+            }
+
+            .cube {
+                width: 40px;
+                height: 40px;
+            }
         }
     </style>
 </head>
@@ -251,4 +290,4 @@
         });
     </script>
 </body>
-</html>
+        </html>
