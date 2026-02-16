@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Инвентарь с кубами, машина и ячейки</title>
+<title>Инвентарь 5x6 с перетаскиванием кубов</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -75,17 +75,30 @@
   }
 
   #inventory {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    width: 100%;
-    max-width: 900px;
+    display: grid;
+    grid-template-columns: repeat(6, 60px);
+    grid-template-rows: repeat(5, 60px);
+    gap: 12px;
+    width: max-content;
+  }
+  #inventory .slot {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+  }
+  #inventory .slot.drag-over {
+    border-color: #2980b9;
+    background-color: #e1f0ff;
+  }
+  #inventory .slot.filled {
+    border-style: solid;
+    border-color: #666;
   }
 
   .cube {
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     border-radius: 10px;
     cursor: grab;
     box-shadow: 0 2px 7px rgba(0,0,0,0.15);
@@ -129,19 +142,35 @@
 
   <div class="slot-group" aria-label="Правые ячейки">
     <div class="slot" data-allowed-color="yellow" title="Жёлтый слот"></div>
-    <div class="slot" data-allowed-color="orange" title="Оранжевый слот"></div>
+    <div class="slot" data-allowed-color="orange" title="Оранже�ый слот"></div>
     <div class="slot" data-allowed-color="purple" title="Фиолетовый слот"></div>
   </div>
 
 </div>
 
 <div id="inventory" aria-label="Инвентарь кубов">
-  <!-- По одно��у кубу каждого цвета -->
+  <!-- 5x6 ячеек -->
 </div>
 
 <script>
   const colors = ['red','green','blue','yellow','orange','purple'];
   const inventory = document.getElementById('inventory');
+
+  // Создаем 5x6 ячеек для инвентаря
+  for(let i=0; i<30; i++){
+    const slot = document.createElement('div');
+    slot.classList.add('slot');
+    slot.dataset.position = i; // уникальная позиция для слота в инвентаре
+    inventory.appendChild(slot);
+  }
+
+  // Разложим по ячейкам кубы — один экземпляр каждого цвета в первых 6 ячейках (на всякий случай)
+  const invSlots = inventory.querySelectorAll('.slot');
+  colors.forEach((color, index) => {
+    const cube = createCube(color);
+    invSlots[index].appendChild(cube);
+    invSlots[index].classList.add('filled');
+  });
 
   function createCube(color) {
     const cube = document.createElement('div');
@@ -152,90 +181,65 @@
     return cube;
   }
 
-  // В инвентаре по 1 кубу каждого цвета
-  for(let c of colors){
-    inventory.appendChild(createCube(c));
-  }
-
   let draggedCube = null;
 
-  function handleDragStart(e){
+  function onDragStart(e){
     draggedCube = e.target;
     e.dataTransfer.setData('text/plain', draggedCube.dataset.color);
     e.dataTransfer.effectAllowed = 'move';
     setTimeout(() => draggedCube.style.visibility = 'hidden', 0);
   }
-  function handleDragEnd(e){
-    if(draggedCube) draggedCube.style.visibility = 'visible';
+
+  function onDragEnd(e){
+    if (draggedCube) draggedCube.style.visibility = 'visible';
     draggedCube = null;
-    slots.forEach(s => s.classList.remove('drag-over'));
-    inventory.classList.remove('drag-over');
+    document.querySelectorAll('.slot').forEach(s => s.classList.remove('drag-over'));
   }
 
-  function handleDragOver(e){
+  function onDragOver(e){
     e.preventDefault();
     this.classList.add('drag-over');
   }
-  function handleDragLeave(e){
+
+  function onDragLeave(e){
     this.classList.remove('drag-over');
   }
 
-  function handleDrop(e){
+  function onDrop(e){
     e.preventDefault();
     this.classList.remove('drag-over');
     if(!draggedCube) return;
 
-    const draggedColor = draggedCube.dataset.color;
-    const allowedColor = this.dataset.allowedColor;
-    const isSlot = this.classList.contains('slot');
-    const isInventory = this.id === 'inventory';
+    // Если в слоте уже есть куб — отменяем действие
+    if(this.children.length > 0) return;
 
-    if(isSlot){
-      if(draggedColor !== allowedColor){
-        alert(`В этот слот можно положить только куб цвета "${allowedColor.charAt(0).toUpperCase() + allowedColor.slice(1)}"`);
-        return;
-      }
-      // Убрать куб из старого слота, если есть
-      if(this.children.length > 0){
-        const existing = this.children[0];
-        inventory.appendChild(existing);
-        existing.setAttribute('draggable','true');
-        existing.style.cursor = 'grab';
-      }
-      this.appendChild(draggedCube);
-      draggedCube.setAttribute('draggable', 'false');
-      draggedCube.style.cursor = 'default';
-      return;
-    }
-    if(isInventory){
-      // Вернуть куб из слота
-      if(draggedCube.parentElement && draggedCube.parentElement.classList.contains('slot')){
-        draggedCube.parentElement.removeChild(draggedCube);
-        inventory.appendChild(draggedCube);
-        draggedCube.setAttribute('draggable', 'true');
-        draggedCube.style.cursor = 'grab';
-      }
-      return;
-    }
+    // Перемещаем куб в новый слот
+    draggedCube.parentElement.classList.remove('filled');
+    this.appendChild(draggedCube);
+    this.classList.add('filled');
+
+    // После перемещения куб перестает быть draggable если слот — это условие было в интерфейсе или оставляем draggable всегда
+    draggedCube.setAttribute('draggable', 'true');
   }
 
-  inventory.querySelectorAll('.cube').forEach(cube => {
-    cube.addEventListener('dragstart', handleDragStart);
-    cube.addEventListener('dragend', handleDragEnd);
-    cube.style.cursor = 'grab';
-  });
+  // Навешиваем события на кубы (изначально в инвентаре)
+  function attachDragEvents(element){
+    element.addEventListener('dragstart', onDragStart);
+    element.addEventListener('dragend', onDragEnd);
+  }
 
-  const slots = document.querySelectorAll('.slot');
+  // Устанавливаем обработчики событий на все слоты (включая инвентарь и лев/прав ячейки)
+  function enableSlots(){
+    document.querySelectorAll('.slot').forEach(slot => {
+      slot.addEventListener('dragover', onDragOver);
+      slot.addEventListener('dragleave', onDragLeave);
+      slot.addEventListener('drop', onDrop);
+    });
+  }
 
-  slots.forEach(slot => {
-    slot.addEventListener('dragover', handleDragOver);
-    slot.addEventListener('dragleave', handleDragLeave);
-    slot.addEventListener('drop', handleDrop);
-  });
-
-  inventory.addEventListener('dragover', handleDragOver);
-  inventory.addEventListener('dragleave', handleDragLeave);
-  inventory.addEventListener('drop', handleDrop);
+  // Инициализация
+  document.querySelectorAll('.cube').forEach(attachDragEvents);
+  enableSlots();
 
 </script>
 
