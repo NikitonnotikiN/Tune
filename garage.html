@@ -2,210 +2,163 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Гараж и инвентарь с переносом кубов</title>
-  <style>
-    body {
-      margin: 0;
-      background: #222;
-      color: #eee;
-      font-family: Arial, sans-serif;
-      padding-bottom: 220px;
-    }
-    .bottom-nav {
-      position: fixed;
-      bottom: 180px;
-      left: 0;
-      width: 100%;
-      background: #111;
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      padding: 10px 0;
-      box-sizing: border-box;
-      font-size: 16px;
-      z-index: 1000;
-      border-top: 1px solid #333;
-    }
-    .bottom-nav a {
-      color: #eee;
-      text-decoration: none;
-      padding: 5px 15px;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      transition: background-color 0.3s, border-color 0.3s;
-    }
-    .bottom-nav a:hover {
-      background-color: #444;
-      border-color: #666;
-    }
-    .inventory {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 180px;
-      background-color: #111;
-      border-top: 2px solid #444;
-      display: flex;
-      flex-wrap: wrap;
-      padding: 10px 20px;
-      box-sizing: border-box;
-      gap: 8px;
-      z-index: 999;
-      overflow-y: auto;
-    }
-    .slot {
-      width: 48px;
-      height: 48px;
-      background-color: #333;
-      border: 1px solid #555;
-      border-radius: 6px;
-      box-sizing: border-box;
-      cursor: pointer;
-      transition: background-color 0.3s, border-color 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #bbb;
-      font-size: 14px;
-      user-select: none;
-    }
-    .slot:hover {
-      background-color: #555;
-      border-color: #888;
-      color: #fff;
-    }
-    .cube {
-      width: 36px;
-      height: 36px;
-      background-color: #4caf50;
-      border-radius: 4px;
-      box-shadow: 0 0 5px #3a8b3a;
-      cursor: grab;
-    }
-    .cube.red {
-      background-color: #f44336;
-      box-shadow: 0 0 5px #b33a3a;
-    }
-    .cube:active {
-      cursor: grabbing;
-    }
-    .highlight {
-      border-color: #ffeb3b !important;
-      background-color: #666 !important;
-      color: #ffeb3b !important;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ячейки с кубами и машиной</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #fafafa;
+    margin: 0;
+    padding: 40px 0 100px 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    position: relative;
+    bottom: 0;
+  }
+
+  .slot-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .slot {
+    width: 70px;
+    height: 70px;
+    border: 2px dashed #888;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .car-container {
+    width: 320px;
+  }
+
+  .car-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  }
+
+  /* Кубы для перетаскивания */
+  .cube {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    cursor: grab;
+  }
+
+  /* Цвета кубов */
+  .cube.red { background: #e74c3c; }
+  .cube.green { background: #27ae60; }
+  .cube.blue { background: #2980b9; }
+  .cube.yellow { background: #f1c40f; }
+  .cube.orange { background: #e67e22; }
+  .cube.purple { background: #8e44ad; }
+
+  /* Контейнер с кубами */
+  .cubes-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+  }
+
+</style>
 </head>
 <body>
 
-  <h1>Гараж и инвентарь с выбором и переносом кубов</h1>
-  <p>Перетащи кубы по слотам инвентаря.</p>
-
-  <nav class="bottom-nav">
-    <a href="menu.html">Меню</a>
-    <a href="rating.html">Рейтинг</a>
-    <a href="race.html">Гонка</a>
-    <a href="shop.html">Магазин</a>
-  </nav>
-
-  <div class="inventory" id="inventory">
-    <!-- Слоты -->
-    <!-- Добавим атрибут data-index для идентификации -->
-    <div class="slot" data-index="1"></div>
-    <div class="slot" data-index="2"></div>
-    <div class="slot" data-index="3"></div>
-    <div class="slot" data-index="4"></div>
-    <div class="slot" data-index="5"></div>
-     <div class="slot" data-index="6"></div>
-    <div class="slot" data-index="7"></div>
-    <div class="slot" data-index="8"></div>
-    <div class="slot" data-index="9"></div>
-    <div class="slot" data-index="10"></div>
-    <div class="slot" data-index="11"></div>
-    <div class="slot" data-index="12"></div>
-    <div class="slot" data-index="13"></div>
-    <div class="slot" data-index="14"></div>
-    <div class="slot" data-index="15"></div>
-    <div class="slot" data-index="16"></div>
-    <div class="slot" data-index="17"></div>
-    <div class="slot" data-index="18"></div>
-    <div class="slot" data-index="19"></div>
-    <div class="slot" data-index="20"></div>
-    <div class="slot" data-index="21"></div>
-    <div class="slot" data-index="22"></div>
-    <div class="slot" data-index="23"></div>
-    <div class="slot" data-index="24"></div>
-    <div class="slot" data-index="25"></div>
-    <div class="slot" data-index="26"></div>
-    <div class="slot" data-index="27"></div>
-    <div class="slot" data-index="28"></div>
-    <div class="slot" data-index="29"></div>
-    <div class="slot" data-index="30"></div>
+<div class="container">
+  <div class="slot-column left">
+    <div class="slot" data-allowed-color="red"></div>
+    <div class="slot" data-allowed-color="green"></div>
+    <div class="slot" data-allowed-color="blue"></div>
   </div>
 
-  <script>
-    const inventory = document.getElementById('inventory');
-    const slots = Array.from(inventory.querySelectorAll('.slot'));
+  <div class="car-container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Vaz_2110_1996.JPG" alt="ВАЗ 2110" />
+  </div>
 
-    // Создадим два куба и поместим их в 2 разных слота
-    const cube1 = document.createElement('div');
-    cube1.classList.add('cube');
-    cube1.setAttribute('draggable', 'true');
-    cube1.id = 'cube1';
-    cube1.title = 'Куб 1';
+  <div class="slot-column right">
+    <div class="slot" data-allowed-color="yellow"></div>
+    <div class="slot" data-allowed-color="orange"></div>
+    <div class="slot" data-allowed-color="purple"></div>
+  </div>
+</div>
 
-    const cube2 = document.createElement('div');
-    cube2.classList.add('cube', 'red');
-    cube2.setAttribute('draggable', 'true');
-    cube2.id = 'cube2';
-    cube2.title = 'Куб 2';
+<div class="cubes-container">
+  <div class="cube red" draggable="true" data-color="red" title="Красный куб"></div>
+  <div class="cube green" draggable="true" data-color="green" title="Зелёный куб"></div>
+  <div class="cube blue" draggable="true" data-color="blue" title="Синий куб"></div>
+  <div class="cube yellow" draggable="true" data-color="yellow" title="Жёлтый куб"></div>
+  <div class="cube orange" draggable="true" data-color="orange" title="Оранжевый куб"></div>
+  <div class="cube purple" draggable="true" data-color="purple" title="Фиолетовый куб"></div>
+</div>
 
-    slots[0].appendChild(cube1);
-    slots[5].appendChild(cube2);
+<script>
+  // Обработчики drag & drop для кубов и ячеек
+  const cubes = document.querySelectorAll('.cube');
+  const slots = document.querySelectorAll('.slot');
 
-    let draggedCube = null;
+  cubes.forEach(cube => {
+    cube.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('color', cube.dataset.color);
+      e.dataTransfer.effectAllowed = 'move';
+      // Для видимости при переносе
+      setTimeout(() => cube.style.visibility = 'hidden', 0);
+    });
+    cube.addEventListener('dragend', e => {
+      cube.style.visibility = 'visible';
+    });
+  });
 
-    // Обработка начала перетаскивания
-    inventory.addEventListener('dragstart', (e) => {
-      if (e.target.classList.contains('cube')) {
-        draggedCube = e.target;
-        e.dataTransfer.effectAllowed = 'move';
-        // Чтобы была видна "копия" или курсор
-        e.dataTransfer.setData('text/plain', e.target.id);
+  slots.forEach(slot => {
+    slot.addEventListener('dragover', e => {
+      e.preventDefault();
+      slot.style.borderColor = '#3498db';
+    });
+
+    slot.addEventListener('dragleave', e => {
+      slot.style.borderColor = '#888';
+    });
+
+    slot.addEventListener('drop', e => {
+      e.preventDefault();
+      slot.style.borderColor = '#888';
+      const draggedColor = e.dataTransfer.getData('color');
+      const allowedColor = slot.dataset.allowedColor;
+
+      if (draggedColor === allowedColor) {
+        // Найти куб с этим цветом
+        const draggedCube = document.querySelector(`.cube[data-color="${draggedColor}"]`);
+        if (draggedCube) {
+          // Если в слоте уже есть куб, вернуть его обратно в контейнер
+          if (slot.firstChild) {
+            document.querySelector('.cubes-container').appendChild(slot.firstChild);
+          }
+          slot.appendChild(draggedCube);
+          draggedCube.style.cursor = 'default';
+          draggedCube.setAttribute('draggable', 'false');
+        }
+      } else {
+        alert(`В эту ячейку можно положить только куб цвета "${allowedColor}"`);
       }
     });
+  });
+</script>
 
-    // Позволяем слотам принимать дроп
-    slots.forEach(slot => {
-      slot.addEventListener('dragover', (e) => {
-        e.preventDefault(); // Обязателен для drop
-        slot.classList.add('highlight');
-        e.dataTransfer.dropEffect = 'move';
-      });
-      slot.addEventListener('dragleave', () => {
-        slot.classList.remove('highlight');
-      });
-      slot.addEventListener('drop', (e) => {
-        e.preventDefault();
-        slot.classList.remove('highlight');
-        if (!draggedCube) return;
-
-        // Если слот пуст — переместить куб туда
-        if (!slot.querySelector('.cube')) {
-          draggedCube.parentElement.removeChild(draggedCube);
-          slot.appendChild(draggedCube);
-        }
-      });
-    });
-
-    // Очищае�� draggedCube при окончании драг
-    inventory.addEventListener('dragend', () => {
-      draggedCube = null;
-      slots.forEach(s => s.classList.remove('highlight'));
-    });
-  </script>
 </body>
 </html>
