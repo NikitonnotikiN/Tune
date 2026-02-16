@@ -4,20 +4,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Гараж и инвентарь</title>
+  <title>Гараж и инвентарь с переносом кубов</title>
   <style>
     body {
       margin: 0;
       background: #222;
       color: #eee;
       font-family: Arial, sans-serif;
-      padding-bottom: 220px; /* Чтобы контент не перекрывала навигация и инвентарь */
+      padding-bottom: 220px;
     }
-
-    /* Навигация */
     .bottom-nav {
       position: fixed;
-      bottom: 180px; /* над инвентарём */
+      bottom: 180px;
       left: 0;
       width: 100%;
       background: #111;
@@ -30,7 +28,6 @@
       z-index: 1000;
       border-top: 1px solid #333;
     }
-
     .bottom-nav a {
       color: #eee;
       text-decoration: none;
@@ -39,13 +36,10 @@
       border-radius: 4px;
       transition: background-color 0.3s, border-color 0.3s;
     }
-
     .bottom-nav a:hover {
       background-color: #444;
       border-color: #666;
     }
-
-    /* Инвентарь */
     .inventory {
       position: fixed;
       bottom: 0;
@@ -62,8 +56,7 @@
       z-index: 999;
       overflow-y: auto;
     }
-
-    .inventory .slot {
+    .slot {
       width: 48px;
       height: 48px;
       background-color: #333;
@@ -79,20 +72,38 @@
       font-size: 14px;
       user-select: none;
     }
-
-    .inventory .slot:hover {
+    .slot:hover {
       background-color: #555;
       border-color: #888;
       color: #fff;
     }
+    .cube {
+      width: 36px;
+      height: 36px;
+      background-color: #4caf50;
+      border-radius: 4px;
+      box-shadow: 0 0 5px #3a8b3a;
+      cursor: grab;
+    }
+    .cube.red {
+      background-color: #f44336;
+      box-shadow: 0 0 5px #b33a3a;
+    }
+    .cube:active {
+      cursor: grabbing;
+    }
+    .highlight {
+      border-color: #ffeb3b !important;
+      background-color: #666 !important;
+      color: #ffeb3b !important;
+    }
   </style>
 </head>
 <body>
-  <!-- Основной контент страницы -->
-  <h1>Добро пожаловать в гараж</h1>
-  <p>Здесь можно управлять автомобилями и другими предметами.</p>
 
-  <!-- Навигация для перехода -->
+  <h1>Гараж и инвентарь с выбором и переносом кубов</h1>
+  <p>Перетащи кубы по слотам инвентаря.</p>
+
   <nav class="bottom-nav">
     <a href="menu.html">Меню</a>
     <a href="rating.html">Рейтинг</a>
@@ -100,40 +111,101 @@
     <a href="shop.html">Магазин</a>
   </nav>
 
-  <!-- Инвентарь с 30 слотами -->
-  <div class="inventory">
-    <!-- Создаём 30 слотов для инвентаря -->
-    <div class="slot">1</div>
-    <div class="slot">2</div>
-    <div class="slot">3</div>
-    <div class="slot">4</div>
-    <div class="slot">5</div>
-    <div class="slot">6</div>
-    <div class="slot">7</div>
-    <div class="slot">8</div>
-    <div class="slot">9</div>
-    <div class="slot">10</div>
-    <div class="slot">11</div>
-    <div class="slot">12</div>
-    <div class="slot">13</div>
-    <div class="slot">14</div>
-    <div class="slot">15</div>
-    <div class="slot">16</div>
-    <div class="slot">17</div>
-    <div class="slot">18</div>
-    <div class="slot">19</div>
-    <div class="slot">20</div>
-    <div class="slot">21</div>
-    <div class="slot">22</div>
-    <div class="slot">23</div>
-    <div class="slot">24</div>
-    <div class="slot">25</div>
-    <div class="slot">26</div>
-    <div class="slot">27</div>
-    <div class="slot">28</div>
-    <div class="slot">29</div>
-    <div class="slot">30</div>
+  <div class="inventory" id="inventory">
+    <!-- Слоты -->
+    <!-- Добавим атрибут data-index для идентификации -->
+    <div class="slot" data-index="1"></div>
+    <div class="slot" data-index="2"></div>
+    <div class="slot" data-index="3"></div>
+    <div class="slot" data-index="4"></div>
+    <div class="slot" data-index="5"></div>
+     <div class="slot" data-index="6"></div>
+    <div class="slot" data-index="7"></div>
+    <div class="slot" data-index="8"></div>
+    <div class="slot" data-index="9"></div>
+    <div class="slot" data-index="10"></div>
+    <div class="slot" data-index="11"></div>
+    <div class="slot" data-index="12"></div>
+    <div class="slot" data-index="13"></div>
+    <div class="slot" data-index="14"></div>
+    <div class="slot" data-index="15"></div>
+    <div class="slot" data-index="16"></div>
+    <div class="slot" data-index="17"></div>
+    <div class="slot" data-index="18"></div>
+    <div class="slot" data-index="19"></div>
+    <div class="slot" data-index="20"></div>
+    <div class="slot" data-index="21"></div>
+    <div class="slot" data-index="22"></div>
+    <div class="slot" data-index="23"></div>
+    <div class="slot" data-index="24"></div>
+    <div class="slot" data-index="25"></div>
+    <div class="slot" data-index="26"></div>
+    <div class="slot" data-index="27"></div>
+    <div class="slot" data-index="28"></div>
+    <div class="slot" data-index="29"></div>
+    <div class="slot" data-index="30"></div>
   </div>
 
+  <script>
+    const inventory = document.getElementById('inventory');
+    const slots = Array.from(inventory.querySelectorAll('.slot'));
+
+    // Создадим два куба и поместим их в 2 разных слота
+    const cube1 = document.createElement('div');
+    cube1.classList.add('cube');
+    cube1.setAttribute('draggable', 'true');
+    cube1.id = 'cube1';
+    cube1.title = 'Куб 1';
+
+    const cube2 = document.createElement('div');
+    cube2.classList.add('cube', 'red');
+    cube2.setAttribute('draggable', 'true');
+    cube2.id = 'cube2';
+    cube2.title = 'Куб 2';
+
+    slots[0].appendChild(cube1);
+    slots[5].appendChild(cube2);
+
+    let draggedCube = null;
+
+    // Обработка начала перетаскивания
+    inventory.addEventListener('dragstart', (e) => {
+      if (e.target.classList.contains('cube')) {
+        draggedCube = e.target;
+        e.dataTransfer.effectAllowed = 'move';
+        // Чтобы была видна "копия" или курсор
+        e.dataTransfer.setData('text/plain', e.target.id);
+      }
+    });
+
+    // Позволяем слотам принимать дроп
+    slots.forEach(slot => {
+      slot.addEventListener('dragover', (e) => {
+        e.preventDefault(); // Обязателен для drop
+        slot.classList.add('highlight');
+        e.dataTransfer.dropEffect = 'move';
+      });
+      slot.addEventListener('dragleave', () => {
+        slot.classList.remove('highlight');
+      });
+      slot.addEventListener('drop', (e) => {
+        e.preventDefault();
+        slot.classList.remove('highlight');
+        if (!draggedCube) return;
+
+        // Если слот пуст — переместить куб туда
+        if (!slot.querySelector('.cube')) {
+          draggedCube.parentElement.removeChild(draggedCube);
+          slot.appendChild(draggedCube);
+        }
+      });
+    });
+
+    // Очищае�� draggedCube при окончании драг
+    inventory.addEventListener('dragend', () => {
+      draggedCube = null;
+      slots.forEach(s => s.classList.remove('highlight'));
+    });
+  </script>
 </body>
 </html>
