@@ -70,6 +70,19 @@
         nav a:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
+/* Вкладки */
+        .tab {
+            display: none;
+            padding: 20px;
+            border: 1px solid #fff;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            text-align: center;
+        }
+
+        .tab.active {
+            display: block;
+        }
     </style>
 </head>
 <body onload="startLoader();">
@@ -80,23 +93,46 @@
 
     <!-- Основное содержание -->
     <section style="display:none;" id="content-section">
-        <h1> Кирилл, Паха Помогите</h1>
+        <h1>Добро пожаловать в моё мини-приложение!</h1>
         <nav>
             <ul>
-                <li><a href="#about">Вызвать Психолога</a></li>
-                <li><a href="#features">Обоссать</a></li>
-                <li><a href="#contact">Связать</a></li>
+                <li><a href="#" onclick="openTab('about')">О приложении</a></li>
+                <li><a href="#" onclick="openTab('features')">Особенности</a></li>
+                <li><a href="#" onclick="openTab('contact')">Связь</a></li>
             </ul>
         </nav>
+
+        <!-- Вкладки -->
+        <div id="about" class="tab">
+            <h2>О приложении</h2>
+            <p>Это моё первое мини-приложение для Telegram.</p>
+        </div>
+        <div id="features" class="tab">
+            <h2>Особенности</h2>
+            <p>Здесь будут описаны особенности приложения.</p>
+        </div>
+        <div id="contact" class="tab">
+            <h2>Связь</h2>
+            <p>Контактная информация для связи.</p>
+        </div>
     </section>
 
-    <!-- Скрипт для управления загрузочным экраном -->
+    <!-- Скрипт для управления вкладками -->
     <script>
+        function openTab(tabName) {
+            var tabs = document.getElementsByClassName('tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            document.getElementById(tabName).classList.add('active');
+        }
+
         function startLoader() {
             setTimeout(function () {
-                document.querySelector('#loader-container').style.display = 'none'; // скрываем загрузчик
-                document.querySelector('#content-section').style.display = 'block'; // показываем основную секцию
-            }, 2000); // Задержка анимации 2 секунды
+                document.querySelector('#loader-container').style.display = 'none';
+                document.querySelector('#content-section').style.display = 'block';
+                openTab('about'); // Открываем первую вкладку по умолчанию
+            }, 2000); // Время анимации (2 секунды)
         }
     </script>
 </body>
