@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Гараж</title>
+    <title>Тюнинг авто</title>
     <style>
         body {
-            background-image: url('https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/aYekK43wStM.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            background-color: #222;
             color: white;
             font-family: Arial, sans-serif;
             height: 100vh;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* Контейнер загрузки */
@@ -48,29 +48,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Навигационная панель */
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: white;
-            padding: 10px 20px;
-            border: 1px solid #fff;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        nav a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
         /* Инвентарь */
         .inventory {
             display: grid;
@@ -94,6 +71,30 @@
             position: absolute;
             z-index: 100;
         }
+
+        /* Авто */
+        .car {
+            width: 300px;
+            height: 150px;
+            background-color: #3498db;
+            margin-top: 20px;
+        }
+
+        /* Ячейки вокруг авто */
+        .car-inventory {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .car-inventory-item {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid #fff;
+            padding: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body onload="startLoader();">
@@ -104,18 +105,23 @@
 
     <!-- Основное содержание -->
     <section style="display:none;" id="content-section">
-        <h1>Гараж</h1>
-        <p>Здесь будет информация о гараже.</p>
+        <h1>Тюнинг авто</h1>
 
-        <!-- Навигационная панель -->
-        <nav>
-            <ul>
-                <li><a href="menu.html">Меню</a></li>
-                <li><a href="shop.html">Магазин</a></li>
-                <li><a href="race.html">Заезд</a></li>
-                <li><a href="rating.html">Рейтинг</a></li>
-            </ul>
-        </nav>
+        <!-- Авто -->
+        <div class="car"></div>
+
+        <!-- Ячейки вокруг авто -->
+        <div class="car-inventory">
+            <div class="car-inventory-item" id="car-cell1"></div>
+            <div class="car-inventory-item" id="car-cell2"></div>
+            <div class="car-inventory-item" id="car-cell3"></div>
+            <div class="car-inventory-item" id="car-cell4"></div>
+            <div class="car-inventory-item" id="car-cell5"></div>
+            <div class="car-inventory-item" id="car-cell6"></div>
+            <div class="car-inventory-item" id="car-cell7"></div>
+            <div class="car-inventory-item" id="car-cell8"></div>
+            <div class="car-inventory-item" id="car-cell9"></div>
+        </div>
 
         <!-- Инвентарь -->
         <div class="inventory">
@@ -162,8 +168,10 @@
             <div class="inventory-item" id="cell40"></div>
         </div>
 
-        <!-- Куб -->
-        <div class="cube" id="cube"></div>
+        <!-- Кубы -->
+        <div class="cube" id="cube1"></div>
+        <div class="cube" id="cube2"></div>
+        <div class="cube" id="cube3"></div>
     </section>
 
     <!-- Скрипт для управления загрузкой -->
@@ -176,26 +184,30 @@
         }
     </script>
 
-    <!-- Скрипт для перемещения куба -->
+    <!-- Скрипт для перемещения кубов -->
     <script>
-        var cube = document.getElementById('cube');
+        var cubes = document.querySelectorAll('.cube');
         var currentCell = null;
 
         function moveCube(event) {
             var target = event.target;
-            if (target.classList.contains('inventory-item')) {
+            if (target.classList.contains('inventory-item') || target.classList.contains('car-inventory-item')) {
                 if (currentCell) {
-                    currentCell.removeChild(cube);
+                    currentCell.removeChild(cubes[0]);
                 }
-                target.appendChild(cube);
+                target.appendChild(cubes[0]);
                 currentCell = target;
             }
         }
 
         var inventoryItems = document.querySelectorAll('.inventory-item');
+        var carInventoryItems = document.querySelectorAll('.car-inventory-item');
         inventoryItems.forEach(function(item) {
+            item.addEventListener('click', moveCube);
+        });
+        carInventoryItems.forEach(function(item) {
             item.addEventListener('click', moveCube);
         });
     </script>
 </body>
-                </html>
+    </html>
