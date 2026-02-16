@@ -220,17 +220,26 @@
     <script>
         var cubes = document.querySelectorAll('.cube');
         var currentCell = null;
+        var selectedCube = null;
+
+        function selectCube(event) {
+            selectedCube = event.target;
+        }
 
         function moveCube(event) {
             var target = event.target;
             if (target.classList.contains('inventory-item') || target.classList.contains('car-inventory-item')) {
                 if (currentCell) {
-                    currentCell.removeChild(cubes[0]);
+                    currentCell.removeChild(selectedCube);
                 }
-                target.appendChild(cubes[0]);
+                target.appendChild(selectedCube);
                 currentCell = target;
             }
         }
+
+        cubes.forEach(function(cube) {
+            cube.addEventListener('click', selectCube);
+        });
 
         var inventoryItems = document.querySelectorAll('.inventory-item');
         var carInventoryItems = document.querySelectorAll('.car-inventory-item');
