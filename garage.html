@@ -103,6 +103,8 @@
             grid-template-rows: repeat(6, 1fr);
             gap: 10px;
             margin-top: 20px;
+            position: fixed;
+            bottom: 0;
             width: 100%;
         }
 
@@ -112,8 +114,8 @@
             padding: 5px;
             text-align: center;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            min-width: 60px;
-            min-height: 60px;
+            width: 50px;
+            height: 50px;
         }
 
         .cube {
@@ -269,15 +271,3 @@
         cubes.forEach(function(cube) {
             cube.addEventListener('click', selectCube);
         });
-
-        var inventoryItems = document.querySelectorAll('.inventory-item');
-        var carInventoryItems = document.querySelectorAll('.car-inventory-item');
-        inventoryItems.forEach(function(item) {
-            item.addEventListener('click', moveCube);
-        });
-        carInventoryItems.forEach(function(item) {
-            item.addEventListener('click', moveCube);
-        });
-    </script>
-</body>
-                </html>
