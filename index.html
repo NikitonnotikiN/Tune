@@ -139,45 +139,34 @@
                 <li><a href="#" onclick="openTab('rating')">Рейтинг</a></li>
             </ul>
         </nav>
+</style>
+</head>
+<body onload="startLoader();">
+    <!-- Экран загрузки -->
+    <div id="loader-container" class="loader-container">
+        <div class="loader"></div>
+    </div>
 
-        <!-- Вкладки -->
-        <div id="menu" class="tab">
-            <h2>Меню</h2>
-            <p>1 чихуек, 2 хек кек 3 ик пук.</p>
-        </div>
-        <div id="shop" class="tab">
-            <h2>Магазин</h2>
-            <p>От автомата ак 74у у-уебок.</p>
-        </div>
-        <div id="garage" class="tab">
-            <h2>Гараж</h2>
-            <p>Гараж который пиво .</p>
-        </div>
-        <div id="race" class="tab">
-            <h2>Заезд</h2>
-            <p>Заезд уезд подъезд квартира.</p>
-        </div>
-        <div id="rating" class="tab">
-            <h2>Рейтинг</h2>
-            <p>Ты на первом месте урааааа (Толькое если ты Пивнев Кирилл).</p>
-        </div>
+    <!-- Основное содержание -->
+    <section style="display:none;" id="content-section">
+        <h1>Добро пожаловать в моё мини-приложение!</h1>
+        <nav>
+            <ul>
+                <li><a href="menu.html">Меню</a></li>
+                <li><a href="shop.html">Магазин</a></li>
+                <li><a href="garage.html">Гараж</a></li>
+                <li><a href="race.html">Заезд</a></li>
+                <li><a href="rating.html">Рейтинг</a></li>
+            </ul>
+        </nav>
     </section>
 
-    <!-- Скрипт для управления вкладками -->
+    <!-- Скрипт для управления загрузкой -->
     <script>
-        function openTab(tabName) {
-            var tabs = document.getElementsByClassName('tab');
-            for (var i = 0; i < tabs.length; i++) {
-                tabs[i].classList.remove('active');
-            }
-            document.getElementById(tabName).classList.add('active');
-        }
-
         function startLoader() {
             setTimeout(function () {
                 document.querySelector('#loader-container').style.display = 'none';
                 document.querySelector('#content-section').style.display = 'block';
-                openTab('menu'); // Открываем первую вкладку по умолчанию
             }, 2000); // Время анимации (2 секунды)
         }
     </script>
