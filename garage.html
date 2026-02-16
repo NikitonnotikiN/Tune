@@ -4,13 +4,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Гонка с Кубами и Инвентарь 5x6</title>
+<title>Инвентарь с кубами, машина и ячейки</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     background: #fafafa;
-    margin: 0;
-    padding: 20px;
+    margin: 0; padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,7 +17,7 @@
   }
 
   nav {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
   }
   nav a {
     margin: 0 12px;
@@ -33,32 +32,23 @@
     text-decoration: underline;
   }
 
-  /* Контейнер всей страницы */
-  .page-container {
+  .main-container {
     display: flex;
-    gap: 30px;
-    align-items: flex-start;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
     width: 100%;
-    max-width: 1100px;
+    max-width: 900px;
+    margin-bottom: 30px;
   }
 
-  /* Левая часть - Машина */
-  .car-container {
-    width: 280px;
-  }
-  .car-container img {
-    width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-  }
-
-  /* Правая часть - Слоты для кубов */
-  .slots-container {
+  .slot-group {
     display: flex;
     flex-direction: column;
-    gap: 25px;
-    width: 140px;
+    gap: 20px;
+    width: 90px;
   }
+
   .slot {
     height: 70px;
     border: 2px dashed #666;
@@ -73,19 +63,26 @@
     background-color: #d0e7ff;
   }
 
-  /* Инвентарь по центру - 5x6 сетка */
-  #inventory {
-    display: grid;
-    grid-template-columns: repeat(6, 60px);
-    grid-template-rows: repeat(5, 60px);
-    gap: 10px;
-    background: #fff;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 5px 18px rgba(0,0,0,0.1);
+  .car-container {
+    width: 280px;
+    display: flex;
+    justify-content: center;
+  }
+  .car-container img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
   }
 
-  /* Кубы в инвентаре и слотах */
+  #inventory {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+  }
+
   .cube {
     width: 60px;
     height: 60px;
@@ -100,7 +97,6 @@
     transform: scale(1.1);
   }
 
-  /* Цвета кубов */
   .red { background: #e74c3c; }
   .green { background: #27ae60; }
   .blue { background: #2980b9; }
@@ -119,33 +115,31 @@
   <a href="shop.html">Магазин</a>
 </nav>
 
-<div class="page-container">
+<div class="main-container">
 
-  <div class="car-container">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/VAZ_2110_front_20100615.jpg/320px-VAZ_2110_front_20100615.jpg" alt="ВАЗ 2110">
-  </div>
-
-  <div id="inventory">
-    <!-- Кубы 5 на 6 = 30 ячеек, заполним разными цветами -->
-    <!-- Используем 5x6 = 30, разных кубов 6 цветов по 5 штук -->
-  </div>
-
-  <div class="slots-container">
+  <div class="slot-group" aria-label="Левые ячейки">
     <div class="slot" data-allowed-color="red" title="Красный слот"></div>
     <div class="slot" data-allowed-color="green" title="Зеленый слот"></div>
     <div class="slot" data-allowed-color="blue" title="Синий слот"></div>
   </div>
 
+  <div class="car-container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/VAZ_2110_front_20100615.jpg/320px-VAZ_2110_front_20100615.jpg" alt="ВАЗ 2110" />
+  </div>
+
+  <div class="slot-group" aria-label="Правые ячейки">
+    <div class="slot" data-allowed-color="yellow" title="Жёлтый слот"></div>
+    <div class="slot" data-allowed-color="orange" title="Оранжевый слот"></div>
+    <div class="slot" data-allowed-color="purple" title="Фиолетовый слот"></div>
+  </div>
+
 </div>
 
-<div class="slots-container" style="margin-top:20px;">
-  <div class="slot" data-allowed-color="yellow" title="Жёлтый слот"></div>
-  <div class="slot" data-allowed-color="orange" title="Оранжевый слот"></div>
-  <div class="slot" data-allowed-color="purple" title="Фиолетовый слот"></div>
+<div id="inventory" aria-label="Инвентарь кубов">
+  <!-- По одно��у кубу каждого цвета -->
 </div>
 
 <script>
-  // Создадим кубы разного цвета, по 5 штук каждого цвета
   const colors = ['red','green','blue','yellow','orange','purple'];
   const inventory = document.getElementById('inventory');
 
@@ -154,21 +148,15 @@
     cube.classList.add('cube', color);
     cube.setAttribute('draggable', 'true');
     cube.dataset.color = color;
-    cube.title = capitalize(color) + ' куб';
+    cube.title = color.charAt(0).toUpperCase() + color.slice(1) + ' куб';
     return cube;
   }
 
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
+  // В инвентаре по 1 кубу каждого цвета
   for(let c of colors){
-    for(let i=0; i<5; i++){
-      inventory.appendChild(createCube(c));
-    }
+    inventory.appendChild(createCube(c));
   }
 
-  // Драг-н-дроп
   let draggedCube = null;
 
   function handleDragStart(e){
@@ -181,7 +169,7 @@
     if(draggedCube) draggedCube.style.visibility = 'visible';
     draggedCube = null;
     slots.forEach(s => s.classList.remove('drag-over'));
-    inventories.forEach(inv => inv.classList.remove('drag-over'));
+    inventory.classList.remove('drag-over');
   }
 
   function handleDragOver(e){
@@ -199,17 +187,15 @@
 
     const draggedColor = draggedCube.dataset.color;
     const allowedColor = this.dataset.allowedColor;
-
     const isSlot = this.classList.contains('slot');
     const isInventory = this.id === 'inventory';
 
-    // Если слот - проверяем цвет
     if(isSlot){
       if(draggedColor !== allowedColor){
-        alert(`В этот слот можно положить только куб цвета "${capitalize(allowedColor)}"`);
+        alert(`В этот слот можно положить только куб цвета "${allowedColor.charAt(0).toUpperCase() + allowedColor.slice(1)}"`);
         return;
       }
-      // Если в слоте уже есть куб, вернуть его в инвентарь
+      // Убрать куб из старого слота, если есть
       if(this.children.length > 0){
         const existing = this.children[0];
         inventory.appendChild(existing);
@@ -221,9 +207,8 @@
       draggedCube.style.cursor = 'default';
       return;
     }
-
-    // Если инвентарь: куб можно вернуть в инвентарь из слота
     if(isInventory){
+      // Вернуть куб из слота
       if(draggedCube.parentElement && draggedCube.parentElement.classList.contains('slot')){
         draggedCube.parentElement.removeChild(draggedCube);
         inventory.appendChild(draggedCube);
@@ -234,7 +219,6 @@
     }
   }
 
-  // Навесим события
   inventory.querySelectorAll('.cube').forEach(cube => {
     cube.addEventListener('dragstart', handleDragStart);
     cube.addEventListener('dragend', handleDragEnd);
@@ -242,7 +226,6 @@
   });
 
   const slots = document.querySelectorAll('.slot');
-  const inventories = [inventory];
 
   slots.forEach(slot => {
     slot.addEventListener('dragover', handleDragOver);
@@ -250,12 +233,11 @@
     slot.addEventListener('drop', handleDrop);
   });
 
-  inventories.forEach(inv => {
-    inv.addEventListener('dragover', handleDragOver);
-    inv.addEventListener('dragleave', handleDragLeave);
-    inv.addEventListener('drop', handleDrop);
-  });
+  inventory.addEventListener('dragover', handleDragOver);
+  inventory.addEventListener('dragleave', handleDragLeave);
+  inventory.addEventListener('drop', handleDrop);
 
 </script>
+
 </body>
 </html>
