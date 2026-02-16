@@ -70,7 +70,7 @@
         nav a:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
-/* Вкладки */
+ /* Вкладки */
         .tab {
             display: none;
             padding: 20px;
@@ -83,6 +83,42 @@
         .tab.active {
             display: block;
         }
+
+        /* Фоны для вкладок */
+        #menu {
+            background-image: url('https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/20260215_203307.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #shop {
+            background-image: url('https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/whGXYnm9uII.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #garage {
+            background-image: url('https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/aYekK43wStM.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #race {
+            background-image: url('https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/20260215_172159.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #rating {
+            background-image: url('https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/Screenshot_20260216-205604_Gallery.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
     </style>
 </head>
 <body onload="startLoader();">
@@ -93,27 +129,37 @@
 
     <!-- Основное содержание -->
     <section style="display:none;" id="content-section">
-        <h1>Добро пожаловать в моё мини-приложение!</h1>
+        <h1>Купи снюс получи кунг</h1>
         <nav>
             <ul>
-                <li><a href="#" onclick="openTab('about')">О приложении</a></li>
-                <li><a href="#" onclick="openTab('features')">Особенности</a></li>
-                <li><a href="#" onclick="openTab('contact')">Связь</a></li>
+                <li><a href="#" onclick="openTab('menu')">Меню</a></li>
+                <li><a href="#" onclick="openTab('shop')">Магазин</a></li>
+                <li><a href="#" onclick="openTab('garage')">Гараж</a></li>
+                <li><a href="#" onclick="openTab('race')">Заезд</a></li>
+                <li><a href="#" onclick="openTab('rating')">Рейтинг</a></li>
             </ul>
         </nav>
 
         <!-- Вкладки -->
-        <div id="about" class="tab">
-            <h2>О приложении</h2>
-            <p>Это моё первое мини-приложение для Telegram.</p>
+        <div id="menu" class="tab">
+            <h2>Меню</h2>
+            <p>1 чихуек, 2 хек кек 3 ик пук.</p>
         </div>
-        <div id="features" class="tab">
-            <h2>Особенности</h2>
-            <p>Здесь будут описаны особенности приложения.</p>
+        <div id="shop" class="tab">
+            <h2>Магазин</h2>
+            <p>От автомата ак 74у у-уебок.</p>
         </div>
-        <div id="contact" class="tab">
-            <h2>Связь</h2>
-            <p>Контактная информация для связи.</p>
+        <div id="garage" class="tab">
+            <h2>Гараж</h2>
+            <p>Гараж который пиво .</p>
+        </div>
+        <div id="race" class="tab">
+            <h2>Заезд</h2>
+            <p>Заезд уезд подъезд квартира.</p>
+        </div>
+        <div id="rating" class="tab">
+            <h2>Рейтинг</h2>
+            <p>Ты на первом месте урааааа (Толькое если ты Пивнев Кирилл).</p>
         </div>
     </section>
 
@@ -131,7 +177,7 @@
             setTimeout(function () {
                 document.querySelector('#loader-container').style.display = 'none';
                 document.querySelector('#content-section').style.display = 'block';
-                openTab('about'); // Открываем первую вкладку по умолчанию
+                openTab('menu'); // Открываем первую вкладку по умолчанию
             }, 2000); // Время анимации (2 секунды)
         }
     </script>
