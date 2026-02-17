@@ -21,6 +21,12 @@
     margin-bottom: 20px;
   }
 
+
+<!-- Добавьте в body, например, сразу после nav -->
+<div id="coinsDisplay" style="font-weight:bold; font-size:18px; margin-bottom:20px; color: #fff;">
+  Монеты: 0
+</div>
+
   nav a {
     margin: 0 12px;
     text-decoration: none;
@@ -129,10 +135,6 @@
   <a href="rating.html">Рейтинг</a>
   <a href="shop.html">Магазин</a>
 </nav>
-
-<div id="coinsDisplay" style="font-weight:bold; font-size:18px; margin-bottom:20px; color: #fff;">
-  Монеты: 0
-</div>
 
 <div class="main-container">
 
@@ -276,6 +278,8 @@
   }).observe(inventory, { childList: true, subtree: true });
 
 
+// Внизу, перед закрывающим тегом </body>, добавьте следующий скрипт для счётчика монет
+
 <script>
   const COINS_KEY = 'playerCoins';
   const coinsDisplay = document.getElementById('coinsDisplay');
@@ -293,13 +297,14 @@
     coinsDisplay.textContent = `Монеты: ${getCoins()}`;
   }
 
+  // При загрузке страницы отображаем текущий баланс монет
   document.addEventListener('DOMContentLoaded', updateCoinsDisplay);
 
-  // Пример функции для добавления монет, вызовите по необходимости
+  // Пример функции для добавления монет (можно вызывать при покупке, наградах и т.п.)
   function addCoins(amount) {
     const current = getCoins();
     setCoins(current + amount);
   }
 </script>
 </body>
-</html>
+      </html>
