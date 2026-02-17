@@ -1,508 +1,540 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🛒 МАГАЗИН - Кирюха Racing</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ton Racing – Магазин</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* ========== ГЛОБАЛЬНЫЕ СБРОСЫ ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #0a0a0f;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px;
-      position: relative;
-      color: white;
-    }
+        body {
+            font-family: 'Racing Sans One', 'Segoe UI', system-ui, sans-serif;
+            background: #0c0c0c;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            position: relative;
+            color: white;
+            background-image: radial-gradient(circle at 20% 30%, rgba(225, 6, 0, 0.15) 0%, transparent 30%),
+                              radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
+        }
 
-    .cyber-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background: radial-gradient(circle at 30% 50%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
-                  radial-gradient(circle at 70% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%);
-    }
+        /* Карбоновая текстура */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(45deg, rgba(30, 30, 30, 0.8) 0px, rgba(30, 30, 30, 0.8) 2px, 
+                              rgba(20, 20, 20, 0.8) 2px, rgba(20, 20, 20, 0.8) 4px);
+            z-index: -1;
+        }
 
-    .cyber-grid {
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      background-image: 
-        linear-gradient(rgba(255, 0, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
-      background-size: min(30px, 5vw) min(30px, 5vw);
-      transform: perspective(500px) rotateX(60deg);
-      animation: gridMove 20s linear infinite;
-      top: -50%;
-      left: -50%;
-    }
+        /* Шашечная полоса сверху */
+        .checkered-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(90deg, #fff, #fff 20px, #000 20px, #000 40px);
+            z-index: 1001;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
 
-    @keyframes gridMove {
-      0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-      100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
-    }
+        /* ========== ШАПКА ========== */
+        .header {
+            position: fixed;
+            top: 8px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid #e10600;
+            box-shadow: 0 0 30px rgba(225, 6, 0, 0.5);
+            z-index: 1000;
+        }
 
-    /* Навигация */
-    .nav {
-      display: flex;
-      justify-content: center;
-      gap: clamp(8px, 2vw, 15px);
-      padding: 12px 10px;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(10px);
-      border-bottom: 2px solid #f0f;
-      box-shadow: 0 0 30px #f0f;
-      z-index: 10;
-      width: 100%;
-      flex-wrap: wrap;
-    }
+        .back-to-menu {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 8px 16px;
+            border: 2px solid #e10600;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+            transition: all 0.2s;
+        }
 
-    .nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-      padding: 8px 16px;
-      border-radius: 30px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid #0ff;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-size: clamp(12px, 3vw, 14px);
-      white-space: nowrap;
-    }
+        .back-to-menu:active {
+            transform: translateY(2px);
+            background: #e10600;
+            color: black;
+        }
 
-    .nav a:hover {
-      background: #0ff;
-      color: #000;
-      box-shadow: 0 0 40px #0ff;
-    }
+        .coins-header {
+            background: linear-gradient(135deg, #e10600, #ff4d4d);
+            padding: 8px 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+            box-shadow: 0 0 20px #e10600;
+        }
 
-    .nav a.active {
-      background: #f0f;
-      border-color: #f0f;
-      color: #000;
-      box-shadow: 0 0 40px #f0f;
-    }
+        /* ========== ЗАГОЛОВОК ========== */
+        .title {
+            text-align: center;
+            margin: 80px 0 20px 0;
+            width: 100%;
+        }
 
-    /* Монеты игрока */
-    .player-coins {
-      position: fixed;
-      top: 12px;
-      right: 12px;
-      background: linear-gradient(135deg, #f0f, #0ff);
-      padding: clamp(8px, 2vw, 12px) clamp(16px, 4vw, 25px);
-      border-radius: 40px;
-      font-weight: bold;
-      font-size: clamp(18px, 5vw, 24px);
-      color: #000;
-      box-shadow: 0 0 50px #f0f;
-      z-index: 100;
-    }
+        .title h1 {
+            font-size: 48px;
+            color: white;
+            text-shadow: 4px 4px 0 #e10600;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
 
-    /* Заголовок */
-    .title {
-      text-align: center;
-      margin: 70px 0 15px 0;
-      width: 100%;
-    }
+        /* ========== КОНТЕЙНЕР МАГАЗИНА ========== */
+        .shop-container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #e10600;
+            padding: 20px;
+            margin-bottom: 20px;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            backdrop-filter: blur(5px);
+        }
 
-    .title h1 {
-      font-size: clamp(28px, 8vw, 48px);
-      font-weight: 900;
-      text-transform: uppercase;
-      color: transparent;
-      -webkit-text-stroke: 2px #f0f;
-      text-shadow: 0 0 30px #f0f;
-      letter-spacing: clamp(2px, 2vw, 4px);
-    }
+        .shop-section {
+            margin-bottom: 30px;
+        }
 
-    /* Контейнер магазина */
-    .shop-container {
-      max-width: 1200px;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(10px);
-      border: 2px solid #f0f;
-      border-radius: 40px;
-      padding: 20px 15px;
-      box-shadow: 0 0 70px rgba(255, 0, 255, 0.4);
-      margin-bottom: 20px;
-    }
+        .shop-section h2 {
+            color: #e10600;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #e10600;
+            padding-bottom: 5px;
+        }
 
-    /* Разделы */
-    .shop-section {
-      margin-bottom: 30px;
-    }
+        /* Сетка товаров (адаптивная) */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
 
-    .shop-section:last-child {
-      margin-bottom: 0;
-    }
+        /* Карточка товара */
+        .shop-item {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid;
+            padding: 15px 10px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+        }
 
-    .shop-section h2 {
-      color: #0ff;
-      font-size: clamp(20px, 5vw, 28px);
-      text-align: center;
-      margin-bottom: 15px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
+        .shop-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px currentColor;
+        }
 
-    /* Сетка товаров (адаптивная) */
-    .shop-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 15px;
-    }
+        .shop-item.rare {
+            border-color: gold !important;
+            box-shadow: 0 0 20px gold;
+            animation: rareGlow 2s infinite;
+        }
 
-    /* Карточка товара */
-    .shop-item {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid;
-      border-radius: 20px;
-      padding: 15px 10px;
-      text-align: center;
-      transition: all 0.3s;
-      cursor: pointer;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        @keyframes rareGlow {
+            0% { box-shadow: 0 0 15px gold; }
+            50% { box-shadow: 0 0 30px gold, 0 0 45px #ffaa00; }
+        }
 
-    .shop-item:hover {
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-    }
+        .rarity-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: gold;
+            color: black;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+        }
 
-    .shop-item.rare {
-      border-color: gold !important;
-      box-shadow: 0 0 20px gold;
-      animation: rareShopGlow 2s infinite;
-    }
+        /* Цвета рамок */
+        .shop-item.red { border-color: #ff4444; }
+        .shop-item.green { border-color: #44ff44; }
+        .shop-item.blue { border-color: #4444ff; }
+        .shop-item.yellow { border-color: #ffff44; }
+        .shop-item.orange { border-color: #ff8844; }
+        .shop-item.purple { border-color: #ff44ff; }
 
-    @keyframes rareShopGlow {
-      0% { box-shadow: 0 0 15px gold; }
-      50% { box-shadow: 0 0 30px gold, 0 0 45px #ffaa00; }
-    }
+        .cube-preview {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+        }
 
-    .rarity-badge {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background: gold;
-      color: #000;
-      padding: 3px 6px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: bold;
-    }
+        .cube-preview.red { background: linear-gradient(145deg, #ff4444, #cc0000); }
+        .cube-preview.green { background: linear-gradient(145deg, #44ff44, #00cc00); }
+        .cube-preview.blue { background: linear-gradient(145deg, #4444ff, #0000cc); }
+        .cube-preview.yellow { background: linear-gradient(145deg, #ffff44, #cccc00); }
+        .cube-preview.orange { background: linear-gradient(145deg, #ff8844, #cc4400); }
+        .cube-preview.purple { background: linear-gradient(145deg, #ff44ff, #cc00cc); }
 
-    /* Цветные рамки */
-    .shop-item.red { border-color: #ff4444; }
-    .shop-item.green { border-color: #44ff44; }
-    .shop-item.blue { border-color: #4444ff; }
-    .shop-item.yellow { border-color: #ffff44; }
-    .shop-item.orange { border-color: #ff8844; }
-    .shop-item.purple { border-color: #ff44ff; }
+        .shop-item h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: white;
+        }
 
-    /* Превью куба */
-    .cube-preview {
-      width: clamp(60px, 15vw, 80px);
-      height: clamp(60px, 15vw, 80px);
-      border-radius: 18px;
-      margin: 0 auto 10px;
-    }
+        .shop-item p {
+            font-size: 12px;
+            color: #e10600;
+            margin-bottom: 10px;
+        }
 
-    .cube-preview.red { background: linear-gradient(145deg, #ff4444, #cc0000); }
-    .cube-preview.green { background: linear-gradient(145deg, #44ff44, #00cc00); }
-    .cube-preview.blue { background: linear-gradient(145deg, #4444ff, #0000cc); }
-    .cube-preview.yellow { background: linear-gradient(145deg, #ffff44, #cccc00); }
-    .cube-preview.orange { background: linear-gradient(145deg, #ff8844, #cc4400); }
-    .cube-preview.purple { background: linear-gradient(145deg, #ff44ff, #cc00cc); }
+        .price {
+            font-size: 22px;
+            font-weight: bold;
+            color: #e10600;
+            margin: 10px 0;
+        }
 
-    /* Название и описание */
-    .shop-item h3 {
-      color: #fff;
-      font-size: clamp(14px, 4vw, 18px);
-      margin-bottom: 5px;
-    }
+        .price::after {
+            content: ' 🪙';
+        }
 
-    .shop-item p {
-      color: #0ff;
-      font-size: clamp(11px, 3vw, 13px);
-      margin-bottom: 10px;
-    }
+        .buy-btn {
+            background: transparent;
+            border: 2px solid;
+            color: white;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            max-width: 120px;
+            font-size: 14px;
+            clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+        }
 
-    /* Цена */
-    .price {
-      font-size: clamp(16px, 5vw, 22px);
-      font-weight: bold;
-      background: linear-gradient(45deg, #f0f, #0ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin: 8px 0;
-    }
+        .shop-item.red .buy-btn { border-color: #ff4444; }
+        .shop-item.green .buy-btn { border-color: #44ff44; }
+        .shop-item.blue .buy-btn { border-color: #4444ff; }
+        .shop-item.yellow .buy-btn { border-color: #ffff44; }
+        .shop-item.orange .buy-btn { border-color: #ff8844; }
+        .shop-item.purple .buy-btn { border-color: #ff44ff; }
 
-    /* Кнопка покупки */
-    .buy-btn {
-      background: transparent;
-      border: 2px solid;
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 30px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-      width: 100%;
-      max-width: 120px;
-      font-size: clamp(12px, 3vw, 14px);
-    }
+        .buy-btn:hover:not(:disabled) {
+            background: currentColor;
+            color: black;
+        }
 
-    .shop-item.red .buy-btn { border-color: #ff4444; }
-    .shop-item.green .buy-btn { border-color: #44ff44; }
-    .shop-item.blue .buy-btn { border-color: #4444ff; }
-    .shop-item.yellow .buy-btn { border-color: #ffff44; }
-    .shop-item.orange .buy-btn { border-color: #ff8844; }
-    .shop-item.purple .buy-btn { border-color: #ff44ff; }
+        /* ========== ТЕЛЕМЕТРИЯ (ТОЧКИ ХАРАКТЕРИСТИК) ========== */
+        .f1-telemetry {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #e10600;
+            padding: 10px 20px;
+            border-radius: 0;
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+            z-index: 100;
+        }
 
-    .buy-btn:hover:not(:disabled) {
-      background: currentColor;
-      color: #000;
-      box-shadow: 0 0 20px currentColor;
-    }
+        .telemetry-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 0;
+            transform: rotate(45deg);
+            box-shadow: 0 0 10px currentColor;
+        }
 
-    /* Кнопка назад */
-    .back-btn {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: transparent;
-      border: 2px solid #f0f;
-      color: #f0f;
-      padding: 10px 20px;
-      border-radius: 40px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      backdrop-filter: blur(10px);
-      font-size: clamp(12px, 3vw, 14px);
-      z-index: 100;
-    }
+        .telemetry-dot.red { background: #ff4444; }
+        .telemetry-dot.green { background: #44ff44; }
+        .telemetry-dot.blue { background: #4444ff; }
+        .telemetry-dot.yellow { background: #ffff44; }
+        .telemetry-dot.orange { background: #ff8844; }
+        .telemetry-dot.purple { background: #ff44ff; }
 
-    .back-btn:hover {
-      background: #f0f;
-      color: #000;
-      box-shadow: 0 0 50px #f0f;
-    }
+        /* ========== КНОПКА ВЫХОДА ========== */
+        .exit-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: transparent;
+            border: 2px solid #e10600;
+            color: #e10600;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            backdrop-filter: blur(10px);
+            font-size: clamp(12px, 3vw, 14px);
+            z-index: 100;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+        }
 
-    /* Уведомления */
-    .notification {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0ff;
-      color: #000;
-      padding: 12px 24px;
-      border-radius: 40px;
-      font-weight: bold;
-      z-index: 1000;
-      display: none;
-      font-size: clamp(12px, 3vw, 14px);
-      white-space: nowrap;
-      box-shadow: 0 0 30px #0ff;
-    }
+        .exit-btn:hover {
+            background: #e10600;
+            color: #000;
+        }
 
-    .notification.show {
-      display: block;
-      animation: slide 0.3s;
-    }
+        /* ========== УВЕДОМЛЕНИЯ ========== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e10600;
+            color: white;
+            padding: 12px 24px;
+            font-weight: bold;
+            z-index: 3000;
+            display: none;
+            font-size: 14px;
+            white-space: nowrap;
+            box-shadow: 0 0 30px #e10600;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+        }
 
-    .notification.error {
-      background: #f0f;
-    }
+        .notification.show {
+            display: block;
+            animation: slideIn 0.3s;
+        }
 
-    @keyframes slide {
-      from { transform: translateX(-50%) translateY(-100%); }
-      to { transform: translateX(-50%) translateY(0); }
-    }
+        @keyframes slideIn {
+            from { transform: translateX(-50%) translateY(-100%); }
+            to { transform: translateX(-50%) translateY(0); }
+        }
 
-    /* Медиа-запросы для очень маленьких экранов */
-    @media (max-width: 480px) {
-      .shop-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-      
-      .shop-item {
-        padding: 12px 8px;
-      }
-      
-      .nav {
-        gap: 5px;
-      }
-      
-      .nav a {
-        padding: 6px 10px;
-        font-size: 11px;
-      }
-      
-      .back-btn {
-        padding: 8px 15px;
-        bottom: 15px;
-        left: 15px;
-      }
-    }
+        .notification.error {
+            background: #f0f;
+        }
 
-    @media (max-width: 360px) {
-      .shop-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+        /* Адаптация для маленьких экранов */
+        @media (max-width: 480px) {
+            .shop-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="cyber-bg">
-    <div class="cyber-grid"></div>
-  </div>
+    <!-- Шашечная полоса -->
+    <div class="checkered-top"></div>
 
-  <nav class="nav">
-    <a href="menu.html">МЕНЮ</a>
-    <a href="garage.html">ГАРАЖ</a>
-    <a href="race.html">ГОНКА</a>
-    <a href="rating.html">РЕЙТИНГ</a>
-    <a href="shop.html" class="active">МАГАЗИН</a>
-  </nav>
-
-  <div class="player-coins" id="playerCoins">1000 🪙</div>
-
-  <div class="title">
-    <h1>🛒 МАГАЗИН</h1>
-  </div>
-
-  <div class="shop-container">
-    <div class="shop-section">
-      <h2>ОБЫЧНЫЕ КУБЫ</h2>
-      <div class="shop-grid" id="commonShop"></div>
+    <!-- Шапка -->
+    <div class="header">
+        <a href="index.html" class="back-to-menu">← МЕНЮ</a>
+        <div class="coins-header" id="playerCoins">1000 🪙</div>
     </div>
 
-    <div class="shop-section">
-      <h2>⭐ РЕДКИЕ КУБЫ</h2>
-      <div class="shop-grid" id="rareShop"></div>
+    <!-- Заголовок -->
+    <div class="title"><h1>🛒 МАГАЗИН</h1></div>
+
+    <!-- Магазин -->
+    <div class="shop-container">
+        <div class="shop-section">
+            <h2>ОБЫЧНЫЕ КУБЫ</h2>
+            <div class="shop-grid" id="commonShop"></div>
+        </div>
+
+        <div class="shop-section">
+            <h2>⭐ РЕДКИЕ КУБЫ</h2>
+            <div class="shop-grid" id="rareShop"></div>
+        </div>
     </div>
-  </div>
 
-  <a href="menu.html" class="back-btn">← В МЕНЮ</a>
+    <!-- Телеметрия (точки) -->
+    <div class="f1-telemetry" id="statsPreview">
+        <div class="telemetry-dot red" title="Скорость"></div>
+        <div class="telemetry-dot green" title="Ускорение"></div>
+        <div class="telemetry-dot blue" title="Макс скорость"></div>
+        <div class="telemetry-dot yellow" title="Удача"></div>
+        <div class="telemetry-dot orange" title="Турбо"></div>
+        <div class="telemetry-dot purple" title="Защита"></div>
+    </div>
 
-  <div id="notification" class="notification"></div>
+    <!-- Кнопка выхода -->
+    <a href="#" class="exit-btn" onclick="window.Telegram?.WebApp?.close()">✖ ВЫХОД</a>
 
-  <script>
-    const COINS_KEY = 'playerCoins';
-    const INVENTORY_KEY = 'playerInventory';
+    <!-- Уведомление -->
+    <div id="notification" class="notification"></div>
 
-    function getCoins() { return parseInt(localStorage.getItem(COINS_KEY)) || 1000; }
-    function setCoins(amount) { localStorage.setItem(COINS_KEY, amount); updateCoinsDisplay(); }
-    function updateCoinsDisplay() { document.getElementById('playerCoins').textContent = getCoins() + ' 🪙'; }
-    function spendCoins(amount) { setCoins(getCoins() - amount); }
+    <script>
+        // ========== TELEGRAM ==========
+        let tg = null;
+        if (window.Telegram?.WebApp) {
+            tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+        }
 
-    function showNotification(text, isError = false) {
-      const n = document.getElementById('notification');
-      n.textContent = isError ? '❌ ' + text : '✨ ' + text;
-      n.className = `notification ${isError ? 'error' : ''} show`;
-      setTimeout(() => n.classList.remove('show'), 2000);
-    }
+        // ========== КЛЮЧИ ХРАНЕНИЯ ==========
+        const COINS_KEY = 'playerCoins';
+        const INVENTORY_KEY = 'playerInventory';
 
-    const commonItems = [
-      { color: 'red', name: 'Красный', desc: '+30 скорости', price: 500 },
-      { color: 'green', name: 'Зелёный', desc: '+3 ускорения', price: 500 },
-      { color: 'blue', name: 'Синий', desc: '+30 макс. скорости', price: 500 },
-      { color: 'yellow', name: 'Жёлтый', desc: '20% удача', price: 500 },
-      { color: 'orange', name: 'Оранжевый', desc: 'Турбо x1.5', price: 500 },
-      { color: 'purple', name: 'Фиолетовый', desc: '30% защиты', price: 500 }
-    ];
+        // ========== МОНЕТЫ ==========
+        function getCoins() {
+            return parseInt(localStorage.getItem(COINS_KEY)) || 1000;
+        }
 
-    const rareItems = [
-      { color: 'red', name: 'Красный редкий', desc: '+30 скорости ⭐', price: 1500 },
-      { color: 'green', name: 'Зелёный редкий', desc: '+3 ускорения ⭐', price: 1500 },
-      { color: 'blue', name: 'Синий редкий', desc: '+30 макс. скорости ⭐', price: 1500 },
-      { color: 'yellow', name: 'Жёлтый редкий', desc: '20% удача ⭐', price: 1500 },
-      { color: 'orange', name: 'Оранжевый редкий', desc: 'Турбо x1.5 ⭐', price: 1500 },
-      { color: 'purple', name: 'Фиолетовый редкий', desc: '30% защиты ⭐', price: 1500 }
-    ];
+        function setCoins(amount) {
+            localStorage.setItem(COINS_KEY, amount);
+            updateCoinsDisplay();
+        }
 
-    function loadShop() {
-      const commonDiv = document.getElementById('commonShop');
-      const rareDiv = document.getElementById('rareShop');
-      
-      commonDiv.innerHTML = '';
-      rareDiv.innerHTML = '';
+        function updateCoinsDisplay() {
+            document.getElementById('playerCoins').textContent = getCoins() + ' 🪙';
+        }
 
-      commonItems.forEach(item => {
-        commonDiv.innerHTML += `
-          <div class="shop-item ${item.color}">
-            <div class="cube-preview ${item.color}"></div>
-            <h3>${item.name}</h3>
-            <p>${item.desc}</p>
-            <div class="price">${item.price} 🪙</div>
-            <button class="buy-btn" onclick="buyCube('${item.color}', ${item.price}, 'common')">КУПИТЬ</button>
-          </div>
-        `;
-      });
+        function spendCoins(amount) {
+            setCoins(getCoins() - amount);
+        }
 
-      rareItems.forEach(item => {
-        rareDiv.innerHTML += `
-          <div class="shop-item ${item.color} rare">
-            <div class="rarity-badge">⭐</div>
-            <div class="cube-preview ${item.color}"></div>
-            <h3>${item.name}</h3>
-            <p>${item.desc}</p>
-            <div class="price">${item.price} 🪙</div>
-            <button class="buy-btn" onclick="buyCube('${item.color}', ${item.price}, 'rare')">КУПИТЬ</button>
-          </div>
-        `;
-      });
-    }
+        function showNotification(text, isError = false) {
+            const n = document.getElementById('notification');
+            n.textContent = isError ? '❌ ' + text : '✨ ' + text;
+            n.className = `notification ${isError ? 'error' : ''} show`;
+            setTimeout(() => n.classList.remove('show'), 2000);
+        }
 
-    function buyCube(color, price, rarity = 'common') {
-      const coins = getCoins();
-      if (coins < price) {
-        showNotification('Не хватает монет!', true);
-        return;
-      }
+        // ========== ТОВАРЫ ==========
+        const commonItems = [
+            { color: 'red', name: 'Красный', desc: '+30 скорости', price: 500 },
+            { color: 'green', name: 'Зелёный', desc: '+3 ускорения', price: 500 },
+            { color: 'blue', name: 'Синий', desc: '+30 макс. скорости', price: 500 },
+            { color: 'yellow', name: 'Жёлтый', desc: '20% удача', price: 500 },
+            { color: 'orange', name: 'Оранжевый', desc: 'Турбо x1.5', price: 500 },
+            { color: 'purple', name: 'Фиолетовый', desc: '30% защиты', price: 500 }
+        ];
 
-      let inventory = JSON.parse(localStorage.getItem(INVENTORY_KEY)) || [];
-      inventory.push({ color, rarity });
-      localStorage.setItem(INVENTORY_KEY, JSON.stringify(inventory));
-      
-      spendCoins(price);
-      showNotification(`Куплен ${rarity === 'rare' ? 'редкий ' : ''}${color} куб!`);
+        const rareItems = [
+            { color: 'red', name: 'Красный редкий', desc: '+30 скорости ⭐', price: 1500 },
+            { color: 'green', name: 'Зелёный редкий', desc: '+3 ускорения ⭐', price: 1500 },
+            { color: 'blue', name: 'Синий редкий', desc: '+30 макс. скорости ⭐', price: 1500 },
+            { color: 'yellow', name: 'Жёлтый редкий', desc: '20% удача ⭐', price: 1500 },
+            { color: 'orange', name: 'Оранжевый редкий', desc: 'Турбо x1.5 ⭐', price: 1500 },
+            { color: 'purple', name: 'Фиолетовый редкий', desc: '30% защиты ⭐', price: 1500 }
+        ];
 
-      if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.HapticFeedback?.notification('success');
-      }
-    }
+        function loadShop() {
+            const commonDiv = document.getElementById('commonShop');
+            const rareDiv = document.getElementById('rareShop');
 
-    function init() {
-      updateCoinsDisplay();
-      loadShop();
-    }
+            commonDiv.innerHTML = '';
+            rareDiv.innerHTML = '';
 
-    init();
-  </script>
+            commonItems.forEach(item => {
+                commonDiv.innerHTML += `
+                    <div class="shop-item ${item.color}">
+                        <div class="cube-preview ${item.color}"></div>
+                        <h3>${item.name}</h3>
+                        <p>${item.desc}</p>
+                        <div class="price">${item.price}</div>
+                        <button class="buy-btn" onclick="buyCube('${item.color}', ${item.price}, 'common')">КУПИТЬ</button>
+                    </div>
+                `;
+            });
+
+            rareItems.forEach(item => {
+                rareDiv.innerHTML += `
+                    <div class="shop-item ${item.color} rare">
+                        <div class="rarity-badge">⭐</div>
+                        <div class="cube-preview ${item.color}"></div>
+                        <h3>${item.name}</h3>
+                        <p>${item.desc}</p>
+                        <div class="price">${item.price}</div>
+                        <button class="buy-btn" onclick="buyCube('${item.color}', ${item.price}, 'rare')">КУПИТЬ</button>
+                    </div>
+                `;
+            });
+        }
+
+        // ========== ПОКУПКА КУБА ==========
+        function buyCube(color, price, rarity = 'common') {
+            const coins = getCoins();
+            if (coins < price) {
+                showNotification('Не хватает монет!', true);
+                return;
+            }
+
+            let inventory = JSON.parse(localStorage.getItem(INVENTORY_KEY)) || [];
+            inventory.push({ color, rarity });
+            localStorage.setItem(INVENTORY_KEY, JSON.stringify(inventory));
+
+            spendCoins(price);
+            showNotification(`Куплен ${rarity === 'rare' ? 'редкий ' : ''}${color} куб!`);
+
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.notification('success');
+            }
+        }
+
+        // ========== ТОЧКИ ХАРАКТЕРИСТИК ИЗ ГАРАЖА ==========
+        function loadCarPreview() {
+            const garageArray = JSON.parse(localStorage.getItem('garageCubes')) || [];
+            const dots = document.querySelectorAll('.telemetry-dot');
+            const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
+            dots.forEach((dot, index) => {
+                if (garageArray[index]) {
+                    dot.style.opacity = '1';
+                    dot.style.boxShadow = '0 0 20px currentColor';
+                } else {
+                    dot.style.opacity = '0.3';
+                    dot.style.boxShadow = 'none';
+                }
+            });
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        function init() {
+            updateCoinsDisplay();
+            loadShop();
+            loadCarPreview();
+
+            window.addEventListener('focus', function() {
+                updateCoinsDisplay();
+                loadCarPreview();
+            });
+        }
+
+        init();
+    </script>
 </body>
-    </html>
+      </html>
