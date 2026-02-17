@@ -1,105 +1,444 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Магазин</title>
+    <title>Кирюха Racing - Магазин</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            background-image: url('https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/whGXYnm9uII.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: white;
-            font-family: Arial, sans-serif;
-            height: 100vh;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Контейнер загрузки */
-        .loader-container {
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f, #1a1a2e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .cyber-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1000;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            z-index: -1;
         }
 
-        /* Анимация загрузки */
-        .loader {
-            border: 16px solid #f3f3f3;
-            border-top: 16px solid #3498db;
-            border-radius: 50%;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite;
+        .cyber-grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(rgba(255, 0, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg);
+            animation: gridMove 20s linear infinite;
+            top: -50%;
+            left: -50%;
         }
 
-        /* Ключевая анимация вращения */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Навигационная панель */
-        nav ul {
-            list-style-type: none;
-            padding: 0;
+        .nav {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #f0f;
+            box-shadow: 0 0 30px #f0f;
+            z-index: 10;
+            width: 100%;
+            margin-bottom: 30px;
         }
 
-        nav a {
+        .nav a {
+            color: #fff;
             text-decoration: none;
-            color: white;
-            padding: 10px 20px;
-            border: 1px solid #fff;
-            border-radius: 5px;
-            transition: all 0.3s ease;
+            font-weight: bold;
+            padding: 10px 25px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #0ff;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        nav a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+        .nav a:hover {
+            background: #0ff;
+            color: #000;
+            box-shadow: 0 0 40px #0ff;
+        }
+
+        .nav a.active {
+            background: #f0f;
+            border-color: #f0f;
+            color: #000;
+            box-shadow: 0 0 40px #f0f;
+        }
+
+        .player-coins {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f0f, #0ff);
+            padding: 15px 30px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 24px;
+            color: #000;
+            box-shadow: 0 0 50px #f0f;
+            z-index: 100;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title h1 {
+            font-size: 48px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: transparent;
+            -webkit-text-stroke: 2px #0ff;
+            text-shadow: 0 0 30px #0ff;
+            letter-spacing: 4px;
+        }
+
+        .shop-container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid #f0f;
+            border-radius: 50px;
+            padding: 30px;
+            box-shadow: 0 0 70px rgba(255, 0, 255, 0.4);
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .shop-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid;
+            border-radius: 30px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .shop-item.red { border-color: #ff4444; }
+        .shop-item.green { border-color: #44ff44; }
+        .shop-item.blue { border-color: #4444ff; }
+        .shop-item.yellow { border-color: #ffff44; }
+        .shop-item.orange { border-color: #ff8844; }
+        .shop-item.purple { border-color: #ff44ff; }
+
+        .cube-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            margin: 0 auto 15px;
+        }
+
+        .cube-preview.red { background: linear-gradient(145deg, #ff4444, #cc0000); }
+        .cube-preview.green { background: linear-gradient(145deg, #44ff44, #00cc00); }
+        .cube-preview.blue { background: linear-gradient(145deg, #4444ff, #0000cc); }
+        .cube-preview.yellow { background: linear-gradient(145deg, #ffff44, #cccc00); }
+        .cube-preview.orange { background: linear-gradient(145deg, #ff8844, #cc4400); }
+        .cube-preview.purple { background: linear-gradient(145deg, #ff44ff, #cc00cc); }
+
+        .shop-item h3 {
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .shop-item p {
+            color: #0ff;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #f0f, #0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 15px 0;
+        }
+
+        .buy-btn {
+            background: transparent;
+            border: 2px solid;
+            color: #fff;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .shop-item.red .buy-btn { border-color: #ff4444; }
+        .shop-item.green .buy-btn { border-color: #44ff44; }
+        .shop-item.blue .buy-btn { border-color: #4444ff; }
+        .shop-item.yellow .buy-btn { border-color: #ffff44; }
+        .shop-item.orange .buy-btn { border-color: #ff8844; }
+        .shop-item.purple .buy-btn { border-color: #ff44ff; }
+
+        .buy-btn:hover:not(:disabled) {
+            background: currentColor;
+            color: #000;
+            box-shadow: 0 0 30px currentColor;
+        }
+
+        .buy-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: transparent;
+            border: 2px solid #f0f;
+            color: #f0f;
+            padding: 12px 30px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: #f0f;
+            color: #000;
+            box-shadow: 0 0 50px #f0f;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0ff;
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 40px;
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: 0 0 30px #0ff;
+            display: none;
+        }
+
+        .notification.show {
+            display: block;
+            animation: notificationSlide 0.3s;
+        }
+
+        .notification.error {
+            background: #f0f;
+        }
+
+        @keyframes notificationSlide {
+            from { transform: translateX(-50%) translateY(-100%); }
+            to { transform: translateX(-50%) translateY(0); }
         }
     </style>
 </head>
-<body onload="startLoader();">
-    <!-- Экран загрузки -->
-    <div id="loader-container" class="loader-container">
-        <div class="loader"></div>
+<body>
+    <div class="cyber-bg">
+        <div class="cyber-grid"></div>
     </div>
 
-    <!-- Основное содержание -->
-    <section style="display:none;" id="content-section">
-        <h1>Не поджигай магазин</h1></h1>
-        <nav>
-            <ul>
-                <li><a href="menu.html">Меню</a></li>
-                <li><a href="shop.html">Магазин</a></li>
-                <li><a href="garage.html">Гараж</a></li>
-                <li><a href="race.html">Заезд</a></li>
-                <li><a href="rating.html">Рейтинг</a></li>
-            </ul>
-        </nav>
-    </section>
+    <nav class="nav">
+        <a href="menu.html">МЕНЮ</a>
+        <a href="garage.html">ГАРАЖ</a>
+        <a href="race.html">ГОНКА</a>
+        <a href="rating.html">РЕЙТИНГ</a>
+        <a href="shop.html" class="active">МАГАЗИН</a>
+    </nav>
 
-    <!-- Скрипт для управления загрузкой -->
+    <div class="player-coins" id="playerCoins">1000</div>
+
+    <div class="title">
+        <h1>🛒 МАГАЗИН 🛒</h1>
+    </div>
+
+    <div class="shop-container">
+        <div class="shop-grid" id="shopGrid">
+            <!-- Кубы будут загружены через JS -->
+        </div>
+    </div>
+
+    <a href="menu.html" class="back-btn">← В МЕНЮ</a>
+
+    <div id="notification" class="notification"></div>
+
     <script>
-        function startLoader() {
-            setTimeout(function () {
-                document.querySelector('#loader-container').style.display = 'none';
-                document.querySelector('#content-section').style.display = 'block';
-            }, 2000); // Время анимации (2 секунды)
+        const COINS_KEY = 'playerCoins';
+        const INVENTORY_KEY = 'playerInventory';
+
+        function getCoins() {
+            return parseInt(localStorage.getItem(COINS_KEY)) || 1000;
         }
+
+        function updateCoins() {
+            document.getElementById('playerCoins').textContent = getCoins();
+        }
+
+        function addCoins(amount) {
+            const newAmount = getCoins() + amount;
+            localStorage.setItem(COINS_KEY, newAmount);
+            updateCoins();
+            
+            // Обновляем рейтинг
+            updateRating();
+        }
+
+        function spendCoins(amount) {
+            const newAmount = getCoins() - amount;
+            localStorage.setItem(COINS_KEY, newAmount);
+            updateCoins();
+            
+            // Обновляем рейтинг
+            updateRating();
+        }
+
+        // Обновление рейтинга при изменении монет
+        function updateRating() {
+            const ratingData = JSON.parse(localStorage.getItem('globalRating')) || [];
+            const currentUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+            
+            if (currentUser) {
+                const userIndex = ratingData.findIndex(u => u.id === currentUser.id);
+                const userData = {
+                    id: currentUser.id,
+                    name: currentUser.first_name || 'Игрок',
+                    username: currentUser.username || '',
+                    photo: currentUser.photo_url || `https://ui-avatars.com/api/?name=${currentUser.first_name || 'Player'}&background=random`,
+                    coins: getCoins(),
+                    lastUpdate: Date.now()
+                };
+
+                if (userIndex !== -1) {
+                    ratingData[userIndex] = userData;
+                } else {
+                    ratingData.push(userData);
+                }
+
+                ratingData.sort((a, b) => b.coins - a.coins);
+                localStorage.setItem('globalRating', JSON.stringify(ratingData));
+            }
+        }
+
+        function showNotification(text, isError = false) {
+            const notif = document.getElementById('notification');
+            notif.textContent = isError ? '❌ ' + text : '✨ ' + text;
+            notif.className = `notification ${isError ? 'error' : ''} show`;
+            
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 2000);
+        }
+
+        // Товары
+        const shopItems = [
+            { color: 'red', name: 'Красный куб', desc: '+30 к скорости', price: 500 },
+            { color: 'green', name: 'Зеленый куб', desc: '+3 к ускорению', price: 500 },
+            { color: 'blue', name: 'Синий куб', desc: '+30 к макс. скорости', price: 500 },
+            { color: 'yellow', name: 'Желтый куб', desc: '20% шанс рывка', price: 800 },
+            { color: 'orange', name: 'Оранжевый куб', desc: 'Турбо x1.5', price: 800 },
+            { color: 'purple', name: 'Фиолетовый куб', desc: '30% защиты', price: 800 }
+        ];
+
+        // Загружаем магазин
+        function loadShop() {
+            const shopGrid = document.getElementById('shopGrid');
+            let html = '';
+
+            shopItems.forEach(item => {
+                html += `
+                    <div class="shop-item ${item.color}">
+                        <div class="cube-preview ${item.color}"></div>
+                        <h3>${item.name}</h3>
+                        <p>${item.desc}</p>
+                        <div class="price">${item.price} 🪙</div>
+                        <button class="buy-btn" onclick="buyCube('${item.color}', ${item.price})">КУПИТЬ</button>
+                    </div>
+                `;
+            });
+
+            shopGrid.innerHTML = html;
+        }
+
+        // Покупка куба
+        function buyCube(color, price) {
+            const coins = getCoins();
+            
+            if (coins < price) {
+                showNotification('Не хватает монет!', true);
+                return;
+            }
+
+            // Загружаем инвентарь
+            let inventory = JSON.parse(localStorage.getItem(INVENTORY_KEY)) || [];
+            
+            // Добавляем куб
+            inventory.push(color);
+            
+            // Сохраняем
+            localStorage.setItem(INVENTORY_KEY, JSON.stringify(inventory));
+            
+            // Списываем монеты
+            spendCoins(price);
+            
+            showNotification(`Куплен ${color} куб!`);
+
+            // Отправляем в Telegram
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.HapticFeedback?.notification('success');
+            }
+        }
+
+        // Инициализация
+        function init() {
+            updateCoins();
+            loadShop();
+            
+            // Обновляем рейтинг при запуске
+            updateRating();
+        }
+
+        init();
     </script>
 </body>
 </html>
