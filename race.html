@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🏁 КИРЮХА RACING — ПРОТИВНИК</title>
+  <title>🏁 КИРЮХА RACING — ГОНКА</title>
   <style>
     * {
       margin: 0;
@@ -12,15 +12,14 @@
     }
 
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       min-height: 100vh;
       background: #0a0a0f;
       position: relative;
       overflow-x: hidden;
     }
 
-    /* Анимированный фон */
-    .cyber-background {
+    .cyber-bg {
       position: fixed;
       top: 0;
       left: 0;
@@ -49,9 +48,7 @@
     }
 
     /* Навигация */
-    .cyber-nav {
-      position: relative;
-      z-index: 10;
+    .nav {
       display: flex;
       justify-content: center;
       gap: 20px;
@@ -60,9 +57,10 @@
       backdrop-filter: blur(10px);
       border-bottom: 2px solid #f0f;
       box-shadow: 0 0 30px #f0f;
+      z-index: 10;
     }
 
-    .cyber-nav a {
+    .nav a {
       color: #fff;
       text-decoration: none;
       font-weight: bold;
@@ -75,18 +73,16 @@
       letter-spacing: 2px;
     }
 
-    .cyber-nav a:hover {
+    .nav a:hover {
       background: #0ff;
       color: #000;
       box-shadow: 0 0 40px #0ff;
-      transform: translateY(-2px);
     }
 
     /* Заголовок */
     .cyber-title {
       text-align: center;
       margin: 30px 0;
-      position: relative;
     }
 
     .cyber-title h1 {
@@ -105,48 +101,33 @@
       50% { text-shadow: 0 0 60px #0ff; }
     }
 
-    /* Основной контейнер */
-    .race-container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 20px;
-      position: relative;
-      z-index: 5;
-    }
-
-    /* Блок монет */
+    /* Монеты */
     .coins-panel {
-      background: linear-gradient(135deg, #1a0033, #000);
-      border: 2px solid #f0f;
-      border-radius: 50px;
+      background: linear-gradient(135deg, #f0f, #0ff);
       padding: 15px 40px;
-      margin: 0 auto 30px;
+      border-radius: 40px;
       width: fit-content;
+      margin: 0 auto 30px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #000;
       box-shadow: 0 0 50px #f0f;
     }
 
-    .coins-panel span {
-      font-size: 32px;
-      font-weight: bold;
-      background: linear-gradient(45deg, #f0f, #0ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    /* Инфо панель машины */
-    .car-stats-panel {
+    /* Панель характеристик */
+    .stats-panel {
+      max-width: 1000px;
+      margin: 0 auto 30px;
       background: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(10px);
       border: 2px solid #0ff;
       border-radius: 30px;
       padding: 20px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 40px rgba(0, 255, 255, 0.3);
     }
 
     .stats-title {
       color: #0ff;
-      font-size: 20px;
+      font-size: 24px;
       text-transform: uppercase;
       letter-spacing: 4px;
       text-align: center;
@@ -164,7 +145,8 @@
       padding: 15px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 20px;
-      border: 1px solid rgba(255, 0, 255, 0.3);
+      border: 1px solid;
+      transition: all 0.3s;
     }
 
     .stat-label {
@@ -180,8 +162,10 @@
       color: #0ff;
     }
 
-    /* Арена для гонки */
+    /* Арена */
     .race-arena {
+      max-width: 1000px;
+      margin: 0 auto;
       background: rgba(0, 0, 0, 0.9);
       backdrop-filter: blur(10px);
       border: 2px solid #f0f;
@@ -189,29 +173,8 @@
       padding: 30px;
       box-shadow: 0 0 70px rgba(255, 0, 255, 0.4);
       position: relative;
-      overflow: hidden;
     }
 
-    .race-arena::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(45deg, 
-        transparent 30%, 
-        rgba(255, 0, 255, 0.1) 50%, 
-        transparent 70%);
-      animation: lightScan 3s linear infinite;
-    }
-
-    @keyframes lightScan {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Статус гонки */
     .race-status {
       text-align: center;
       font-size: 24px;
@@ -229,7 +192,7 @@
     }
 
     /* Треки */
-    .race-track-container {
+    .tracks {
       display: flex;
       flex-direction: column;
       gap: 30px;
@@ -277,20 +240,14 @@
     .car {
       position: absolute;
       bottom: 20px;
-      transition: left 0.1s linear;
+      left: 20px;
+      transition: left 0.05s linear;
       z-index: 10;
       filter: drop-shadow(0 0 15px currentColor);
     }
 
-    .car.player {
-      left: 20px;
-      color: #0ff;
-    }
-
-    .car.enemy {
-      left: 20px;
-      color: #f0f;
-    }
+    .car.player { color: #0ff; }
+    .car.enemy { color: #f0f; }
 
     .car svg {
       width: 80px;
@@ -308,7 +265,6 @@
       white-space: nowrap;
     }
 
-    /* Финиш */
     .finish-line {
       position: absolute;
       right: 0;
@@ -324,7 +280,7 @@
       50% { box-shadow: 0 0 40px #ff0; }
     }
 
-    /* Инфо о гонке */
+    /* Инфо */
     .race-info {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -340,13 +296,8 @@
       border: 1px solid;
     }
 
-    .info-block.player {
-      border-color: #0ff;
-    }
-
-    .info-block.enemy {
-      border-color: #f0f;
-    }
+    .info-block.player { border-color: #0ff; }
+    .info-block.enemy { border-color: #f0f; }
 
     .info-label {
       color: #fff;
@@ -356,24 +307,18 @@
     }
 
     .info-value {
-      font-size: 24px;
+      font-size: 28px;
       font-weight: bold;
     }
 
-    .player .info-value {
-      color: #0ff;
-    }
+    .player .info-value { color: #0ff; }
+    .enemy .info-value { color: #f0f; }
 
-    .enemy .info-value {
-      color: #f0f;
-    }
-
-    /* Кнопки управления */
+    /* Кнопки */
     .race-controls {
       display: flex;
       justify-content: center;
       gap: 30px;
-      margin: 30px 0;
     }
 
     .race-btn {
@@ -388,23 +333,6 @@
       transition: all 0.3s;
       text-transform: uppercase;
       letter-spacing: 2px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .race-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transition: left 0.3s;
-    }
-
-    .race-btn:hover::before {
-      left: 100%;
     }
 
     .race-btn.start {
@@ -412,7 +340,7 @@
       box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
     }
 
-    .race-btn.start:hover {
+    .race-btn.start:hover:not(:disabled) {
       background: #0f0;
       color: #000;
       box-shadow: 0 0 50px #0f0;
@@ -423,10 +351,15 @@
       box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
     }
 
-    .race-btn.stop:hover {
+    .race-btn.stop:hover:not(:disabled) {
       background: #f00;
       color: #000;
       box-shadow: 0 0 50px #f00;
+    }
+
+    .race-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
     }
 
     /* Результат */
@@ -462,15 +395,8 @@
       margin-bottom: 20px;
     }
 
-    .result-win .result-title {
-      color: #0f0;
-      text-shadow: 0 0 30px #0f0;
-    }
-
-    .result-lose .result-title {
-      color: #f00;
-      text-shadow: 0 0 30px #f00;
-    }
+    .result-win .result-title { color: #0f0; text-shadow: 0 0 30px #0f0; }
+    .result-lose .result-title { color: #f00; text-shadow: 0 0 30px #f00; }
 
     .result-reward {
       font-size: 32px;
@@ -479,8 +405,8 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Кнопка в гараж */
-    .garage-btn {
+    /* Кнопка назад */
+    .back-btn {
       position: fixed;
       bottom: 30px;
       left: 30px;
@@ -492,159 +418,159 @@
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s;
-      z-index: 100;
+      text-decoration: none;
       text-transform: uppercase;
       letter-spacing: 2px;
       backdrop-filter: blur(10px);
-      text-decoration: none;
     }
 
-    .garage-btn:hover {
+    .back-btn:hover {
       background: #f0f;
       color: #000;
       box-shadow: 0 0 50px #f0f;
-      transform: scale(1.1);
+    }
+
+    /* Предупреждение */
+    .warning {
+      text-align: center;
+      color: #f0f;
+      margin: 10px 0;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      animation: warningBlink 1s infinite;
+    }
+
+    @keyframes warningBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
   </style>
 </head>
 <body>
-  <div class="cyber-background">
+  <div class="cyber-bg">
     <div class="cyber-grid"></div>
   </div>
 
-  <nav class="cyber-nav">
+  <nav class="nav">
     <a href="menu.html">МЕНЮ</a>
     <a href="garage.html">ГАРАЖ</a>
     <a href="rating.html">РЕЙТИНГ</a>
     <a href="shop.html">МАГАЗИН</a>
   </nav>
 
-  <div class="race-container">
-    <div class="cyber-title">
-      <h1>КИРЮХА RACING</h1>
-    </div>
+  <div class="cyber-title">
+    <h1>КИРЮХА RACING</h1>
+  </div>
 
-    <div class="coins-panel">
-      <span id="coinsDisplay">1000</span> МОНЕТ
-    </div>
+  <div class="coins-panel" id="coinsDisplay">1000</div>
 
-    <!-- Характеристики машины из гаража -->
-    <div class="car-stats-panel">
-      <div class="stats-title">🚗 ТВОЯ МАШИНА</div>
-      <div class="stats-grid" id="carStats">
-        <div class="stat-item">
-          <div class="stat-label">КРАСНЫЙ</div>
-          <div class="stat-value" id="redStat">0</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">ЗЕЛЕНЫЙ</div>
-          <div class="stat-value" id="greenStat">0</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">СИНИЙ</div>
-          <div class="stat-value" id="blueStat">0</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">ЖЕЛТЫЙ</div>
-          <div class="stat-value" id="yellowStat">0</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">ОРАНЖЕВЫЙ</div>
-          <div class="stat-value" id="orangeStat">0</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">ФИОЛЕТОВЫЙ</div>
-          <div class="stat-value" id="purpleStat">0</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">СКОРОСТЬ</div>
-          <div class="stat-value" id="speedStat">0</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">УСКОРЕНИЕ</div>
-          <div class="stat-value" id="accelStat">0</div>
-        </div>
+  <!-- Панель характеристик машины -->
+  <div class="stats-panel">
+    <div class="stats-title">🚗 ТВОЯ МАШИНА ИЗ ГАРАЖА</div>
+    <div class="stats-grid" id="carStats">
+      <div class="stat-item">
+        <div class="stat-label">КРАСНЫЙ</div>
+        <div class="stat-value" id="redStat">0</div>
       </div>
-    </div>
-
-    <!-- Арена для гонки -->
-    <div class="race-arena">
-      <div class="race-status" id="raceStatus">НАЖМИ СТАРТ ДЛЯ ГОНКИ</div>
-      
-      <div class="race-track-container">
-        <!-- Трек игрока -->
-        <div class="track player">
-          <div class="track-lines"></div>
-          <div class="car player" id="playerCar" style="left: 20px;">
-            <div class="car-name">ТЫ</div>
-            <svg viewBox="0 0 100 40">
-              <rect x="20" y="10" width="60" height="20" rx="8" fill="#0ff" filter="url(#glow)"/>
-              <circle cx="35" cy="30" r="6" fill="#333"/>
-              <circle cx="65" cy="30" r="6" fill="#333"/>
-              <rect x="25" y="5" width="10" height="8" fill="#fff"/>
-              <rect x="45" y="5" width="10" height="8" fill="#fff"/>
-            </svg>
-          </div>
-          <div class="finish-line"></div>
-        </div>
-
-        <!-- Трек противника -->
-        <div class="track enemy">
-          <div class="track-lines"></div>
-          <div class="car enemy" id="enemyCar" style="left: 20px;">
-            <div class="car-name">ПРОТИВНИК</div>
-            <svg viewBox="0 0 100 40">
-              <rect x="20" y="10" width="60" height="20" rx="8" fill="#f0f" filter="url(#glow)"/>
-              <circle cx="35" cy="30" r="6" fill="#333"/>
-              <circle cx="65" cy="30" r="6" fill="#333"/>
-              <rect x="25" y="5" width="10" height="8" fill="#fff"/>
-              <rect x="45" y="5" width="10" height="8" fill="#fff"/>
-            </svg>
-          </div>
-          <div class="finish-line"></div>
-        </div>
+      <div class="stat-item">
+        <div class="stat-label">ЗЕЛЕНЫЙ</div>
+        <div class="stat-value" id="greenStat">0</div>
       </div>
-
-      <!-- Информация о гонке -->
-      <div class="race-info">
-        <div class="info-block player">
-          <div class="info-label">ТВОЯ СКОРОСТЬ</div>
-          <div class="info-value" id="playerSpeed">0</div>
-        </div>
-        <div class="info-block">
-          <div class="info-label">ПРОГРЕСС</div>
-          <div class="info-value" id="raceProgress">0%</div>
-        </div>
-        <div class="info-block enemy">
-          <div class="info-label">СКОРОСТЬ ВРАГА</div>
-          <div class="info-value" id="enemySpeed">0</div>
-        </div>
+      <div class="stat-item">
+        <div class="stat-label">СИНИЙ</div>
+        <div class="stat-value" id="blueStat">0</div>
       </div>
-
-      <!-- Кнопки управления -->
-      <div class="race-controls">
-        <button class="race-btn start" id="startRaceBtn" onclick="startRace()">🏁 СТАРТ</button>
-        <button class="race-btn stop" id="stopRaceBtn" onclick="stopRace()" disabled>⏹ СТОП</button>
+      <div class="stat-item">
+        <div class="stat-label">ЖЕЛТЫЙ</div>
+        <div class="stat-value" id="yellowStat">0</div>
       </div>
-
-      <!-- Результат гонки -->
-      <div id="raceResult" style="display: none;"></div>
+      <div class="stat-item">
+        <div class="stat-label">ОРАНЖ</div>
+        <div class="stat-value" id="orangeStat">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">ФИОЛЕТ</div>
+        <div class="stat-value" id="purpleStat">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">СКОРОСТЬ</div>
+        <div class="stat-value" id="speedStat">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">УСКОР</div>
+        <div class="stat-value" id="accelStat">0</div>
+      </div>
     </div>
   </div>
 
-  <a href="garage.html" class="garage-btn">← В ГАРАЖ</a>
+  <!-- Арена -->
+  <div class="race-arena">
+    <div class="race-status" id="raceStatus">НАЖМИ СТАРТ</div>
+    
+    <div class="tracks">
+      <!-- Трек игрока -->
+      <div class="track player">
+        <div class="track-lines"></div>
+        <div class="car player" id="playerCar" style="left: 20px;">
+          <div class="car-name">ТЫ</div>
+          <svg viewBox="0 0 100 40">
+            <rect x="20" y="10" width="60" height="20" rx="8" fill="#0ff"/>
+            <circle cx="35" cy="30" r="6" fill="#333"/>
+            <circle cx="65" cy="30" r="6" fill="#333"/>
+            <rect x="25" y="5" width="10" height="8" fill="#fff"/>
+            <rect x="45" y="5" width="10" height="8" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="finish-line"></div>
+      </div>
 
-  <svg style="display: none;">
-    <defs>
-      <filter id="glow">
-        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-        <feMerge>
-          <feMergeNode in="coloredBlur"/>
-          <feMergeNode in="SourceGraphic"/>
-        </feMerge>
-      </filter>
-    </defs>
-  </svg>
+      <!-- Трек противника -->
+      <div class="track enemy">
+        <div class="track-lines"></div>
+        <div class="car enemy" id="enemyCar" style="left: 20px;">
+          <div class="car-name">КИРЮХА</div>
+          <svg viewBox="0 0 100 40">
+            <rect x="20" y="10" width="60" height="20" rx="8" fill="#f0f"/>
+            <circle cx="35" cy="30" r="6" fill="#333"/>
+            <circle cx="65" cy="30" r="6" fill="#333"/>
+            <rect x="25" y="5" width="10" height="8" fill="#fff"/>
+            <rect x="45" y="5" width="10" height="8" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="finish-line"></div>
+      </div>
+    </div>
+
+    <!-- Инфо -->
+    <div class="race-info">
+      <div class="info-block player">
+        <div class="info-label">ТВОЯ СКОРОСТЬ</div>
+        <div class="info-value" id="playerSpeed">0</div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">ПРОГРЕСС</div>
+        <div class="info-value" id="raceProgress">0%</div>
+      </div>
+      <div class="info-block enemy">
+        <div class="info-label">СКОРОСТЬ КИРЮХИ</div>
+        <div class="info-value" id="enemySpeed">0</div>
+      </div>
+    </div>
+
+    <!-- Кнопки -->
+    <div class="race-controls">
+      <button class="race-btn start" id="startRaceBtn" onclick="startRace()">🏁 СТАРТ</button>
+      <button class="race-btn stop" id="stopRaceBtn" onclick="stopRace()" disabled>⏹ СТОП</button>
+    </div>
+
+    <!-- Результат -->
+    <div id="raceResult" style="display: none;"></div>
+  </div>
+
+  <a href="menu.html" class="back-btn">← В МЕНЮ</a>
+
+  <div id="warning" class="warning" style="display: none;">⚠️ СНАЧАЛА СОБЕРИ МАШИНУ В ГАРАЖЕ ⚠️</div>
 
   <script>
     // ========== МОНЕТЫ ==========
@@ -670,68 +596,79 @@
 
     // ========== ЗАГРУЗКА МАШИНЫ ИЗ ГАРАЖА ==========
     function loadCarFromGarage() {
-      // Загружаем кубы из гаража
       const garageData = JSON.parse(localStorage.getItem(GARAGE_KEY)) || {
         red: false, green: false, blue: false,
         yellow: false, orange: false, purple: false
       };
       
-      // Характеристики кубов:
-      // Красный - скорость
-      // Зеленый - ускорение
-      // Синий - макс скорость
-      // Желтый - удача (шанс крита)
-      // Оранжевый - турбо (доп. ускорение)
-      // Фиолетовый - защита (меньше шанс поломки)
+      console.log('Машина из гаража:', garageData);
       
-      let speed = 50; // Базовая скорость
-      let acceleration = 5; // Базовое ускорение
-      let maxSpeed = 100; // Базовая макс скорость
+      // База
+      let speed = 50;
+      let acceleration = 5;
+      let maxSpeed = 100;
       let luck = 0;
       let turbo = 0;
       let defense = 0;
       
-      // Считаем установленные кубы
+      // Красный - скорость
       if (garageData.red) {
         speed += 30;
         document.getElementById('redStat').textContent = '+30';
+        document.getElementById('redStat').parentElement.style.borderColor = '#0ff';
       } else {
         document.getElementById('redStat').textContent = '0';
+        document.getElementById('redStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
+      // Зеленый - ускорение
       if (garageData.green) {
         acceleration += 3;
         document.getElementById('greenStat').textContent = '+3';
+        document.getElementById('greenStat').parentElement.style.borderColor = '#0ff';
       } else {
         document.getElementById('greenStat').textContent = '0';
+        document.getElementById('greenStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
+      // Синий - макс скорость
       if (garageData.blue) {
         maxSpeed += 30;
         document.getElementById('blueStat').textContent = '+30';
+        document.getElementById('blueStat').parentElement.style.borderColor = '#0ff';
       } else {
         document.getElementById('blueStat').textContent = '0';
+        document.getElementById('blueStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
+      // Желтый - удача
       if (garageData.yellow) {
         luck = 0.2;
-        document.getElementById('yellowStat').textContent = '+20%';
+        document.getElementById('yellowStat').textContent = '20%';
+        document.getElementById('yellowStat').parentElement.style.borderColor = '#0ff';
       } else {
         document.getElementById('yellowStat').textContent = '0';
+        document.getElementById('yellowStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
+      // Оранжевый - турбо
       if (garageData.orange) {
         turbo = 1.5;
         document.getElementById('orangeStat').textContent = 'x1.5';
+        document.getElementById('orangeStat').parentElement.style.borderColor = '#0ff';
       } else {
         document.getElementById('orangeStat').textContent = '0';
+        document.getElementById('orangeStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
+      // Фиолетовый - защита
       if (garageData.purple) {
         defense = 0.3;
         document.getElementById('purpleStat').textContent = '30%';
+        document.getElementById('purpleStat').parentElement.style.borderColor = '#0ff';
       } else {
         document.getElementById('purpleStat').textContent = '0';
+        document.getElementById('purpleStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
       document.getElementById('speedStat').textContent = speed;
@@ -743,55 +680,49 @@
         maxSpeed,
         luck,
         turbo,
-        defense
+        defense,
+        hasCubes: Object.values(garageData).some(v => v === true)
       };
     }
 
     // ========== ПЕРЕМЕННЫЕ ГОНКИ ==========
-    let playerCar = null;
-    let enemyCar = null;
     let raceInterval = null;
     let raceActive = false;
     
     let playerPos = 20;
     let enemyPos = 20;
-    let playerCurrentSpeed = 0;
-    let enemyCurrentSpeed = 0;
-    
-    // Характеристики противника (рандомные, но зависят от игрока)
-    function generateEnemy(playerStats) {
-      return {
-        speed: playerStats.speed + (Math.random() * 40 - 20),
-        acceleration: playerStats.acceleration + (Math.random() * 4 - 2),
-        maxSpeed: playerStats.maxSpeed + (Math.random() * 30 - 15)
-      };
-    }
+    let playerSpeed = 0;
+    let enemySpeed = 0;
+    let playerStats = null;
 
     // ========== НАЧАЛО ГОНКИ ==========
     function startRace() {
       if (raceActive) return;
       
-      // Загружаем машину из гаража
-      const playerStats = loadCarFromGarage();
+      // Загружаем машину
+      playerStats = loadCarFromGarage();
       
-      // Проверяем, есть ли кубы в машине
-      const garageData = JSON.parse(localStorage.getItem(GARAGE_KEY)) || {};
-      const hasCubes = Object.values(garageData).some(v => v === true);
-      
-      if (!hasCubes) {
-        alert('❌ Сначала собери машину в гараже!');
-        window.location.href = 'garage.html';
+      // Проверяем, есть ли кубы
+      if (!playerStats.hasCubes) {
+        document.getElementById('warning').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('warning').style.display = 'none';
+        }, 3000);
         return;
       }
       
       // Генерируем противника
-      enemyCar = generateEnemy(playerStats);
+      const enemyStats = {
+        speed: playerStats.speed + (Math.random() * 40 - 20),
+        acceleration: playerStats.acceleration + (Math.random() * 4 - 2),
+        maxSpeed: playerStats.maxSpeed + (Math.random() * 30 - 15)
+      };
       
-      // Сбрасываем позиции
+      // Сброс
       playerPos = 20;
       enemyPos = 20;
-      playerCurrentSpeed = 0;
-      enemyCurrentSpeed = 0;
+      playerSpeed = 0;
+      enemySpeed = 0;
       
       document.getElementById('playerCar').style.left = '20px';
       document.getElementById('enemyCar').style.left = '20px';
@@ -799,7 +730,7 @@
       raceActive = true;
       document.getElementById('startRaceBtn').disabled = true;
       document.getElementById('stopRaceBtn').disabled = false;
-      document.getElementById('raceStatus').textContent = 'ГОНКА НАЧАЛАСЬ! 💨';
+      document.getElementById('raceStatus').textContent = 'ГОНКА! 💨';
       document.getElementById('raceResult').style.display = 'none';
       
       let raceTime = 0;
@@ -809,82 +740,60 @@
         
         raceTime++;
         
-        // ===== ДВИЖЕНИЕ ИГРОКА =====
-        // Ускорение
-        if (playerCurrentSpeed < playerStats.maxSpeed) {
-          playerCurrentSpeed += playerStats.acceleration * (0.8 + Math.random() * 0.4);
+        // Игрок
+        if (playerSpeed < playerStats.maxSpeed) {
+          playerSpeed += playerStats.acceleration * (0.8 + Math.random() * 0.4);
         }
         
-        // Эффект удачи (желтый куб) - случайный рывок
+        // Удача
         if (Math.random() < playerStats.luck) {
-          playerCurrentSpeed *= 1.3;
-          createSpeedEffect('player');
+          playerSpeed *= 1.3;
         }
         
-        // Эффект турбо (оранжевый куб) - каждые 2 секунды
+        // Турбо
         if (raceTime % 20 === 0 && playerStats.turbo > 1) {
-          playerCurrentSpeed *= playerStats.turbo;
+          playerSpeed *= playerStats.turbo;
         }
         
-        // Защита (фиолетовый куб) - меньше шанс поломки
+        // Защита
         if (Math.random() < 0.05 * (1 - playerStats.defense)) {
-          playerCurrentSpeed *= 0.5;
-          document.getElementById('raceStatus').textContent = 'ПОЛОМКА! 🛠️';
-          setTimeout(() => {
-            document.getElementById('raceStatus').textContent = 'ГОНКА ПРОДОЛЖАЕТСЯ!';
-          }, 500);
+          playerSpeed *= 0.5;
         }
         
-        // ===== ДВИЖЕНИЕ ПРОТИВНИКА =====
-        if (enemyCurrentSpeed < enemyCar.maxSpeed) {
-          enemyCurrentSpeed += enemyCar.acceleration * (0.7 + Math.random() * 0.6);
+        // Противник
+        if (enemySpeed < enemyStats.maxSpeed) {
+          enemySpeed += enemyStats.acceleration * (0.7 + Math.random() * 0.6);
         }
         
-        // Случайные события для противника
-        if (Math.random() < 0.02) {
-          enemyCurrentSpeed *= 0.3; // Противник ломается
-        }
-        if (Math.random() < 0.01) {
-          enemyCurrentSpeed *= 1.5; // Противник ускоряется
-        }
+        // Случайности для противника
+        if (Math.random() < 0.02) enemySpeed *= 0.3;
+        if (Math.random() < 0.01) enemySpeed *= 1.5;
         
-        // Двигаем машины
-        playerPos += playerCurrentSpeed / 20;
-        enemyPos += enemyCurrentSpeed / 20;
+        // Движение
+        playerPos += playerSpeed / 20;
+        enemyPos += enemySpeed / 20;
         
-        // Ограничиваем позиции
         playerPos = Math.min(playerPos, 570);
         enemyPos = Math.min(enemyPos, 570);
         
-        // Обновляем отображение
+        // Обновление UI
         document.getElementById('playerCar').style.left = playerPos + 'px';
         document.getElementById('enemyCar').style.left = enemyPos + 'px';
         
-        document.getElementById('playerSpeed').textContent = Math.floor(playerCurrentSpeed);
-        document.getElementById('enemySpeed').textContent = Math.floor(enemyCurrentSpeed);
+        document.getElementById('playerSpeed').textContent = Math.floor(playerSpeed);
+        document.getElementById('enemySpeed').textContent = Math.floor(enemySpeed);
         
         const progress = Math.floor((playerPos / 570) * 100);
         document.getElementById('raceProgress').textContent = progress + '%';
         
-        // Проверяем финиш
+        // Финиш
         if (playerPos >= 570 || enemyPos >= 570) {
           finishRace();
         }
       }, 50);
     }
 
-    // ========== ЭФФЕКТ СКОРОСТИ ==========
-    function createSpeedEffect(player) {
-      const car = player === 'player' ? 'playerCar' : 'enemyCar';
-      const element = document.getElementById(car);
-      
-      element.style.transform = 'scale(1.2)';
-      setTimeout(() => {
-        element.style.transform = 'scale(1)';
-      }, 200);
-    }
-
-    // ========== ЗАВЕРШЕНИЕ ГОНКИ ==========
+    // ========== ФИНИШ ==========
     function finishRace() {
       raceActive = false;
       clearInterval(raceInterval);
@@ -895,12 +804,10 @@
       const resultDiv = document.getElementById('raceResult');
       resultDiv.style.display = 'block';
       
-      // Определяем победителя
-      let playerFinished = playerPos >= 570;
-      let enemyFinished = enemyPos >= 570;
+      const playerFinished = playerPos >= 570;
+      const enemyFinished = enemyPos >= 570;
       
       if (playerFinished && !enemyFinished) {
-        // Победа
         const reward = 100 + Math.floor(Math.random() * 100);
         addCoins(reward);
         
@@ -908,66 +815,56 @@
         resultDiv.innerHTML = `
           <div class="result-title">🏆 ПОБЕДА 🏆</div>
           <div class="result-reward">+${reward} МОНЕТ</div>
-          <div style="color: #fff; margin-top: 20px;">Ты быстрее Кирюхи!</div>
+          <div style="color: #fff;">Ты быстрее Кирюхи!</div>
         `;
-        document.getElementById('raceStatus').textContent = 'ТЫ ПОБЕДИЛ! 🎉';
+        document.getElementById('raceStatus').textContent = 'ТЫ ПОБЕДИЛ!';
       } 
       else if (!playerFinished && enemyFinished) {
-        // Поражение
         resultDiv.className = 'race-result result-lose';
         resultDiv.innerHTML = `
           <div class="result-title">😢 ПОРАЖЕНИЕ</div>
-          <div style="color: #fff; margin-top: 20px;">Кирюха быстрее...</div>
+          <div style="color: #fff;">Кирюха быстрее...</div>
         `;
         document.getElementById('raceStatus').textContent = 'КИРЮХА ПОБЕДИЛ';
       }
       else {
-        // Ничья или двойной финиш
         if (playerPos > enemyPos) {
-          const reward = 50 + Math.floor(Math.random() * 50);
-          addCoins(reward);
+          addCoins(50);
           resultDiv.className = 'race-result result-win';
           resultDiv.innerHTML = `
             <div class="result-title">🤝 ФОТОФИНИШ</div>
-            <div class="result-reward">+${reward} МОНЕТ</div>
-            <div style="color: #fff; margin-top: 20px;">Ты чуть быстрее!</div>
+            <div class="result-reward">+50 МОНЕТ</div>
+            <div style="color: #fff;">Ты чуть быстрее!</div>
           `;
         } else {
           resultDiv.className = 'race-result result-lose';
           resultDiv.innerHTML = `
             <div class="result-title">😢 ФОТОФИНИШ</div>
-            <div style="color: #fff; margin-top: 20px;">Кирюха чуть быстрее</div>
+            <div style="color: #fff;">Кирюха чуть быстрее</div>
           `;
         }
       }
     }
 
-    // ========== ОСТАНОВКА ГОНКИ ==========
     function stopRace() {
       if (!raceActive) return;
-      
       raceActive = false;
       clearInterval(raceInterval);
-      
       document.getElementById('startRaceBtn').disabled = false;
       document.getElementById('stopRaceBtn').disabled = true;
       document.getElementById('raceStatus').textContent = 'ГОНКА ОСТАНОВЛЕНА';
     }
 
     // ========== ИНИЦИАЛИЗАЦИЯ ==========
-    function init() {
-      updateCoinsDisplay();
-      loadCarFromGarage();
-      
-      // Слушаем изменения в гараже
-      window.addEventListener('storage', function(e) {
-        if (e.key === GARAGE_KEY) {
-          loadCarFromGarage();
-        }
-      });
-    }
-
-    init();
+    updateCoinsDisplay();
+    loadCarFromGarage();
+    
+    // Обновление при возвращении из гаража
+    window.addEventListener('storage', function(e) {
+      if (e.key === GARAGE_KEY) {
+        loadCarFromGarage();
+      }
+    });
   </script>
 </body>
-  </html>
+      </html>
