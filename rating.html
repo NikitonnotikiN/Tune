@@ -2,10 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кирюха Racing - Рейтинг</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ton Racing – Рейтинг</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* ========== ГЛОБАЛЬНЫЕ СБРОСЫ ========== */
         * {
             margin: 0;
             padding: 0;
@@ -13,333 +14,297 @@
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0a0a0f, #1a1a2e);
+            font-family: 'Racing Sans One', 'Segoe UI', system-ui, sans-serif;
+            background: #0c0c0c;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
             position: relative;
-            overflow-x: hidden;
+            color: white;
+            background-image: radial-gradient(circle at 20% 30%, rgba(225, 6, 0, 0.15) 0%, transparent 30%),
+                              radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
         }
 
-        /* Анимированный фон */
-        .cyber-bg {
+        /* Карбоновая текстура */
+        body::before {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background-image: repeating-linear-gradient(45deg, rgba(30, 30, 30, 0.8) 0px, rgba(30, 30, 30, 0.8) 2px, 
+                              rgba(20, 20, 20, 0.8) 2px, rgba(20, 20, 20, 0.8) 4px);
             z-index: -1;
         }
 
-        .cyber-grid {
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background-image: 
-                linear-gradient(rgba(255, 0, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
-            transform: perspective(500px) rotateX(60deg);
-            animation: gridMove 20s linear infinite;
-            top: -50%;
-            left: -50%;
-        }
-
-        @keyframes gridMove {
-            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
-        }
-
-        /* Навигация */
-        .nav {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid #f0f;
-            box-shadow: 0 0 30px #f0f;
-            z-index: 10;
+        /* Шашечная полоса сверху */
+        .checkered-top {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            margin-bottom: 30px;
+            height: 8px;
+            background: repeating-linear-gradient(90deg, #fff, #fff 20px, #000 20px, #000 40px);
+            z-index: 1001;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
 
-        .nav a {
-            color: #fff;
+        /* ========== ШАПКА ========== */
+        .header {
+            position: fixed;
+            top: 8px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid #e10600;
+            box-shadow: 0 0 30px rgba(225, 6, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .back-to-menu {
+            color: white;
             text-decoration: none;
             font-weight: bold;
-            padding: 10px 25px;
-            border-radius: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #0ff;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 16px;
+            padding: 8px 16px;
+            border: 2px solid #e10600;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+            transition: all 0.2s;
         }
 
-        .nav a:hover {
-            background: #0ff;
-            color: #000;
-            box-shadow: 0 0 40px #0ff;
+        .back-to-menu:active {
+            transform: translateY(2px);
+            background: #e10600;
+            color: black;
         }
 
-        .nav a.active {
-            background: #f0f;
-            border-color: #f0f;
-            color: #000;
-            box-shadow: 0 0 40px #f0f;
-        }
-
-        /* Монеты игрока */
-        .player-coins {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #f0f, #0ff);
-            padding: 15px 30px;
-            border-radius: 40px;
+        .coins-header {
+            background: linear-gradient(135deg, #e10600, #ff4d4d);
+            padding: 8px 16px;
+            color: white;
             font-weight: bold;
-            font-size: 24px;
-            color: #000;
-            box-shadow: 0 0 50px #f0f;
-            z-index: 100;
+            font-size: 18px;
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+            box-shadow: 0 0 20px #e10600;
         }
 
-        /* Заголовок */
+        /* ========== ЗАГОЛОВОК ========== */
         .title {
             text-align: center;
-            margin-bottom: 40px;
+            margin: 80px 0 20px 0;
+            width: 100%;
         }
 
         .title h1 {
             font-size: 48px;
-            font-weight: 900;
+            color: white;
+            text-shadow: 4px 4px 0 #e10600;
             text-transform: uppercase;
-            color: transparent;
-            -webkit-text-stroke: 2px #0ff;
-            text-shadow: 0 0 30px #0ff;
             letter-spacing: 4px;
-            animation: titlePulse 2s infinite;
         }
 
-        @keyframes titlePulse {
-            0%, 100% { text-shadow: 0 0 30px #0ff; }
-            50% { text-shadow: 0 0 60px #f0f; }
-        }
-
-        /* Рейтинг */
+        /* ========== КОНТЕЙНЕР РЕЙТИНГА ========== */
         .rating-container {
             max-width: 800px;
             width: 100%;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            border: 2px solid #f0f;
-            border-radius: 50px;
-            padding: 30px;
-            box-shadow: 0 0 70px rgba(255, 0, 255, 0.4);
-            margin-bottom: 30px;
+            border: 2px solid #e10600;
+            padding: 20px;
+            margin-bottom: 20px;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            backdrop-filter: blur(5px);
         }
 
         .rating-header {
             display: grid;
             grid-template-columns: 80px 1fr 150px;
-            padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 40px;
-            margin-bottom: 20px;
-            border: 1px solid #0ff;
-            color: #0ff;
+            padding: 10px 20px;
+            background: rgba(225, 6, 0, 0.2);
+            border: 1px solid #e10600;
+            margin-bottom: 10px;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #e10600;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
         }
 
         .rating-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 30px;
-            max-height: 500px;
+            gap: 8px;
+            margin-bottom: 20px;
+            max-height: 400px;
             overflow-y: auto;
-            padding-right: 10px;
+            padding-right: 5px;
         }
 
         .rating-list::-webkit-scrollbar {
             width: 8px;
         }
-
         .rating-list::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
         }
-
         .rating-list::-webkit-scrollbar-thumb {
-            background: #f0f;
-            border-radius: 10px;
-            box-shadow: 0 0 20px #f0f;
+            background: #e10600;
+            border-radius: 0;
         }
 
         .rating-item {
             display: grid;
             grid-template-columns: 80px 1fr 150px;
-            padding: 15px 20px;
+            padding: 12px 20px;
             background: rgba(255, 255, 255, 0.03);
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .rating-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s;
+            border: 1px solid rgba(225, 6, 0, 0.3);
+            transition: all 0.2s;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
         }
 
         .rating-item:hover {
-            transform: translateX(10px);
-            border-color: #0ff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-        }
-
-        .rating-item:hover::before {
-            left: 100%;
+            border-color: #e10600;
+            transform: translateX(5px);
         }
 
         .rating-item.top-1 {
-            background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), transparent);
+            background: rgba(255, 215, 0, 0.1);
             border-color: gold;
         }
-
         .rating-item.top-2 {
-            background: linear-gradient(90deg, rgba(192, 192, 192, 0.2), transparent);
+            background: rgba(192, 192, 192, 0.1);
             border-color: silver;
         }
-
         .rating-item.top-3 {
-            background: linear-gradient(90deg, rgba(205, 127, 50, 0.2), transparent);
+            background: rgba(205, 127, 50, 0.1);
             border-color: #cd7f32;
         }
-
         .rating-item.current-user {
-            border: 2px solid #f0f;
-            box-shadow: 0 0 30px #f0f;
-            background: rgba(255, 0, 255, 0.1);
+            border: 2px solid #e10600;
+            background: rgba(225, 6, 0, 0.15);
         }
 
         .rating-place {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .top-1 .rating-place { color: gold; text-shadow: 0 0 20px gold; }
-        .top-2 .rating-place { color: silver; text-shadow: 0 0 20px silver; }
-        .top-3 .rating-place { color: #cd7f32; text-shadow: 0 0 20px #cd7f32; }
-
-        .rating-name {
             font-size: 20px;
             font-weight: bold;
-            color: #fff;
+        }
+        .top-1 .rating-place { color: gold; }
+        .top-2 .rating-place { color: silver; }
+        .top-3 .rating-place { color: #cd7f32; }
+
+        .rating-name {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
         .rating-name img {
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            border: 2px solid #0ff;
+            border: 2px solid #e10600;
         }
 
         .rating-coins {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
-            background: linear-gradient(45deg, #f0f, #0ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #e10600;
             text-align: right;
         }
-
         .rating-coins::after {
             content: ' 🪙';
-            font-size: 20px;
+            font-size: 18px;
         }
 
         /* Статистика */
         .rating-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 30px;
+            gap: 15px;
+            margin-top: 20px;
         }
-
         .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #0ff;
-            border-radius: 30px;
-            padding: 20px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #e10600;
+            padding: 15px;
             text-align: center;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
         }
-
         .stat-value {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
-            color: #0ff;
-            margin-bottom: 5px;
+            color: #e10600;
         }
-
         .stat-label {
-            color: #fff;
-            opacity: 0.7;
+            font-size: 12px;
             text-transform: uppercase;
-            font-size: 14px;
-            letter-spacing: 1px;
+            color: #aaa;
         }
 
         /* Кнопка обновления */
         .refresh-btn {
             background: transparent;
-            border: 2px solid #0ff;
-            color: #0ff;
+            border: 2px solid #e10600;
+            color: #e10600;
             padding: 15px 40px;
-            border-radius: 40px;
             font-weight: bold;
             font-size: 18px;
             cursor: pointer;
             transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-top: 20px;
+            margin: 20px auto 0;
+            display: block;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
         }
-
         .refresh-btn:hover {
-            background: #0ff;
-            color: #000;
-            box-shadow: 0 0 50px #0ff;
-            transform: scale(1.05);
+            background: #e10600;
+            color: black;
         }
 
-        /* Кнопка назад */
-        .back-btn {
+        /* ========== ТЕЛЕМЕТРИЯ (ТОЧКИ ХАРАКТЕРИСТИК) ========== */
+        .f1-telemetry {
             position: fixed;
-            bottom: 30px;
-            left: 30px;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #e10600;
+            padding: 10px 20px;
+            border-radius: 0;
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+            z-index: 100;
+        }
+
+        .telemetry-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 0;
+            transform: rotate(45deg);
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .telemetry-dot.red { background: #ff4444; }
+        .telemetry-dot.green { background: #44ff44; }
+        .telemetry-dot.blue { background: #4444ff; }
+        .telemetry-dot.yellow { background: #ffff44; }
+        .telemetry-dot.orange { background: #ff8844; }
+        .telemetry-dot.purple { background: #ff44ff; }
+
+        /* ========== КНОПКА ВЫХОДА ========== */
+        .exit-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
             background: transparent;
-            border: 2px solid #f0f;
-            color: #f0f;
-            padding: 12px 30px;
-            border-radius: 40px;
+            border: 2px solid #e10600;
+            color: #e10600;
+            padding: 10px 20px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
@@ -347,78 +312,70 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             backdrop-filter: blur(10px);
+            font-size: clamp(12px, 3vw, 14px);
+            z-index: 100;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
         }
 
-        .back-btn:hover {
-            background: #f0f;
+        .exit-btn:hover {
+            background: #e10600;
             color: #000;
-            box-shadow: 0 0 50px #f0f;
         }
 
-        /* Загрузчик */
-        .loader {
-            text-align: center;
-            padding: 50px;
-            color: #0ff;
-            font-size: 24px;
-            animation: loaderPulse 1s infinite;
-        }
-
-        @keyframes loaderPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        /* Уведомление */
+        /* ========== УВЕДОМЛЕНИЯ ========== */
         .notification {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: #0ff;
-            color: #000;
-            padding: 15px 30px;
-            border-radius: 40px;
+            background: #e10600;
+            color: white;
+            padding: 12px 24px;
             font-weight: bold;
-            z-index: 1000;
-            box-shadow: 0 0 30px #0ff;
+            z-index: 3000;
             display: none;
+            font-size: 14px;
+            white-space: nowrap;
+            box-shadow: 0 0 30px #e10600;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
         }
 
         .notification.show {
             display: block;
-            animation: notificationSlide 0.3s;
+            animation: slideIn 0.3s;
         }
 
-        @keyframes notificationSlide {
+        @keyframes slideIn {
             from { transform: translateX(-50%) translateY(-100%); }
             to { transform: translateX(-50%) translateY(0); }
+        }
+
+        .loader {
+            text-align: center;
+            padding: 40px;
+            color: #e10600;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="cyber-bg">
-        <div class="cyber-grid"></div>
+    <!-- Шашечная полоса -->
+    <div class="checkered-top"></div>
+
+    <!-- Шапка -->
+    <div class="header">
+        <a href="index.html" class="back-to-menu">← МЕНЮ</a>
+        <div class="coins-header" id="playerCoins">1000 🪙</div>
     </div>
 
-    <nav class="nav">
-        <a href="menu.html">МЕНЮ</a>
-        <a href="garage.html">ГАРАЖ</a>
-        <a href="race.html">ГОНКА</a>
-        <a href="rating.html" class="active">РЕЙТИНГ</a>
-        <a href="shop.html">МАГАЗИН</a>
-    </nav>
+    <!-- Заголовок -->
+    <div class="title"><h1>🏆 РЕЙТИНГ</h1></div>
 
-    <div class="player-coins" id="playerCoins">1000</div>
-
-    <div class="title">
-        <h1>🏆 РЕЙТИНГ 🏆</h1>
-    </div>
-
+    <!-- Контейнер рейтинга -->
     <div class="rating-container">
         <div class="rating-header">
             <div>МЕСТО</div>
-            <div>ИГРОК</div>
+            <div>ПИЛОТ</div>
             <div>МОНЕТЫ</div>
         </div>
 
@@ -429,7 +386,7 @@
         <div class="rating-stats" id="ratingStats">
             <div class="stat-card">
                 <div class="stat-value" id="totalPlayers">0</div>
-                <div class="stat-label">ВСЕГО ИГРОКОВ</div>
+                <div class="stat-label">ВСЕГО ПИЛОТОВ</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="topPlayerCoins">0</div>
@@ -444,12 +401,24 @@
         <button class="refresh-btn" onclick="loadRating()">🔄 ОБНОВИТЬ</button>
     </div>
 
-    <a href="menu.html" class="back-btn">← В МЕНЮ</a>
+    <!-- Телеметрия (точки) -->
+    <div class="f1-telemetry" id="statsPreview">
+        <div class="telemetry-dot red" title="Скорость"></div>
+        <div class="telemetry-dot green" title="Ускорение"></div>
+        <div class="telemetry-dot blue" title="Макс скорость"></div>
+        <div class="telemetry-dot yellow" title="Удача"></div>
+        <div class="telemetry-dot orange" title="Турбо"></div>
+        <div class="telemetry-dot purple" title="Защита"></div>
+    </div>
 
+    <!-- Кнопка выхода -->
+    <a href="#" class="exit-btn" onclick="window.Telegram?.WebApp?.close()">✖ ВЫХОД</a>
+
+    <!-- Уведомление -->
     <div id="notification" class="notification"></div>
 
     <script>
-        // ========== TELEGRAM ИНИЦИАЛИЗАЦИЯ ==========
+        // ========== TELEGRAM ==========
         let tg = null;
         let currentUser = null;
 
@@ -457,59 +426,82 @@
             tg = window.Telegram.WebApp;
             tg.ready();
             tg.expand();
-            
+
             currentUser = tg.initDataUnsafe?.user;
-            console.log('Telegram User:', currentUser);
         }
 
-        // ========== КЛЮЧИ ДЛЯ ХРАНЕНИЯ ==========
+        // ========== КЛЮЧИ ХРАНЕНИЯ ==========
         const COINS_KEY = 'playerCoins';
         const RATING_KEY = 'globalRating';
-        const USER_RATING_KEY = 'userRatingData';
 
-        // ========== ПОЛУЧЕНИЕ МОНЕТ ==========
+        // ========== МОНЕТЫ ==========
         function getCoins() {
             return parseInt(localStorage.getItem(COINS_KEY)) || 1000;
         }
 
-        function updatePlayerCoins() {
-            document.getElementById('playerCoins').textContent = getCoins();
+        function updateCoinsDisplay() {
+            document.getElementById('playerCoins').textContent = getCoins() + ' 🪙';
         }
 
-        // ========== СОХРАНЕНИЕ ДАННЫХ ИГРОКА ==========
-        function saveUserData() {
+        // ========== СОХРАНЕНИЕ ТЕКУЩЕГО ИГРОКА ==========
+        function saveCurrentUser() {
             if (!currentUser) return null;
 
             const userData = {
                 id: currentUser.id,
                 name: currentUser.first_name || 'Игрок',
                 username: currentUser.username || '',
-                photo: currentUser.photo_url || `https://ui-avatars.com/api/?name=${currentUser.first_name || 'Player'}&background=random`,
+                photo: currentUser.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.first_name || 'Player')}&background=e10600&color=fff`,
                 coins: getCoins(),
                 lastUpdate: Date.now()
             };
 
-            // Сохраняем в localStorage
-            const allUsers = JSON.parse(localStorage.getItem(RATING_KEY)) || [];
-            
-            // Ищем существующего пользователя
+            let allUsers = JSON.parse(localStorage.getItem(RATING_KEY)) || [];
             const existingIndex = allUsers.findIndex(u => u.id === userData.id);
-            
             if (existingIndex !== -1) {
-                // Обновляем существующего
                 allUsers[existingIndex] = userData;
             } else {
-                // Добавляем нового
                 allUsers.push(userData);
             }
 
-            // Сортируем по монетам
             allUsers.sort((a, b) => b.coins - a.coins);
-            
-            // Сохраняем
             localStorage.setItem(RATING_KEY, JSON.stringify(allUsers));
-            
             return userData;
+        }
+
+        // ========== ГЕНЕРАЦИЯ БОТОВ ==========
+        function generateBotPlayers(count = 9) {
+            const botNames = [
+                'Гонщик', 'Механик', 'Стример', 'Ночной_драйвер', 'Кибер_гонщик',
+                'Фантом', 'Ракета', 'Молния', 'Тень', 'Вихрь', 'Спутник', 'Зигзаг'
+            ];
+            const botPhotos = [
+                'https://ui-avatars.com/api/?name=Гонщик&background=e10600&color=fff',
+                'https://ui-avatars.com/api/?name=Механик&background=e10600&color=fff',
+                'https://ui-avatars.com/api/?name=Стример&background=e10600&color=fff',
+                'https://ui-avatars.com/api/?name=Драйвер&background=e10600&color=fff',
+                'https://ui-avatars.com/api/?name=Кибер&background=e10600&color=fff'
+            ];
+
+            const bots = [];
+            const playerCoins = getCoins();
+
+            for (let i = 0; i < count; i++) {
+                const coins = Math.floor(Math.random() * (playerCoins + 2000)) + 500;
+                const name = botNames[Math.floor(Math.random() * botNames.length)] + (i + 1);
+                const photo = botPhotos[Math.floor(Math.random() * botPhotos.length)];
+
+                bots.push({
+                    id: -i - 1,
+                    name: name,
+                    username: '',
+                    photo: photo,
+                    coins: coins,
+                    lastUpdate: Date.now() - Math.random() * 10000000
+                });
+            }
+
+            return bots;
         }
 
         // ========== ЗАГРУЗКА РЕЙТИНГА ==========
@@ -517,87 +509,30 @@
             const ratingList = document.getElementById('ratingList');
             ratingList.innerHTML = '<div class="loader">ЗАГРУЗКА...</div>';
 
-            // Сохраняем текущего пользователя
             if (currentUser) {
-                saveUserData();
+                saveCurrentUser();
             }
 
-            // Получаем всех пользователей
             setTimeout(() => {
-                const allUsers = JSON.parse(localStorage.getItem(RATING_KEY)) || [];
-                
-                if (allUsers.length === 0) {
-                    // Если нет данных, создаем тестовых
-                    createTestUsers();
-                    return;
+                let allUsers = JSON.parse(localStorage.getItem(RATING_KEY)) || [];
+
+                if (allUsers.length < 5) {
+                    const bots = generateBotPlayers(8);
+                    const botIds = new Set(allUsers.map(u => u.id));
+                    bots.forEach(bot => {
+                        if (!botIds.has(bot.id)) {
+                            allUsers.push(bot);
+                            botIds.add(bot.id);
+                        }
+                    });
                 }
 
+                allUsers.sort((a, b) => b.coins - a.coins);
                 displayRating(allUsers);
             }, 500);
         }
 
-        // ========== СОЗДАНИЕ ТЕСТОВЫХ ПОЛЬЗОВАТЕЛЕЙ ==========
-        function createTestUsers() {
-            const testUsers = [
-                {
-                    id: 1,
-                    name: 'Кирюха',
-                    username: 'kiryuha',
-                    photo: 'https://ui-avatars.com/api/?name=Кирюха&background=ff00ff',
-                    coins: 9999,
-                    lastUpdate: Date.now()
-                },
-                {
-                    id: 2,
-                    name: 'Гонщик',
-                    username: 'racer',
-                    photo: 'https://ui-avatars.com/api/?name=Гонщик&background=00ffff',
-                    coins: 7500,
-                    lastUpdate: Date.now()
-                },
-                {
-                    id: 3,
-                    name: 'Механик',
-                    username: 'mechanic',
-                    photo: 'https://ui-avatars.com/api/?name=Механик&background=ff8800',
-                    coins: 5000,
-                    lastUpdate: Date.now()
-                },
-                {
-                    id: 4,
-                    name: 'Новичок',
-                    username: 'noob',
-                    photo: 'https://ui-avatars.com/api/?name=Новичок&background=44ff44',
-                    coins: 2500,
-                    lastUpdate: Date.now()
-                },
-                {
-                    id: 5,
-                    name: 'Легенда',
-                    username: 'legend',
-                    photo: 'https://ui-avatars.com/api/?name=Легенда&background=ff4444',
-                    coins: 1000,
-                    lastUpdate: Date.now()
-                }
-            ];
-
-            // Добавляем текущего пользователя если есть
-            if (currentUser) {
-                testUsers.push({
-                    id: currentUser.id,
-                    name: currentUser.first_name || 'Игрок',
-                    username: currentUser.username || '',
-                    photo: currentUser.photo_url || `https://ui-avatars.com/api/?name=${currentUser.first_name || 'Player'}&background=random`,
-                    coins: getCoins(),
-                    lastUpdate: Date.now()
-                });
-            }
-
-            localStorage.setItem(RATING_KEY, JSON.stringify(testUsers));
-            displayRating(testUsers);
-        }
-
-        // ========== ОТОБРАЖЕНИЕ РЕЙТИНГА ==========
+        // ========== ОТОБРАЖЕНИЕ ==========
         function displayRating(users) {
             const ratingList = document.getElementById('ratingList');
             const currentUserId = currentUser?.id;
@@ -607,14 +542,13 @@
 
             users.forEach((user, index) => {
                 totalCoins += user.coins;
-                
+
                 const place = index + 1;
                 let placeClass = '';
-                
                 if (place === 1) placeClass = 'top-1';
                 else if (place === 2) placeClass = 'top-2';
                 else if (place === 3) placeClass = 'top-3';
-                
+
                 const isCurrentUser = user.id === currentUserId;
                 const userClass = isCurrentUser ? 'current-user' : '';
 
@@ -633,78 +567,50 @@
 
             ratingList.innerHTML = html;
 
-            // Обновляем статистику
             document.getElementById('totalPlayers').textContent = users.length;
             document.getElementById('topPlayerCoins').textContent = users[0]?.coins.toLocaleString() || '0';
             document.getElementById('avgCoins').textContent = Math.floor(totalCoins / users.length).toLocaleString();
 
-            // Показываем уведомление
-            showNotification('Рейтинг обновлен');
+            showNotification('Рейтинг обновлён');
         }
 
-        // ========== УВЕДОМЛЕНИЯ ==========
         function showNotification(text) {
             const notif = document.getElementById('notification');
             notif.textContent = '✨ ' + text;
             notif.classList.add('show');
-            
-            setTimeout(() => {
-                notif.classList.remove('show');
-            }, 2000);
+            setTimeout(() => notif.classList.remove('show'), 2000);
         }
 
-        // ========== ПОДЕЛИТЬСЯ РЕЗУЛЬТАТОМ ==========
-        function shareRating() {
-            if (!tg) {
-                alert('Доступно только в Telegram');
-                return;
-            }
-
-            const users = JSON.parse(localStorage.getItem(RATING_KEY)) || [];
-            const currentUserData = users.find(u => u.id === currentUser?.id);
-            
-            if (!currentUserData) return;
-
-            // Находим место
-            const place = users.findIndex(u => u.id === currentUser.id) + 1;
-            const total = users.length;
-            
-            const shareText = `🏁 КИРЮХА RACING 🏁\nМое место в рейтинге: ${place}/${total}\nМонет: ${currentUserData.coins}\nПрисоединяйся!`;
-            
-            if (typeof tg.shareToStory === 'function') {
-                tg.shareToStory(window.location.href, { text: shareText });
-            } else {
-                tg.showAlert('Поделиться пока нельзя');
-            }
+        // ========== ТОЧКИ ХАРАКТЕРИСТИК ИЗ ГАРАЖА ==========
+        function loadCarPreview() {
+            const garageArray = JSON.parse(localStorage.getItem('garageCubes')) || [];
+            const dots = document.querySelectorAll('.telemetry-dot');
+            const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
+            dots.forEach((dot, index) => {
+                if (garageArray[index]) {
+                    dot.style.opacity = '1';
+                    dot.style.boxShadow = '0 0 20px currentColor';
+                } else {
+                    dot.style.opacity = '0.3';
+                    dot.style.boxShadow = 'none';
+                }
+            });
         }
 
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         function init() {
-            updatePlayerCoins();
-            
-            // Загружаем рейтинг
+            updateCoinsDisplay();
             loadRating();
+            loadCarPreview();
 
-            // Обновляем при фокусе
             window.addEventListener('focus', function() {
-                updatePlayerCoins();
-                saveUserData();
-            });
-
-            // Слушаем изменения монет в других вкладках
-            window.addEventListener('storage', function(e) {
-                if (e.key === COINS_KEY) {
-                    updatePlayerCoins();
-                    saveUserData();
-                }
-                if (e.key === RATING_KEY) {
-                    const users = JSON.parse(e.newValue);
-                    if (users) displayRating(users);
-                }
+                updateCoinsDisplay();
+                saveCurrentUser();
+                loadCarPreview();
             });
         }
 
         init();
     </script>
 </body>
-  </html>
+</html>
