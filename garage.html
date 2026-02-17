@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ton Racing – 3D Гараж (ВАЗ-2107)</title>
+    <title>Ton Racing – 3D Гараж</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -38,7 +38,7 @@
             z-index: 10;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 10px;
         }
 
         /* Верхняя шапка */
@@ -46,26 +46,26 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0,0,0,0.7);
-            border: 2px solid #e10600;
-            padding: 12px 20px;
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #e10600;
+            padding: 6px 12px;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
             pointer-events: auto;
             backdrop-filter: blur(5px);
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
-            box-shadow: 0 0 30px rgba(225,6,0,0.5);
+            box-shadow: 0 0 15px rgba(225,6,0,0.3);
         }
 
         .back-to-menu {
             color: white;
             text-decoration: none;
             font-weight: bold;
-            font-size: 16px;
-            padding: 8px 16px;
-            border: 2px solid #e10600;
-            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+            font-size: 14px;
+            padding: 4px 10px;
+            border: 1px solid #e10600;
+            clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
             transition: 0.2s;
         }
 
@@ -76,69 +76,70 @@
 
         .coins-header {
             background: linear-gradient(135deg, #e10600, #ff4d4d);
-            padding: 8px 20px;
+            padding: 4px 12px;
             font-weight: bold;
-            font-size: 18px;
-            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+            font-size: 14px;
+            clip-path: polygon(5px 0, 100% 0, 100% 100%, 0 100%, 0 5px);
         }
 
-        /* Панель характеристик (горизонтальная полоса) */
+        /* Панель характеристик (компактная строка) */
         .stats-bar {
-            background: rgba(0,0,0,0.6);
-            border: 2px solid #e10600;
-            padding: 10px 20px;
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #e10600;
+            padding: 4px 8px;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
             pointer-events: auto;
             backdrop-filter: blur(5px);
             max-width: 1200px;
-            margin: 10px auto;
-            width: 100%;
+            margin: 5px auto;
+            width: fit-content;
             display: flex;
-            justify-content: space-around;
+            gap: 12px;
             flex-wrap: wrap;
-            gap: 15px;
+            justify-content: center;
         }
 
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
+            font-size: 12px;
         }
 
         .stat-label {
             color: #e10600;
-            font-size: 14px;
             text-transform: uppercase;
+            font-size: 10px;
         }
 
         .stat-value {
-            font-size: 18px;
             font-weight: bold;
             color: white;
+            font-size: 12px;
         }
 
-        /* Навигационное меню */
+        /* Навигационное меню (маленькое) */
         .nav-menu {
             display: flex;
-            gap: 15px;
+            gap: 8px;
             justify-content: center;
-            margin: 10px auto;
+            margin: 5px auto;
             pointer-events: auto;
             max-width: 1200px;
         }
 
         .nav-item {
-            width: 50px;
-            height: 50px;
-            background: rgba(0,0,0,0.8);
-            border: 2px solid #e10600;
+            width: 36px;
+            height: 36px;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #e10600;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 18px;
             text-decoration: none;
             color: white;
-            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+            clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
             transition: 0.2s;
         }
 
@@ -150,19 +151,19 @@
         .nav-item.active {
             background: #e10600;
             color: black;
-            box-shadow: 0 0 20px #e10600;
+            box-shadow: 0 0 10px #e10600;
         }
 
-        /* Инвентарь (внизу) */
+        /* Инвентарь (компактный внизу) */
         .inventory-panel {
             position: absolute;
-            bottom: 20px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.6);
-            border: 2px solid #e10600;
-            padding: 10px;
-            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #e10600;
+            padding: 5px;
+            clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
             pointer-events: auto;
             backdrop-filter: blur(5px);
             width: auto;
@@ -173,28 +174,28 @@
         .inventory-title {
             color: #e10600;
             text-align: center;
-            margin-bottom: 8px;
-            font-size: 18px;
+            margin-bottom: 3px;
+            font-size: 12px;
             text-transform: uppercase;
         }
 
         .inventory-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
+            gap: 3px;
             justify-content: center;
         }
 
         .inventory-slot {
-            width: 55px;
-            height: 55px;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid #e10600;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #e10600;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+            clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
             transition: 0.2s;
             position: relative;
         }
@@ -206,29 +207,29 @@
 
         .inventory-slot.active {
             border-color: #00ff00;
-            box-shadow: 0 0 20px #00ff00;
+            box-shadow: 0 0 10px #00ff00;
         }
 
         .inventory-slot.active::after {
             content: '✓';
             position: absolute;
-            top: 2px;
-            right: 5px;
+            top: 0px;
+            right: 2px;
             color: #00ff00;
-            font-size: 18px;
+            font-size: 12px;
             font-weight: bold;
-            text-shadow: 0 0 10px #00ff00;
+            text-shadow: 0 0 5px #00ff00;
         }
 
         .cube {
-            width: 85%;
-            height: 85%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+            width: 80%;
+            height: 80%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            clip-path: polygon(2px 0, 100% 0, 100% calc(100% - 2px), calc(100% - 2px) 100%, 0 100%, 0 2px);
         }
 
         .cube.rare {
-            box-shadow: 0 0 15px gold, 0 0 30px gold;
+            box-shadow: 0 0 8px gold, 0 0 15px gold;
             animation: rareGlow 2s infinite;
             position: relative;
         }
@@ -236,15 +237,15 @@
         .cube.rare::before {
             content: '⭐';
             position: absolute;
-            top: -8px;
-            right: -8px;
-            font-size: 16px;
-            filter: drop-shadow(0 0 5px gold);
+            top: -5px;
+            right: -5px;
+            font-size: 10px;
+            filter: drop-shadow(0 0 3px gold);
         }
 
         @keyframes rareGlow {
-            0% { box-shadow: 0 0 15px gold; }
-            50% { box-shadow: 0 0 30px gold, 0 0 45px #ffaa00; }
+            0% { box-shadow: 0 0 8px gold; }
+            50% { box-shadow: 0 0 15px gold, 0 0 20px #ffaa00; }
         }
 
         .cube.red { background: linear-gradient(145deg, #ff4444, #cc0000); }
@@ -256,22 +257,22 @@
 
         .exit-btn {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
+            bottom: 10px;
+            left: 10px;
             background: transparent;
-            border: 2px solid #e10600;
+            border: 1px solid #e10600;
             color: #e10600;
-            padding: 10px 20px;
+            padding: 5px 12px;
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
             text-decoration: none;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            backdrop-filter: blur(10px);
-            font-size: 14px;
+            letter-spacing: 1px;
+            backdrop-filter: blur(5px);
+            font-size: 12px;
             z-index: 100;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
             pointer-events: auto;
         }
 
@@ -282,19 +283,19 @@
 
         .notification {
             position: fixed;
-            top: 20px;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
             background: #e10600;
             color: white;
-            padding: 12px 24px;
+            padding: 6px 15px;
             font-weight: bold;
             z-index: 3000;
             display: none;
-            font-size: 14px;
+            font-size: 12px;
             white-space: nowrap;
-            box-shadow: 0 0 30px #e10600;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+            box-shadow: 0 0 15px #e10600;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
             pointer-events: none;
         }
 
@@ -307,12 +308,17 @@
             to { transform: translateX(-50%) translateY(0); }
         }
 
-        /* Адаптация */
-        @media (max-width: 700px) {
+        /* Адаптация для узких экранов */
+        @media (max-width: 600px) {
+            .inventory-slot {
+                width: 35px;
+                height: 35px;
+            }
             .stats-bar {
-                flex-direction: column;
-                align-items: center;
-                gap: 5px;
+                gap: 6px;
+            }
+            .stat-item {
+                font-size: 10px;
             }
         }
     </style>
@@ -321,7 +327,7 @@
     <!-- 3D сцена -->
     <div id="canvas-container"></div>
 
-    <!-- Интерфейс поверх 3D -->
+    <!-- Интерфейс -->
     <div id="ui-container">
         <!-- Верхняя шапка -->
         <div class="header">
@@ -329,30 +335,30 @@
             <div class="coins-header" id="coinsDisplay">1000 🪙</div>
         </div>
 
-        <!-- Панель характеристик (горизонтальная полоса) -->
+        <!-- Панель характеристик (компактная строка) -->
         <div class="stats-bar" id="statsBar">
             <div class="stat-item">
-                <span class="stat-label">СКОРОСТЬ</span>
+                <span class="stat-label">СКОР</span>
                 <span class="stat-value" id="statSpeed">50</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">СЦЕПЛЕНИЕ</span>
+                <span class="stat-label">СЦЕП</span>
                 <span class="stat-value" id="statGrip">50</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">РАЗГОН</span>
+                <span class="stat-label">РАЗГ</span>
                 <span class="stat-value" id="statAccel">5</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">МАКС. СКОР</span>
+                <span class="stat-label">МАКС</span>
                 <span class="stat-value" id="statMaxSpeed">100</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">РЫВОК</span>
+                <span class="stat-label">УДАЧ</span>
                 <span class="stat-value" id="statLuck">0%</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">МОЩНОСТЬ</span>
+                <span class="stat-label">МОЩ</span>
                 <span class="stat-value" id="statPower">100%</span>
             </div>
         </div>
@@ -365,7 +371,7 @@
             <a href="rating.html" class="nav-item">📊</a>
         </div>
 
-        <!-- Инвентарь (внизу) -->
+        <!-- Инвентарь (компактный внизу) -->
         <div class="inventory-panel">
             <div class="inventory-title">📦 ИНВЕНТАРЬ</div>
             <div id="inventoryGrid" class="inventory-grid"></div>
@@ -378,7 +384,7 @@
     <!-- Уведомление -->
     <div id="notification" class="notification"></div>
 
-    <!-- Подключаем Three.js и загрузчики OBJ/MTL -->
+    <!-- Подключаем Three.js -->
     <script type="importmap">
         {
             "imports": {
@@ -394,13 +400,14 @@
         import { OBJLoader } from 'https://unpkg.com/three@0.128.0/examples/jsm/loaders/OBJLoader.js';
         import { MTLLoader } from 'https://unpkg.com/three@0.128.0/examples/jsm/loaders/MTLLoader.js';
 
-        // --- Инициализация сцены ---
+        // --- 3D СЦЕНА (как в предыдущей версии) ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x111122);
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.set(3, 2, 5);
+        camera.lookAt(0, 0.5, 0);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -409,7 +416,7 @@
         renderer.setPixelRatio(window.devicePixelRatio);
         container.appendChild(renderer.domElement);
 
-        // --- Освещение ---
+        // Освещение
         const dirLight = new THREE.DirectionalLight(0xffffff, 1);
         dirLight.position.set(2, 5, 3);
         dirLight.castShadow = true;
@@ -432,10 +439,7 @@
         bottomLight.position.set(0, -1, 2);
         scene.add(bottomLight);
 
-        const ambientLight = new THREE.AmbientLight(0x404060);
-        scene.add(ambientLight);
-
-        // --- Пол и сетка ---
+        // Пол
         const planeGeometry = new THREE.CircleGeometry(5, 32);
         const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x222233, roughness: 0.4, metalness: 0.1 });
         const plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -448,33 +452,27 @@
         gridHelper.position.y = -0.19;
         scene.add(gridHelper);
 
-        // --- Группа для модели ---
+        // Группа машины
         const carGroup = new THREE.Group();
         scene.add(carGroup);
 
-        // --- Загрузка модели ВАЗ-2107 с материалами ---
+        // Загрузка модели ВАЗ-2107
         const mtlLoader = new MTLLoader();
         const objLoader = new OBJLoader();
 
-        // Загружаем MTL файл
         mtlLoader.load(
-            'models/VAZ2107.mtl', // путь к MTL файлу (измените при необходимости)
+            'models/2107.mtl',
             (materials) => {
                 materials.preload();
                 objLoader.setMaterials(materials);
                 
-                // Затем загружаем OBJ
                 objLoader.load(
-                    'models/VAZ2107.obj',
+                    'models/2107.obj',
                     (object) => {
-                        console.log('Модель ВАЗ-2107 с материалами загружена');
-                        
-                        // Масштабируем и позиционируем
-                        object.scale.set(0.01, 0.01, 0.01); // подберите нужный масштаб
+                        object.scale.set(0.01, 0.01, 0.01);
                         object.position.set(0, 0, 0);
-                        object.rotation.y = Math.PI; // если нужно повернуть
+                        object.rotation.y = Math.PI;
                         
-                        // Включаем тени для всех мешей
                         object.traverse((child) => {
                             if (child.isMesh) {
                                 child.castShadow = true;
@@ -507,40 +505,10 @@
             undefined,
             (error) => {
                 console.error('Ошибка загрузки MTL:', error);
-                // Пробуем загрузить OBJ без материалов
-                objLoader.load(
-                    'models/VAZ2107.obj',
-                    (object) => {
-                        console.log('Модель загружена без материалов');
-                        object.scale.set(0.01, 0.01, 0.01);
-                        object.position.set(0, 0, 0);
-                        object.traverse((child) => {
-                            if (child.isMesh) {
-                                child.castShadow = true;
-                                child.receiveShadow = true;
-                            }
-                        });
-                        carGroup.add(object);
-                        
-                        const box = new THREE.Box3().setFromObject(carGroup);
-                        const center = box.getCenter(new THREE.Vector3());
-                        const size = box.getSize(new THREE.Vector3());
-                        const maxDim = Math.max(size.x, size.y, size.z);
-                        const distance = maxDim * 2.5;
-                        camera.position.set(center.x + distance * 0.5, center.y + distance * 0.3, center.z + distance);
-                        controls.target.copy(center);
-                        controls.update();
-                    },
-                    undefined,
-                    (error) => {
-                        console.error('Ошибка загрузки OBJ без материалов:', error);
-                        createFallbackModel();
-                    }
-                );
+                createFallbackModel();
             }
         );
 
-        // Запасной вариант, если модель не загрузится
         function createFallbackModel() {
             const geometry = new THREE.BoxGeometry(1, 0.5, 2);
             const material = new THREE.MeshStandardMaterial({ color: 0xff4444 });
@@ -551,7 +519,7 @@
             console.log('Используется заглушка (куб)');
         }
 
-        // --- Управление камерой ---
+        // Управление камерой
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
@@ -560,7 +528,6 @@
         controls.enableZoom = true;
         controls.maxPolarAngle = Math.PI / 2;
 
-        // --- Анимация ---
         function animate() {
             requestAnimationFrame(animate);
             controls.update();
@@ -568,14 +535,13 @@
         }
         animate();
 
-        // --- Ресайз окна ---
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- ЛОГИКА ИНВЕНТАРЯ И АКТИВНЫХ КУБОВ (без изменений) ---
+        // --- ЛОГИКА ИНВЕНТАРЯ И АКТИВНЫХ КУБОВ ---
         const colorList = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
         const cubeStats = {
             red:    [30, 0, 0, 0, 0, 0],
