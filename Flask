@@ -1,0 +1,28 @@
+from flask import Flask,request,jsonify
+import sqlite3,os
+
+app=Flask(__name__)
+DB='race.db'
+
+def init():
+    with sqlite3.connect(DB) as c:
+        c.execute('CREATE TABLE IF NOT EXISTS users(tg_id INTEGER PRIMARY KEY,name TEXT,coins INTEGER)')
+init()
+
+@app.route('/update_score',methods=['POST'])
+def upd():
+    d=request.get_json()
+    uid,name,coins=d['tg_id'],d['name'],int(d['coins'])
+    with sqlite3.connect(DB) as c:
+        c.execute('INSERT OR IGNORE INTO users(tg_id,name,coins) VALUES(?,?,?)',(uid,name,0))
+        c.execute('UPDATE users SET coins=max(coins,?) WHERE tg_id=?',(coins,uid))
+    return jsonify(ok=True)
+
+@app.route('/top')
+def top():
+    with sqlite3.connect(DB) as c:
+        rows=c.execute('SELECT tg_id,name,coins FROM users ORDER BY coins DESC LIMIT 100').fetchall()
+    return jsonify([{'tg_id':r[0],'name':r[1],'coins':r[2]} for r in rows])
+
+if __name__=='__main__':
+    app.run(port=int(os.getenv('PORT',5000)))
