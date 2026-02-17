@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🚗 Тюнинг ВАЗ-2107 — Гараж</title>
-  <meta name="description" content="Перемещай кубы на слоты, тюнингуй семёрочку и зарабатывай монеты" />
   <style>
     * {
       margin: 0;
@@ -13,7 +12,7 @@
     }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
       min-height: 100vh;
       display: flex;
@@ -21,7 +20,6 @@
       align-items: center;
       padding: 20px;
       position: relative;
-      overflow-x: hidden;
     }
 
     /* Анимированный фон */
@@ -47,7 +45,7 @@
       backdrop-filter: blur(10px);
       padding: 15px 30px;
       border-radius: 50px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       z-index: 10;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -56,7 +54,7 @@
     nav a {
       color: #fff;
       text-decoration: none;
-      margin: 0 20px;
+      margin: 0 15px;
       font-weight: 600;
       font-size: 16px;
       padding: 8px 16px;
@@ -76,32 +74,20 @@
     /* Блок монет */
     .coins-container {
       background: linear-gradient(135deg, #f1c40f, #e67e22);
-      padding: 15px 40px;
+      padding: 12px 40px;
       border-radius: 50px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       box-shadow: 0 10px 30px rgba(241, 196, 15, 0.3);
       z-index: 10;
       border: 2px solid rgba(255, 255, 255, 0.3);
       position: relative;
-      overflow: hidden;
-    }
-
-    .coins-container::after {
-      content: '💰';
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 24px;
-      opacity: 0.3;
     }
 
     #coinsDisplay {
       font-weight: 800;
-      font-size: 28px;
+      font-size: 24px;
       color: #fff;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      letter-spacing: 1px;
     }
 
     /* Основная сетка */
@@ -115,20 +101,20 @@
       z-index: 10;
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(10px);
-      padding: 40px;
-      border-radius: 60px;
+      padding: 30px;
+      border-radius: 50px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     }
 
-    /* Слоты */
-    .slots {
+    /* Слоты для машины */
+    .car-slots {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 15px;
     }
 
-    .slot {
+    .car-slot {
       width: 80px;
       height: 80px;
       background: rgba(255, 255, 255, 0.1);
@@ -143,8 +129,8 @@
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
 
-    .slot::before {
-      content: attr(data-allowed);
+    .car-slot::before {
+      content: attr(data-color);
       position: absolute;
       bottom: -25px;
       left: 50%;
@@ -156,33 +142,99 @@
       white-space: nowrap;
     }
 
-    .slot[data-filled="true"] {
+    .car-slot[data-filled="true"] {
       border-style: solid;
-      border-color: #0088cc;
-      background: rgba(0, 136, 204, 0.2);
-      box-shadow: 0 0 20px rgba(0, 136, 204, 0.5);
-    }
-
-    .slot.drag-over {
       border-color: #2ecc71;
-      background: rgba(46, 204, 113, 0.2);
-      transform: scale(1.1);
+      background: rgba(46, 204, 113, 0.1);
+      box-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
     }
 
-    .slot.selected {
+    .car-slot.available {
       border-color: #f1c40f;
-      box-shadow: 0 0 30px rgba(241, 196, 15, 0.8);
+      background: rgba(241, 196, 15, 0.1);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(241, 196, 15, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0); }
+    }
+
+    /* Машина */
+    .car {
+      position: relative;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .car img {
+      width: 300px;
+      filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.5));
+      transition: all 0.3s;
+    }
+
+    /* Инвентарь */
+    .inventory {
+      grid-column: 1 / -1;
+      margin-top: 30px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 25px;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .inventory h3 {
+      color: white;
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.8;
+    }
+
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      gap: 10px;
+    }
+
+    .inventory-slot {
+      aspect-ratio: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .inventory-slot:hover {
+      background: rgba(255, 255, 255, 0.1);
       transform: scale(1.05);
+    }
+
+    .inventory-slot.selected {
+      border-color: #f1c40f;
+      box-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
     }
 
     /* Кубы */
     .cube {
-      width: 70px;
-      height: 70px;
-      border-radius: 18px;
+      width: 90%;
+      height: 90%;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
       position: relative;
       overflow: hidden;
     }
@@ -198,11 +250,6 @@
       transition: left 0.5s;
     }
 
-    .cube:hover {
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    }
-
     .cube:hover::after {
       left: 100%;
     }
@@ -213,7 +260,7 @@
       z-index: 100;
     }
 
-    /* Цвета кубов с градиентами */
+    /* Цвета кубов */
     .red { background: linear-gradient(135deg, #e74c3c, #c0392b); }
     .green { background: linear-gradient(135deg, #27ae60, #229954); }
     .blue { background: linear-gradient(135deg, #3498db, #2980b9); }
@@ -221,52 +268,7 @@
     .orange { background: linear-gradient(135deg, #e67e22, #ca6f1e); }
     .purple { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
 
-    /* Машина */
-    .car {
-      position: relative;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .car img {
-      width: 320px;
-      filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.5));
-      transition: all 0.3s;
-    }
-
-    .car:hover img {
-      transform: scale(1.05);
-      filter: drop-shadow(0 30px 40px rgba(0, 136, 204, 0.6));
-    }
-
-    /* Инвентарь */
-    .inventory {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 15px;
-      margin-top: 40px;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 25px;
-      border-radius: 40px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .inventory .slot {
-      width: 100%;
-      height: 80px;
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .inventory .slot::before {
-      display: none;
-    }
-
-    /* Уведомления */
+    /* Уведомление */
     .notification {
       position: fixed;
       top: 20px;
@@ -280,14 +282,13 @@
       transition: transform 0.3s;
       z-index: 1000;
       box-shadow: 0 10px 30px rgba(46, 204, 113, 0.4);
-      border: 2px solid rgba(255, 255, 255, 0.2);
     }
 
     .notification.show {
       transform: translateX(0);
     }
 
-    /* Кнопка возврата в меню */
+    /* Кнопка назад */
     .back-btn {
       position: fixed;
       bottom: 30px;
@@ -295,14 +296,13 @@
       background: #0088cc;
       color: white;
       border: none;
-      padding: 15px 30px;
+      padding: 12px 25px;
       border-radius: 50px;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s;
       z-index: 100;
       box-shadow: 0 5px 20px rgba(0, 136, 204, 0.4);
-      border: 2px solid rgba(255, 255, 255, 0.2);
     }
 
     .back-btn:hover {
@@ -317,20 +317,15 @@
         gap: 40px;
       }
       
-      .slots {
+      .car-slots {
         flex-direction: row;
         justify-content: center;
-      }
-      
-      .inventory {
-        grid-template-columns: repeat(3, 1fr);
       }
     }
   </style>
 </head>
 <body>
 
-<!-- Уведомление -->
 <div id="notification" class="notification">✨ +10 монет</div>
 
 <nav>
@@ -345,11 +340,11 @@
 </div>
 
 <main class="main-grid">
-  <!-- Левые слоты -->
-  <section class="slots slots--left">
-    <div class="slot" data-allowed="red" data-filled="false" tabindex="0"></div>
-    <div class="slot" data-allowed="green" data-filled="false" tabindex="0"></div>
-    <div class="slot" data-allowed="blue" data-filled="false" tabindex="0"></div>
+  <!-- Левые слоты машины -->
+  <section class="car-slots">
+    <div class="car-slot" data-color="red" data-filled="false"></div>
+    <div class="car-slot" data-color="green" data-filled="false"></div>
+    <div class="car-slot" data-color="blue" data-filled="false"></div>
   </section>
 
   <!-- Машина -->
@@ -358,18 +353,20 @@
          alt="ВАЗ-2107" />
   </figure>
 
-  <!-- Правые слоты -->
-  <section class="slots slots--right">
-    <div class="slot" data-allowed="yellow" data-filled="false" tabindex="0"></div>
-    <div class="slot" data-allowed="orange" data-filled="false" tabindex="0"></div>
-    <div class="slot" data-allowed="purple" data-filled="false" tabindex="0"></div>
+  <!-- Правые слоты машины -->
+  <section class="car-slots">
+    <div class="car-slot" data-color="yellow" data-filled="false"></div>
+    <div class="car-slot" data-color="orange" data-filled="false"></div>
+    <div class="car-slot" data-color="purple" data-filled="false"></div>
   </section>
 
-  <!-- Инвентарь -->
-  <section id="inventory" class="inventory"></section>
+  <!-- Инвентарь 5x6 -->
+  <section class="inventory">
+    <h3>📦 Инвентарь (5x6)</h3>
+    <div id="inventoryGrid" class="inventory-grid"></div>
+  </section>
 </main>
 
-<!-- Кнопка назад -->
 <button class="back-btn" onclick="window.location.href='menu.html'">← В меню</button>
 
 <script>
@@ -402,23 +399,25 @@
     setTimeout(() => notif.classList.remove('show'), 2000);
   }
 
-  // ========== ИНИЦИАЛИЗАЦИЯ ==========
+  // ========== СОЗДАНИЕ ИНВЕНТАРЯ 5x6 ==========
   const COLORS = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
-  const inventory = document.getElementById('inventory');
-
-  // Создаём ячейки инвентаря
+  const inventoryGrid = document.getElementById('inventoryGrid');
+  
+  // Создаем 30 слотов (5x6)
   for (let i = 0; i < 30; i++) {
     const slot = document.createElement('div');
-    slot.className = 'slot';
+    slot.className = 'inventory-slot';
+    slot.dataset.index = i;
     slot.dataset.filled = 'false';
-    inventory.appendChild(slot);
+    inventoryGrid.appendChild(slot);
   }
 
-  // Добавляем кубы
-  COLORS.forEach((color, i) => {
+  // Заполняем первые 6 слотов кубами (по одному каждого цвета)
+  COLORS.forEach((color, index) => {
+    const slot = inventoryGrid.children[index];
     const cube = createCube(color);
-    inventory.children[i].appendChild(cube);
-    inventory.children[i].dataset.filled = 'true';
+    slot.appendChild(cube);
+    slot.dataset.filled = 'true';
   });
 
   function createCube(color) {
@@ -432,19 +431,20 @@
   document.addEventListener('click', (e) => {
     const cube = e.target.closest('.cube');
     
-    // Снимаем выделение со всех
+    // Снимаем выделение со всего
     document.querySelectorAll('.cube').forEach(c => c.classList.remove('selected'));
-    document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+    document.querySelectorAll('.inventory-slot').forEach(s => s.classList.remove('selected'));
+    document.querySelectorAll('.car-slot').forEach(s => s.classList.remove('available'));
     
     if (cube) {
       // Выделяем куб
       cube.classList.add('selected');
+      cube.closest('.inventory-slot').classList.add('selected');
       selectedCube = cube;
       
-      // Подсвечиваем доступные слоты
-      document.querySelectorAll('.slot').forEach(slot => {
-        if (slot.dataset.filled === 'false' && 
-            (!slot.dataset.allowed || slot.dataset.allowed === cube.dataset.color)) {
+      // Подсвечиваем доступные слоты на машине (только подходящего цвета)
+      document.querySelectorAll('.car-slot').forEach(slot => {
+        if (slot.dataset.filled === 'false' && slot.dataset.color === cube.dataset.color) {
           slot.classList.add('available');
         }
       });
@@ -455,82 +455,95 @@
 
   // ========== ПЕРЕМЕЩЕНИЕ ПО КЛИКУ ==========
   document.addEventListener('click', (e) => {
-    const slot = e.target.closest('.slot');
-    if (!slot || !selectedCube) return;
+    const carSlot = e.target.closest('.car-slot');
+    if (!carSlot || !selectedCube) return;
     
-    // Проверяем можно ли поставить
-    if (slot.dataset.filled === 'true') return;
-    if (slot.dataset.allowed && slot.dataset.allowed !== selectedCube.dataset.color) return;
+    // Проверяем подходит ли цвет
+    if (carSlot.dataset.color !== selectedCube.dataset.color) {
+      showNotification('❌ Неподходящий цвет!');
+      return;
+    }
     
-    // Перемещаем куб
-    const oldSlot = selectedCube.parentElement;
-    oldSlot.dataset.filled = 'false';
+    // Проверяем свободен ли слот
+    if (carSlot.dataset.filled === 'true') {
+      showNotification('❌ Слот уже занят!');
+      return;
+    }
     
-    slot.appendChild(selectedCube);
-    slot.dataset.filled = 'true';
+    // Перемещаем куб из инвентаря на машину
+    const inventorySlot = selectedCube.closest('.inventory-slot');
+    inventorySlot.removeChild(selectedCube);
+    inventorySlot.dataset.filled = 'false';
+    
+    carSlot.appendChild(selectedCube);
+    carSlot.dataset.filled = 'true';
     
     // Снимаем выделение
     selectedCube.classList.remove('selected');
-    slot.classList.remove('selected');
+    inventorySlot.classList.remove('selected');
+    carSlot.classList.remove('available');
     
     // Добавляем монеты
     addCoins(10);
     
-    // Проверяем все ли слоты заполнены
+    // Проверяем все ли слоты машины заполнены
     checkAllSlotsFilled();
+    
+    selectedCube = null;
   });
 
-  // ========== DRAG & DROP ==========
-  document.addEventListener('dragstart', (e) => {
-    if (!e.target.classList.contains('cube')) return;
-    selectedCube = e.target;
-    e.dataTransfer.setData('text/plain', selectedCube.dataset.color);
-    setTimeout(() => selectedCube.style.opacity = '0.5', 0);
-  });
-
-  document.addEventListener('dragend', (e) => {
-    if (selectedCube) {
-      selectedCube.style.opacity = '1';
+  // ========== ПЕРЕМЕЩЕНИЕ ПО ИНВЕНТАРЮ ==========
+  document.addEventListener('click', (e) => {
+    const inventorySlot = e.target.closest('.inventory-slot');
+    if (!inventorySlot || !selectedCube) return;
+    
+    // Не перемещаем в тот же слот
+    if (inventorySlot === selectedCube.closest('.inventory-slot')) return;
+    
+    // Если слот пустой
+    if (inventorySlot.dataset.filled === 'false') {
+      const oldSlot = selectedCube.closest('.inventory-slot');
+      
+      // Перемещаем куб
+      oldSlot.removeChild(selectedCube);
+      oldSlot.dataset.filled = 'false';
+      
+      inventorySlot.appendChild(selectedCube);
+      inventorySlot.dataset.filled = 'true';
+      
+      // Снимаем выделение
+      selectedCube.classList.remove('selected');
+      oldSlot.classList.remove('selected');
+      
+      selectedCube = null;
     }
-    document.querySelectorAll('.slot').forEach(s => s.classList.remove('drag-over'));
-  });
-
-  document.addEventListener('dragover', (e) => {
-    const slot = e.target.closest('.slot');
-    if (!slot || slot.dataset.filled === 'true') return;
-    
-    if (selectedCube && (!slot.dataset.allowed || slot.dataset.allowed === selectedCube.dataset.color)) {
-      e.preventDefault();
-      slot.classList.add('drag-over');
+    // Если в слоте есть куб - меняем их местами
+    else {
+      const targetCube = inventorySlot.querySelector('.cube');
+      const sourceSlot = selectedCube.closest('.inventory-slot');
+      
+      if (targetCube && targetCube !== selectedCube) {
+        // Меняем кубы местами
+        sourceSlot.removeChild(selectedCube);
+        inventorySlot.removeChild(targetCube);
+        
+        sourceSlot.appendChild(targetCube);
+        inventorySlot.appendChild(selectedCube);
+        
+        // Снимаем выделение
+        selectedCube.classList.remove('selected');
+        targetCube.classList.remove('selected');
+        sourceSlot.classList.remove('selected');
+        inventorySlot.classList.remove('selected');
+        
+        selectedCube = null;
+      }
     }
   });
 
-  document.addEventListener('dragleave', (e) => {
-    e.target.closest('.slot')?.classList.remove('drag-over');
-  });
-
-  document.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const slot = e.target.closest('.slot');
-    if (!slot || !selectedCube || slot.dataset.filled === 'true') return;
-    
-    if (slot.dataset.allowed && slot.dataset.allowed !== selectedCube.dataset.color) return;
-    
-    const oldSlot = selectedCube.parentElement;
-    oldSlot.dataset.filled = 'false';
-    
-    slot.appendChild(selectedCube);
-    slot.dataset.filled = 'true';
-    slot.classList.remove('drag-over');
-    
-    selectedCube.style.opacity = '1';
-    addCoins(10);
-    checkAllSlotsFilled();
-  });
-
-  // ========== ПРОВЕРКА ЗАПОЛНЕНИЯ ==========
+  // ========== ПРОВЕРКА ЗАПОЛНЕНИЯ МАШИНЫ ==========
   function checkAllSlotsFilled() {
-    const carSlots = document.querySelectorAll('.slots .slot');
+    const carSlots = document.querySelectorAll('.car-slot');
     const allFilled = Array.from(carSlots).every(slot => slot.dataset.filled === 'true');
     
     if (allFilled) {
@@ -548,6 +561,8 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && selectedCube) {
       selectedCube.classList.remove('selected');
+      selectedCube.closest('.inventory-slot').classList.remove('selected');
+      document.querySelectorAll('.car-slot').forEach(s => s.classList.remove('available'));
       selectedCube = null;
     }
   });
@@ -557,4 +572,4 @@
 </script>
 
 </body>
-  </html>
+</html>
