@@ -136,6 +136,34 @@
   <a href="shop.html">Магазин</a>
 </nav>
 
+// Внизу, перед закрывающим тегом </body>, добавьте следующий скрипт для счётчика монет
+
+<script>
+  const COINS_KEY = 'playerCoins';
+  const coinsDisplay = document.getElementById('coinsDisplay');
+
+  function getCoins() {
+    return parseInt(localStorage.getItem(COINS_KEY)) || 0;
+  }
+
+  function setCoins(amount) {
+    localStorage.setItem(COINS_KEY, amount);
+    updateCoinsDisplay();
+  }
+
+  function updateCoinsDisplay() {
+    coinsDisplay.textContent = `Монеты: ${getCoins()}`;
+  }
+
+  // При загрузке страницы отображаем текущий баланс монет
+  document.addEventListener('DOMContentLoaded', updateCoinsDisplay);
+
+  // Пример функции для добавления монет (можно вызывать при покупке, наградах и т.п.)
+  function addCoins(amount) {
+    const current = getCoins();
+    setCoins(current + amount);
+  }
+
 <div class="main-container">
 
   <div class="slot-group" aria-label="Левые слоты">
@@ -278,33 +306,7 @@
   }).observe(inventory, { childList: true, subtree: true });
 
 
-// Внизу, перед закрывающим тегом </body>, добавьте следующий скрипт для счётчика монет
 
-<script>
-  const COINS_KEY = 'playerCoins';
-  const coinsDisplay = document.getElementById('coinsDisplay');
-
-  function getCoins() {
-    return parseInt(localStorage.getItem(COINS_KEY)) || 0;
-  }
-
-  function setCoins(amount) {
-    localStorage.setItem(COINS_KEY, amount);
-    updateCoinsDisplay();
-  }
-
-  function updateCoinsDisplay() {
-    coinsDisplay.textContent = `Монеты: ${getCoins()}`;
-  }
-
-  // При загрузке страницы отображаем текущий баланс монет
-  document.addEventListener('DOMContentLoaded', updateCoinsDisplay);
-
-  // Пример функции для добавления монет (можно вызывать при покупке, наградах и т.п.)
-  function addCoins(amount) {
-    const current = getCoins();
-    setCoins(current + amount);
-  }
 </script>
 </body>
-      </html>
+</html>
