@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Гонка</title>
+<title>Гонка с монетами</title>
 <style>
   body {
     margin: 0;
@@ -17,10 +17,19 @@
   }
   header {
     background: #111;
-    padding: 15px;
-    text-align: center;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 24px;
     font-weight: bold;
+  }
+  .coins-display {
+    font-size: 20px;
+    background: #27ae60;
+    padding: 5px 12px;
+    border-radius: 8px;
+    user-select: none;
   }
   nav {
     background: #333;
@@ -106,7 +115,10 @@
 </head>
 <body>
 
-<header>Гонка</header>
+<header>
+  Гонка
+  <div class="coins-display" aria-live="polite" id="coinsDisplay">Монеты: 0</div>
+</header>
 
 <nav aria-label="Навигация по сайту">
   <a href="menu.html">Меню</a>
@@ -117,14 +129,15 @@
 
 <main>
   <div class="race-track" aria-label="Трасса гонки">
+    <!-- Машина игрока — номер 2 -->
     <div class="lane" data-lane="1">
       <div class="car" id="car1" title="Машина 1">
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/VAZ_2110_front_20100615.jpg/120px-VAZ_2110_front_20100615.jpg" alt="Машина 1" />
       </div>
     </div>
     <div class="lane" data-lane="2">
-      <div class="car" id="car2" title="Машина 2">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Toyota_Corolla_E170_IMG_0033.jpg/120px-Toyota_Corolla_E170_IMG_0033.jpg" alt="Машина 2" />
+      <div class="car" id="car2" title="Ваша машина (№2)">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Toyota_Corolla_E170_IMG_0033.jpg/120px-Toyota_Corolla_E170_IMG_0033.jpg" alt="Ваша машина (№2)" />
       </div>
     </div>
     <div class="lane" data-lane="3">
@@ -142,9 +155,12 @@
 </main>
 
 <script>
+  const PLAYER_CAR_NUMBER = 2; // номер игрока (lane 2)
+  const COINS_KEY = 'playerCoins';
+
   const cars = [
     document.getElementById('car1'),
-    document.getElementById('car2'),
+    document.getElementById('car2'), // игрок
     document.getElementById('car3')
   ];
   const startBtn = document.getElementById('startRaceBtn');
@@ -154,10 +170,28 @@
   let positions = [0, 0, 0];
   let raceInterval = null;
   let raceInProgress = false;
+  const coinsDisplay = document.getElementById('coinsDisplay');
+
+  // Получить монеты из localStorage или 0
+  function getCoins() {
+    return parseInt(localStorage.getItem(COINS_KEY)) || 0;
+  }
+
+  // Сохранить монеты
+  function setCoins(value) {
+    localStorage.setItem(COINS_KEY, value);
+    updateCoinsDisplay();
+  }
+
+  // Обновить отображение монет
+  function updateCoinsDisplay() {
+    const coins = getCoins();
+    coinsDisplay.textContent = `Монеты: ${coins}`;
+  }
 
   function resetPositions() {
     positions = [0, 0, 0];
-    cars.forEach(car => car.style.left = '0px');
+    cars.forEach(car => (car.style.left = '0px'));
     statusEl.textContent = '';
   }
 
@@ -182,9 +216,18 @@
       const winnerIndex = positions.findIndex(pos => pos >= trackWidth - carWidth);
       if (winnerIndex !== -1) {
         clearInterval(raceInterval);
-        statusEl.textContent = `Победитель: Машина ${winnerIndex + 1} 🎉`;
         raceInProgress = false;
-        // Через 3 секунды подготовим гонку для нового старта
+        const winnerNum = winnerIndex + 1;
+        statusEl.textContent = `Победитель: Машина ${winnerNum} 🎉`;
+
+        if (winnerNum === PLAYER_CAR_NUMBER) {
+          let coins = getCoins();
+          coins += 1;
+          setCoins(coins);
+          statusEl.textContent += ` Вы получили 1 монету! 🪙`;
+        }
+
+        // Через 3 секунды сброс и активация кнопки
         setTimeout(() => {
           resetPositions();
           startBtn.disabled = false;
@@ -196,8 +239,9 @@
   startBtn.addEventListener('click', startRace);
 
   // Инициализация
+  updateCoinsDisplay();
   resetPositions();
 </script>
 
 </body>
-</html>
+      </html>
