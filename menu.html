@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Кирюха Racing</title>
+    <title>Кирюха Racing - Меню</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -25,7 +25,6 @@
             color: white;
         }
 
-        /* Анимированный фон */
         .cyber-bg {
             position: fixed;
             top: 0;
@@ -56,7 +55,6 @@
             100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
         }
 
-        /* Шапка с пользователем */
         .header {
             position: fixed;
             top: 0;
@@ -95,9 +93,6 @@
         }
 
         .coins-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
             background: linear-gradient(135deg, #f0f, #0ff);
             padding: 8px 16px;
             border-radius: 40px;
@@ -107,7 +102,6 @@
             font-size: clamp(16px, 5vw, 20px);
         }
 
-        /* Заголовок */
         .title {
             text-align: center;
             margin: 80px 0 30px 0;
@@ -131,7 +125,6 @@
             50% { text-shadow: 0 0 60px #0ff; }
         }
 
-        /* Сетка меню */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -187,6 +180,7 @@
         .menu-item.race { border-color: #f0f; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3); }
         .menu-item.rating { border-color: #0f0; box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
         .menu-item.shop { border-color: #ff0; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3); }
+        .menu-item.bonus { border-color: #ffaa00; box-shadow: 0 0 20px #ffaa00; }
 
         .menu-emoji {
             font-size: clamp(32px, 10vw, 48px);
@@ -207,7 +201,6 @@
             letter-spacing: 1px;
         }
 
-        /* Кнопка назад */
         .back-btn {
             position: fixed;
             bottom: 20px;
@@ -232,7 +225,6 @@
             transform: scale(0.9);
         }
 
-        /* Загрузчик */
         .loader-container {
             position: fixed;
             top: 0;
@@ -262,7 +254,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Характеристики внизу */
         .stats-preview {
             position: fixed;
             bottom: 20px;
@@ -284,12 +275,12 @@
             box-shadow: 0 0 10px currentColor;
         }
 
-        .stat-dot.red { background: #ff4444; color: #ff4444; }
-        .stat-dot.green { background: #44ff44; color: #44ff44; }
-        .stat-dot.blue { background: #4444ff; color: #4444ff; }
-        .stat-dot.yellow { background: #ffff44; color: #ffff44; }
-        .stat-dot.orange { background: #ff8844; color: #ff8844; }
-        .stat-dot.purple { background: #ff44ff; color: #ff44ff; }
+        .stat-dot.red { background: #ff4444; }
+        .stat-dot.green { background: #44ff44; }
+        .stat-dot.blue { background: #4444ff; }
+        .stat-dot.yellow { background: #ffff44; }
+        .stat-dot.orange { background: #ff8844; }
+        .stat-dot.purple { background: #ff44ff; }
     </style>
 </head>
 <body>
@@ -302,9 +293,7 @@
             <img id="userAvatar" src="" alt="avatar">
             <span id="userName">Загрузка...</span>
         </div>
-        <div class="coins-badge" id="coinsDisplay">
-            1000 🪙
-        </div>
+        <div class="coins-badge" id="coinsDisplay">1000 🪙</div>
     </div>
 
     <div class="title">
@@ -319,6 +308,10 @@
         <a href="race.html" class="menu-item race">
             <div class="menu-emoji">🏁</div>
             <h2>ГОНКА</h2>
+        </a>
+        <a href="bonus.html" class="menu-item bonus">
+            <div class="menu-emoji">🎁</div>
+            <h2>БОНУСЫ</h2>
         </a>
         <a href="rating.html" class="menu-item rating">
             <div class="menu-emoji">📊</div>
@@ -368,17 +361,15 @@
             document.getElementById('coinsDisplay').textContent = getCoins() + ' 🪙';
         }
 
-        // Загрузка характеристик из гаража
+        // Загрузка характеристик из гаража (подсветка точек)
         function loadCarPreview() {
-            const garageData = JSON.parse(localStorage.getItem('garageCubes')) || {
-                red: false, green: false, blue: false,
-                yellow: false, orange: false, purple: false
-            };
-            
+            const garageArray = JSON.parse(localStorage.getItem('garageCubes')) || [];
             const dots = document.querySelectorAll('.stat-dot');
+            const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
+            
             dots.forEach((dot, index) => {
-                const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
-                if (garageData[colors[index]]) {
+                // Проверяем, есть ли куб в соответствующем слоте (по индексу)
+                if (garageArray[index]) {
                     dot.style.opacity = '1';
                     dot.style.boxShadow = '0 0 20px currentColor';
                 } else {
@@ -399,11 +390,10 @@
         updateCoins();
         loadCarPreview();
 
-        // Обновление при фокусе
         window.addEventListener('focus', function() {
             updateCoins();
             loadCarPreview();
         });
     </script>
 </body>
-                         </html>
+</html>
