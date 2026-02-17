@@ -1,134 +1,409 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Кирюха Racing</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <style>
-        body{
-            background-image:url(https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%91%D0%B5%D0%B7%20%D0%BD%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F284_20260215224953.jpg);
-            background-size:cover;
-            background-position:center;
-            background-repeat:no-repeat;
-            color:#fff;
-            font-family:Arial,Helvetica,sans-serif;
-            height:100vh;
-            margin:0;padding:0;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* ----------  USER BADGE  ---------- */
-        .user-badge{
-            position:fixed;
-            top:12px; left:12px;
-            display:none; align-items:center;
-            gap:8px;
-            z-index:10000;              /* на 1 шаг выше лоадера */
-            background:#0006;
-            backdrop-filter:blur(4px);
-            padding:6px 12px;
-            border-radius:24px;
-            font-size:14px
-        }
-        .user-badge img{
-            width:32px; height:32px;
-            border-radius:50%; object-fit:cover
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a0f;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            position: relative;
+            color: white;
         }
 
-        /* ----------  LOADER  ---------- */
-        .loader-container{
-            position:fixed;
-            top:0; left:0; width:100%; height:100%;
-            z-index:9999;            /* loader всё-таки ниже бейджа */
-            background:#000c; display:flex;
-            justify-content:center; align-items:center
+        /* Анимированный фон */
+        .cyber-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%);
         }
-        .loader{
-            border:16px solid #f3f3f3;
-            border-top:16px solid #3498db;
-            border-radius:50%;
-            width:120px; height:120px;
-            animation:spin 2s linear infinite
-        }
-        @keyframes spin{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
 
-        /* ----------  NAV  ---------- */
-        nav ul{
-            list-style:none; display:flex;
-            gap:20px; padding:0; margin-top:20px;
-            justify-content:center
+        .cyber-grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(rgba(255, 0, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: min(30px, 5vw) min(30px, 5vw);
+            transform: perspective(500px) rotateX(60deg);
+            animation: gridMove 20s linear infinite;
+            top: -50%;
+            left: -50%;
         }
-        nav a{
-            color:#fff; text-decoration:none;
-            padding:10px 20px; border:1px solid #fff;
-            border-radius:5px; transition:.3s
+
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
         }
-        nav a:hover{background:#fff2}
+
+        /* Шапка с пользователем */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #f0f;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+            z-index: 100;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-badge img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 20px #0ff;
+        }
+
+        .user-badge span {
+            font-weight: bold;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+            font-size: clamp(14px, 4vw, 16px);
+        }
+
+        .coins-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #f0f, #0ff);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #000;
+            box-shadow: 0 0 30px #f0f;
+            font-size: clamp(16px, 5vw, 20px);
+        }
+
+        /* Заголовок */
+        .title {
+            text-align: center;
+            margin: 80px 0 30px 0;
+            width: 100%;
+        }
+
+        .title h1 {
+            font-size: clamp(32px, 10vw, 64px);
+            font-weight: 900;
+            text-transform: uppercase;
+            color: transparent;
+            -webkit-text-stroke: 2px #f0f;
+            text-shadow: 0 0 30px #f0f;
+            letter-spacing: clamp(2px, 2vw, 8px);
+            animation: titlePulse 2s infinite;
+            line-height: 1.2;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { text-shadow: 0 0 30px #f0f; }
+            50% { text-shadow: 0 0 60px #0ff; }
+        }
+
+        /* Сетка меню */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(12px, 3vw, 20px);
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .menu-item {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid;
+            border-radius: clamp(20px, 5vw, 30px);
+            padding: clamp(15px, 4vw, 25px) clamp(10px, 3vw, 15px);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 6s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            20% { transform: translateX(100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .menu-item:active {
+            transform: scale(0.95);
+        }
+
+        .menu-item.garage { border-color: #0ff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); }
+        .menu-item.race { border-color: #f0f; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3); }
+        .menu-item.rating { border-color: #0f0; box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
+        .menu-item.shop { border-color: #ff0; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3); }
+
+        .menu-emoji {
+            font-size: clamp(32px, 10vw, 48px);
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 10px currentColor);
+            animation: float 3s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .menu-item h2 {
+            font-size: clamp(14px, 4vw, 20px);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Кнопка назад */
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: transparent;
+            border: 2px solid #f0f;
+            color: #f0f;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            backdrop-filter: blur(10px);
+            font-size: clamp(12px, 3vw, 14px);
+            z-index: 100;
+        }
+
+        .back-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Загрузчик */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+
+        .loader {
+            width: min(120px, 30vw);
+            height: min(120px, 30vw);
+            border: 4px solid #f0f;
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 50px #f0f;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Характеристики внизу */
+        .stats-preview {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 40px;
+            border: 1px solid #0ff;
+            z-index: 100;
+        }
+
+        .stat-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .stat-dot.red { background: #ff4444; color: #ff4444; }
+        .stat-dot.green { background: #44ff44; color: #44ff44; }
+        .stat-dot.blue { background: #4444ff; color: #4444ff; }
+        .stat-dot.yellow { background: #ffff44; color: #ffff44; }
+        .stat-dot.orange { background: #ff8844; color: #ff8844; }
+        .stat-dot.purple { background: #ff44ff; color: #ff44ff; }
     </style>
 </head>
 <body>
+    <div class="cyber-bg">
+        <div class="cyber-grid"></div>
+    </div>
 
-<!-- Лоадер -->
-<div id="loader-container" class="loader-container">
-    <div class="loader"></div>
-</div>
+    <div class="header">
+        <div class="user-badge" id="userBadge">
+            <img id="userAvatar" src="" alt="avatar">
+            <span id="userName">Загрузка...</span>
+        </div>
+        <div class="coins-badge" id="coinsDisplay">
+            1000 🪙
+        </div>
+    </div>
 
-<!-- Основной контент -->
-<section id="content-section" style="display:none">
-    <h1>Кирюха спи</h1>
-    <nav>
-        <ul>
-            <li><a href="menu.html">Меню</a></li>
-            <li><a href="shop.html">Магазин</a></li>
-            <li><a href="garage.html">Гараж</a></li>
-            <li><a href="race.html">Заезд</a></li>
-            <li><a href="rating.html">Рейтинг</a></li>
-        </ul>
-    </nav>
-</section>
+    <div class="title">
+        <h1>КИРЮХА RACING</h1>
+    </div>
 
-<!-- Бейдж -->
-<div id="userBadge" class="user-badge">
-    <img id="userAvatar" src="" alt="">
-    <span id="userName"></span>
-</div>
+    <div class="menu-grid">
+        <a href="garage.html" class="menu-item garage">
+            <div class="menu-emoji">🔧</div>
+            <h2>ГАРАЖ</h2>
+        </a>
+        <a href="race.html" class="menu-item race">
+            <div class="menu-emoji">🏁</div>
+            <h2>ГОНКА</h2>
+        </a>
+        <a href="rating.html" class="menu-item rating">
+            <div class="menu-emoji">📊</div>
+            <h2>РЕЙТИНГ</h2>
+        </a>
+        <a href="shop.html" class="menu-item shop">
+            <div class="menu-emoji">🛒</div>
+            <h2>МАГАЗИН</h2>
+        </a>
+    </div>
 
-<script>
-/* ----------  USER BADGE  ---------- */
-let badgeShown = false;
-function showUserBadge(){
-    if(badgeShown) return;
-    badgeShown = true;
+    <!-- Превью характеристик -->
+    <div class="stats-preview" id="statsPreview">
+        <div class="stat-dot red" title="Скорость"></div>
+        <div class="stat-dot green" title="Ускорение"></div>
+        <div class="stat-dot blue" title="Макс скорость"></div>
+        <div class="stat-dot yellow" title="Удача"></div>
+        <div class="stat-dot orange" title="Турбо"></div>
+        <div class="stat-dot purple" title="Защита"></div>
+    </div>
 
-    const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-    if(!user) return;
+    <a href="#" class="back-btn" onclick="window.Telegram?.WebApp?.close()">✖ ВЫХОД</a>
 
-    const badge  = document.getElementById('userBadge');
-    const avatar = document.getElementById('userAvatar');
-    const name   = document.getElementById('userName');
+    <div class="loader-container" id="loader">
+        <div class="loader"></div>
+    </div>
 
-    avatar.src = user.photo_url || 'https://i.ibb.co/3sN2YMc/default-ava.png';
-    name.textContent = user.first_name || user.username || 'Игрок';
-    badge.style.display = 'flex';
-}
-
-/* ----------  LOADER & INIT  ---------- */
-function startLoader(){
-    setTimeout(() => {
-        document.getElementById('loader-container').style.display = 'none';
-        document.getElementById('content-section').style.display = 'block';
-
-        // готовим Telegram
-        if(window.Telegram?.WebApp){
+    <script>
+        // Telegram Integration
+        if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.ready();
-            setTimeout(showUserBadge, 150); // даём время на initDataUnsafe
+            window.Telegram.WebApp.expand();
+            
+            const user = window.Telegram.WebApp.initDataUnsafe?.user;
+            if (user) {
+                document.getElementById('userAvatar').src = user.photo_url || 'https://ui-avatars.com/api/?name=' + (user.first_name || 'Player') + '&background=ff00ff';
+                document.getElementById('userName').textContent = user.first_name || 'Игрок';
+            }
         }
-    }, 2000);
-}
 
-window.startLoader();   // вызываем сразу
-</script>
+        // Монеты
+        function getCoins() {
+            return parseInt(localStorage.getItem('playerCoins')) || 1000;
+        }
 
+        function updateCoins() {
+            document.getElementById('coinsDisplay').textContent = getCoins() + ' 🪙';
+        }
+
+        // Загрузка характеристик из гаража
+        function loadCarPreview() {
+            const garageData = JSON.parse(localStorage.getItem('garageCubes')) || {
+                red: false, green: false, blue: false,
+                yellow: false, orange: false, purple: false
+            };
+            
+            const dots = document.querySelectorAll('.stat-dot');
+            dots.forEach((dot, index) => {
+                const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
+                if (garageData[colors[index]]) {
+                    dot.style.opacity = '1';
+                    dot.style.boxShadow = '0 0 20px currentColor';
+                } else {
+                    dot.style.opacity = '0.3';
+                    dot.style.boxShadow = 'none';
+                }
+            });
+        }
+
+        // Загрузчик
+        setTimeout(() => {
+            document.getElementById('loader').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+            }, 500);
+        }, 1000);
+
+        updateCoins();
+        loadCarPreview();
+
+        // Обновление при фокусе
+        window.addEventListener('focus', function() {
+            updateCoins();
+            loadCarPreview();
+        });
+    </script>
 </body>
-</html>
+                         </html>
