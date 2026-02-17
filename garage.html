@@ -19,6 +19,15 @@
             overflow: hidden;
         }
 
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
         #ui-container {
             position: absolute;
             top: 0;
@@ -44,6 +53,9 @@
             clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
             pointer-events: auto;
             backdrop-filter: blur(5px);
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .back-to-menu {
@@ -70,13 +82,14 @@
             clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
         }
 
-        /* Навигационное меню (иконки) */
+        /* Навигационное меню */
         .nav-menu {
             display: flex;
             gap: 15px;
             justify-content: center;
-            margin: 10px 0;
+            margin: 10px auto;
             pointer-events: auto;
+            max-width: 1200px;
         }
 
         .nav-item {
@@ -105,29 +118,33 @@
             box-shadow: 0 0 20px #e10600;
         }
 
-        /* Панель характеристик */
+        /* Панель характеристик (слева) */
         .stats-panel {
-            background: rgba(0,0,0,0.8);
+            position: absolute;
+            top: 120px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
             border: 2px solid #e10600;
-            padding: 15px 25px;
+            padding: 15px;
             clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
             pointer-events: auto;
             backdrop-filter: blur(5px);
-            max-width: 800px;
-            margin: 10px auto;
-            width: fit-content;
+            width: 280px;
+            z-index: 20;
         }
 
         .stats-grid {
             display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .stat-item {
-            text-align: center;
-            min-width: 100px;
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e10600;
+            padding: 5px 0;
         }
 
         .stat-label {
@@ -137,36 +154,40 @@
         }
 
         .stat-value {
-            font-size: 28px;
+            font-size: 18px;
             font-weight: bold;
             color: white;
         }
 
-        /* Инвентарь */
+        /* Инвентарь (внизу по центру) */
         .inventory-panel {
-            background: rgba(0,0,0,0.8);
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
             border: 2px solid #e10600;
-            padding: 20px;
+            padding: 15px;
             clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
             pointer-events: auto;
             backdrop-filter: blur(5px);
-            width: 100%;
-            max-width: 700px;
-            margin: 0 auto;
+            width: 600px;
+            max-width: 90vw;
+            z-index: 20;
         }
 
         .inventory-title {
             color: #e10600;
             text-align: center;
-            margin-bottom: 15px;
-            font-size: 24px;
+            margin-bottom: 10px;
+            font-size: 20px;
             text-transform: uppercase;
         }
 
         .inventory-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
+            gap: 6px;
         }
 
         .inventory-slot {
@@ -293,18 +314,16 @@
 </head>
 <body>
     <!-- 3D сцена -->
-    <div id="canvas-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;"></div>
+    <div id="canvas-container"></div>
 
     <!-- Интерфейс поверх 3D -->
     <div id="ui-container">
-        <!-- Верхняя панель -->
+        <!-- Верхняя панель с навигацией и монетами -->
         <div>
             <div class="header">
                 <a href="index.html" class="back-to-menu">← МЕНЮ</a>
                 <div class="coins-header" id="coinsDisplay">1000 🪙</div>
             </div>
-
-            <!-- Навигационные иконки -->
             <div class="nav-menu">
                 <a href="garage.html" class="nav-item active">🔧</a>
                 <a href="race.html" class="nav-item">🏁</a>
@@ -313,43 +332,40 @@
             </div>
         </div>
 
-        <!-- Центральная часть с характеристиками и инвентарём -->
-        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px;">
-            <!-- Панель характеристик -->
-            <div class="stats-panel">
-                <div class="stats-grid" id="statsGrid">
-                    <div class="stat-item">
-                        <div class="stat-label">СКОРОСТЬ</div>
-                        <div class="stat-value" id="statSpeed">50</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">СЦЕПЛЕНИЕ</div>
-                        <div class="stat-value" id="statGrip">50</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">РАЗГОН</div>
-                        <div class="stat-value" id="statAccel">5</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">МАКС. СКОР</div>
-                        <div class="stat-value" id="statMaxSpeed">100</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">РЫВОК</div>
-                        <div class="stat-value" id="statLuck">0%</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">МОЩНОСТЬ</div>
-                        <div class="stat-value" id="statPower">100%</div>
-                    </div>
+        <!-- Панель характеристик (слева) -->
+        <div class="stats-panel">
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-row">
+                    <span class="stat-label">СКОРОСТЬ</span>
+                    <span class="stat-value" id="statSpeed">50</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">СЦЕПЛЕНИЕ</span>
+                    <span class="stat-value" id="statGrip">50</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">РАЗГОН</span>
+                    <span class="stat-value" id="statAccel">5</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">МАКС. СКОР</span>
+                    <span class="stat-value" id="statMaxSpeed">100</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">РЫВОК</span>
+                    <span class="stat-value" id="statLuck">0%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">МОЩНОСТЬ</span>
+                    <span class="stat-value" id="statPower">100%</span>
                 </div>
             </div>
+        </div>
 
-            <!-- Инвентарь 5x6 -->
-            <div class="inventory-panel">
-                <div class="inventory-title">📦 ИНВЕНТАРЬ</div>
-                <div id="inventoryGrid" class="inventory-grid"></div>
-            </div>
+        <!-- Инвентарь 5x6 (внизу по центру) -->
+        <div class="inventory-panel">
+            <div class="inventory-title">📦 ИНВЕНТАРЬ</div>
+            <div id="inventoryGrid" class="inventory-grid"></div>
         </div>
     </div>
 
@@ -372,7 +388,7 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js';
 
-        // --- 3D СЦЕНА (как в предыдущей версии) ---
+        // --- 3D СЦЕНА (без изменений) ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x111122);
@@ -674,4 +690,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
