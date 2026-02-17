@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>🚗 ГАРАЖ - Тюнинг</title>
   <style>
+    /* Стили полностью совпадают с предыдущей версией, их можно не менять */
     * {
       margin: 0;
       padding: 0;
@@ -396,14 +397,14 @@
 
     const AVAILABLE_COLORS = ['red', 'orange', 'yellow', 'blue', 'purple', 'green'];
 
-    // Бонусы от кубов (настройте под свои цвета)
+    // Бонусы от кубов (в соответствии с магазином)
     const bonuses = {
-      red:    { speed: 30, acceleration: 0, maxSpeed: 0 },
-      orange: { speed: 0, acceleration: 3, maxSpeed: 0 },
-      yellow: { speed: 0, acceleration: 0, maxSpeed: 30 },
-      blue:   { speed: 20, acceleration: 0, maxSpeed: 0 },
-      purple: { speed: 0, acceleration: 2, maxSpeed: 0 },
-      green:  { speed: 0, acceleration: 0, maxSpeed: 20 }
+      red:    { speed: 30, acceleration: 0, maxSpeed: 0 },   // скорость
+      green:  { speed: 0, acceleration: 3, maxSpeed: 0 },   // ускорение
+      blue:   { speed: 0, acceleration: 0, maxSpeed: 30 },  // макс скорость
+      yellow: { speed: 0, acceleration: 0, maxSpeed: 0 },   // удача (не влияет на числа)
+      orange: { speed: 0, acceleration: 0, maxSpeed: 0 },   // турбо
+      purple: { speed: 0, acceleration: 0, maxSpeed: 0 }    // защита
     };
 
     let selectedCube = null;
@@ -524,7 +525,7 @@
         }
       });
       updateCarParts();
-      updateStats(); // Обновляем характеристики
+      updateStats();
     }
 
     // ========== СОХРАНЕНИЕ МАШИНЫ ==========
@@ -541,7 +542,7 @@
       });
       localStorage.setItem(GARAGE_KEY, JSON.stringify(state));
       updateCarParts();
-      updateStats(); // Обновляем характеристики
+      updateStats();
     }
 
     // ========== ОБНОВЛЕНИЕ ДЕТАЛЕЙ МАШИНЫ ==========
@@ -613,7 +614,7 @@
       document.getElementById('statAccel').textContent = acceleration;
       document.getElementById('statMaxSpeed').textContent = maxSpeed;
 
-      // Сохраняем для гонки
+      // Сохраняем для гонки (все три числа + флаги особых свойств будут считаться из garageCubes в гонке)
       localStorage.setItem('playerCarStats', JSON.stringify({ speed, acceleration, maxSpeed }));
     }
 
@@ -782,10 +783,10 @@
       initInventory();
       loadSavedCar();
       updateCoinsDisplay();
-      updateStats(); // первичный расчёт
+      updateStats();
     }
 
     init();
   </script>
 </body>
-</html>
+  </html>
