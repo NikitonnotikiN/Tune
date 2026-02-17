@@ -152,7 +152,47 @@
   <!-- 5x6 ячеек -->
 </div>
 
+  
+// Код счётчика монет для добавления в гараж
+
+// 1. Добавьте в HTML в нужном месте (например, в шапке или рядом с инвентарём):
+<div id="coinsDisplay" style="font-weight:bold; font-size:18px; margin-bottom:10px;">Монеты: 0</div>
+
+<!-- Пример для вставки около инвентаря -->
+<div class="inventory">
+  <div id="coinsDisplay" style="font-weight:bold; font-size:18px; margin-bottom:10px;">Монеты: 0</div>
+  <ul>
+    <li>Покрышки: 3 шт.</li>
+    <li>Масло: 5 л.</li>
+    <li>Тормозные колодки: 2 комплекта</li>
+  </ul>
+</div>
+  
 <script>
+
+
+// 2. Добавьте этот скрипт в <script> после загрузки DOM (в конце body или после элемента coinsDisplay):
+
+<script>
+  // Ключ для хранения монет (должен совпадать с вашим ключом сохранения)
+  const COINS_KEY = 'playerCoins';
+
+  // Получаем элемент для отображения
+  const coinsDisplay = document.getElementById('coinsDisplay');
+
+  // Функция получения монет из localStorage (или 0 если нет)
+  function getCoins() {
+    return parseInt(localStorage.getItem(COINS_KEY)) || 0;
+  }
+
+  // Обновляем текст с монетами
+  function updateCoinsDisplay() {
+    coinsDisplay.textContent = `Монеты: ${getCoins()}`;
+  }
+
+  // Запускаем обновление при загрузке страницы
+  updateCoinsDisplay();
+  
   const colors = ['red','green','blue','yellow','orange','purple'];
   const inventory = document.getElementById('inventory');
 
