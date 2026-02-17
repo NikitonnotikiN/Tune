@@ -1,826 +1,915 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>🚗 ГАРАЖ - Тюнинг</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ton Racing – Гараж</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* ========== ГЛОБАЛЬНЫЕ СБРОСЫ И ШРИФТЫ ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #0a0a0f;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
-      position: relative;
-      color: white;
-    }
+        body {
+            font-family: 'Racing Sans One', 'Segoe UI', system-ui, sans-serif;
+            background: #0c0c0c;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            position: relative;
+            color: white;
+            background-image: radial-gradient(circle at 20% 30%, rgba(225, 6, 0, 0.15) 0%, transparent 30%),
+                              radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
+        }
 
-    .cyber-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background: radial-gradient(circle at 30% 50%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
-                  radial-gradient(circle at 70% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%);
-    }
+        /* Карбоновая текстура */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(45deg, rgba(30, 30, 30, 0.8) 0px, rgba(30, 30, 30, 0.8) 2px, 
+                              rgba(20, 20, 20, 0.8) 2px, rgba(20, 20, 20, 0.8) 4px);
+            z-index: -1;
+        }
 
-    .cyber-grid {
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      background-image: 
-        linear-gradient(rgba(255, 0, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
-      background-size: min(30px, 5vw) min(30px, 5vw);
-      transform: perspective(500px) rotateX(60deg);
-      animation: gridMove 20s linear infinite;
-      top: -50%;
-      left: -50%;
-    }
+        /* Шашечная полоса сверху */
+        .checkered-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(90deg, #fff, #fff 20px, #000 20px, #000 40px);
+            z-index: 1001;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
 
-    @keyframes gridMove {
-      0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-      100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
-    }
+        /* ========== ШАПКА ========== */
+        .header {
+            position: fixed;
+            top: 8px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid #e10600;
+            box-shadow: 0 0 30px rgba(225, 6, 0, 0.5);
+            z-index: 1000;
+        }
 
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
-      border-bottom: 2px solid #0ff;
-      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-      z-index: 100;
-    }
+        .back-to-menu {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 8px 16px;
+            border: 2px solid #e10600;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+            transition: all 0.2s;
+        }
 
-    .back-to-menu {
-      color: #0ff;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: clamp(14px, 4vw, 16px);
-      padding: 8px 16px;
-      border: 1px solid #0ff;
-      border-radius: 30px;
-      transition: all 0.3s;
-    }
+        .back-to-menu:active {
+            transform: translateY(2px);
+            background: #e10600;
+            color: black;
+        }
 
-    .back-to-menu:active {
-      background: #0ff;
-      color: #000;
-    }
+        .coins-header {
+            background: linear-gradient(135deg, #e10600, #ff4d4d);
+            padding: 8px 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+            box-shadow: 0 0 20px #e10600;
+        }
 
-    .coins-header {
-      background: linear-gradient(135deg, #f0f, #0ff);
-      padding: 8px 16px;
-      border-radius: 40px;
-      font-weight: bold;
-      color: #000;
-      font-size: clamp(14px, 4vw, 18px);
-    }
+        /* ========== ЗАГОЛОВОК ========== */
+        .title {
+            text-align: center;
+            margin: 80px 0 20px 0;
+            width: 100%;
+        }
 
-    .title {
-      text-align: center;
-      margin: 70px 0 20px 0;
-      width: 100%;
-    }
+        .title h1 {
+            font-size: 48px;
+            color: white;
+            text-shadow: 4px 4px 0 #e10600;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
 
-    .title h1 {
-      font-size: clamp(28px, 8vw, 48px);
-      font-weight: 900;
-      text-transform: uppercase;
-      color: transparent;
-      -webkit-text-stroke: 2px #0ff;
-      text-shadow: 0 0 30px #0ff;
-      letter-spacing: clamp(2px, 2vw, 4px);
-    }
+        /* ========== ПАНЕЛЬ ХАРАКТЕРИСТИК (ТАБЛО) ========== */
+        .stats-panel {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #e10600;
+            padding: 20px;
+            margin-bottom: 20px;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            backdrop-filter: blur(5px);
+        }
 
-    /* Панель характеристик */
-    .stats-panel {
-      width: 100%;
-      max-width: 800px;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(10px);
-      border: 2px solid #f0f;
-      border-radius: 30px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e10600;
+            transition: all 0.3s;
+        }
 
-    .stat-card {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 12px 8px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+        .stat-card.active {
+            border-color: #e10600;
+            box-shadow: 0 0 20px #e10600;
+        }
 
-    .stat-icon { font-size: 24px; margin-bottom: 5px; }
-    .stat-name { font-size: 12px; color: #f0f; text-transform: uppercase; }
-    .stat-value { font-size: 18px; font-weight: bold; color: #0ff; }
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
 
-    /* Основная сетка */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: clamp(10px, 3vw, 20px);
-      align-items: center;
-      width: 100%;
-      max-width: 1000px;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      padding: clamp(15px, 4vw, 25px);
-      border-radius: 40px;
-      border: 2px solid #f0f;
-      margin-bottom: 20px;
-    }
+        .stat-name {
+            font-size: 12px;
+            color: #e10600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-    /* Слоты машины (по 3 с каждой стороны) */
-    .car-slots {
-      display: flex;
-      flex-direction: column;
-      gap: clamp(8px, 2vw, 12px);
-    }
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+        }
 
-    .car-slot {
-      width: clamp(60px, 15vw, 80px);
-      height: clamp(60px, 15vw, 80px);
-      background: rgba(255, 255, 255, 0.1);
-      border: 3px dashed;
-      border-radius: clamp(15px, 4vw, 20px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-      cursor: pointer;
-    }
+        /* ========== ОСНОВНАЯ СЕТКА ========== */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #e10600;
+            padding: 20px;
+            margin-bottom: 20px;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+        }
 
-    /* Цветные рамки для категорий */
-    .car-slot[data-category="body"] { border-color: #ff4444; }
-    .car-slot[data-category="spoiler"] { border-color: #ff8844; }
-    .car-slot[data-category="hood"] { border-color: #ffff44; }
-    .car-slot[data-category="wheels"] { border-color: #4444ff; }
-    .car-slot[data-category="lights"] { border-color: #ff44ff; }
-    .car-slot[data-category="exhaust"] { border-color: #44ff44; }
+        /* Слоты машины (по 3 с каждой стороны) */
+        .car-slots {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-    .car-slot[data-filled="true"] {
-      border-style: solid;
-      box-shadow: 0 0 30px currentColor;
-    }
+        .car-slot {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px dashed #e10600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+        }
 
-    .car-slot.available {
-      animation: pulse 1.5s infinite;
-    }
+        .car-slot[data-filled="true"] {
+            border-style: solid;
+            box-shadow: 0 0 30px #e10600;
+        }
 
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5); }
-      70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
-    }
+        .car-slot.available {
+            animation: pulse 1.5s infinite;
+        }
 
-    /* Контейнер машины с накладываемыми деталями */
-    .car-container {
-      position: relative;
-      display: inline-block;
-      max-width: 300px;
-      width: 100%;
-    }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 #e10600; }
+            70% { box-shadow: 0 0 30px 10px #e10600; }
+        }
 
-    .car-container img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
+        /* Контейнер машины */
+        .car-container {
+            position: relative;
+            display: inline-block;
+            max-width: 300px;
+            width: 100%;
+        }
 
-    .car-part {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: auto;
-      pointer-events: none;
-    }
+        .car-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
 
-    /* Инвентарь */
-    .inventory {
-      width: 100%;
-      max-width: 900px;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(10px);
-      border: 2px solid #0ff;
-      border-radius: 40px;
-      padding: 20px;
-    }
+        .car-part {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            pointer-events: none;
+        }
 
-    .inventory h2 {
-      color: #0ff;
-      text-align: center;
-      margin-bottom: 15px;
-      font-size: clamp(18px, 5vw, 24px);
-    }
+        /* ========== ИНВЕНТАРЬ ========== */
+        .inventory {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #e10600;
+            padding: 20px;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            backdrop-filter: blur(5px);
+            margin-bottom: 20px;
+        }
 
-    .inventory-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: clamp(5px, 2vw, 10px);
-    }
+        .inventory h2 {
+            color: #e10600;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
-    .inventory-slot {
-      aspect-ratio: 1;
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-radius: clamp(10px, 3vw, 15px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
 
-    .inventory-slot.selected {
-      border-color: #f0f;
-      box-shadow: 0 0 30px #f0f;
-    }
+        .inventory-slot {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #e10600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+            transition: all 0.2s;
+        }
 
-    /* Кубы */
-    .cube {
-      width: 85%;
-      height: 85%;
-      border-radius: clamp(8px, 2vw, 12px);
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-      position: relative;
-      overflow: hidden;
-    }
+        .inventory-slot.selected {
+            border-color: #ff0;
+            box-shadow: 0 0 30px #ff0;
+        }
 
-    .cube::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      transition: left 0.5s;
-    }
+        /* ========== КУБЫ ========== */
+        .cube {
+            width: 85%;
+            height: 85%;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+        }
 
-    .cube:active::after { left: 100%; }
-    .cube.selected { transform: scale(1.1); box-shadow: 0 0 30px currentColor; }
+        .cube.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px currentColor;
+        }
 
-    /* Стили для редких кубов */
-    .cube.rare {
-      position: relative;
-      box-shadow: 0 0 15px gold, 0 0 30px gold;
-      animation: rareGlow 2s infinite;
-    }
-    .cube.rare::before {
-      content: '⭐';
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      font-size: 16px;
-      filter: drop-shadow(0 0 5px gold);
-      z-index: 10;
-    }
-    @keyframes rareGlow {
-      0% { box-shadow: 0 0 15px gold; }
-      50% { box-shadow: 0 0 30px gold, 0 0 45px #ffaa00; }
-      100% { box-shadow: 0 0 15px gold; }
-    }
+        /* Редкие кубы */
+        .cube.rare {
+            box-shadow: 0 0 15px gold, 0 0 30px gold;
+            animation: rareGlow 2s infinite;
+            position: relative;
+        }
 
-    /* Цвета кубов */
-    .cube.red { background: linear-gradient(145deg, #ff4444, #cc0000); }
-    .cube.orange { background: linear-gradient(145deg, #ff8844, #cc4400); }
-    .cube.yellow { background: linear-gradient(145deg, #ffff44, #cccc00); }
-    .cube.blue { background: linear-gradient(145deg, #4444ff, #0000cc); }
-    .cube.purple { background: linear-gradient(145deg, #ff44ff, #cc00cc); }
-    .cube.green { background: linear-gradient(145deg, #44ff44, #00cc00); }
+        .cube.rare::before {
+            content: '⭐';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 16px;
+            filter: drop-shadow(0 0 5px gold);
+            z-index: 10;
+        }
 
-    .notification {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0ff;
-      color: #000;
-      padding: 12px 24px;
-      border-radius: 40px;
-      font-weight: bold;
-      z-index: 1000;
-      display: none;
-    }
-    .notification.show { display: block; animation: slide 0.3s; }
-    @keyframes slide {
-      from { transform: translateX(-50%) translateY(-100%); }
-      to { transform: translateX(-50%) translateY(0); }
-    }
-    .notification.error { background: #f0f; }
-  </style>
+        @keyframes rareGlow {
+            0% { box-shadow: 0 0 15px gold; }
+            50% { box-shadow: 0 0 30px gold, 0 0 45px #ffaa00; }
+            100% { box-shadow: 0 0 15px gold; }
+        }
+
+        /* Цвета кубов */
+        .cube.red { background: linear-gradient(145deg, #ff4444, #cc0000); }
+        .cube.orange { background: linear-gradient(145deg, #ff8844, #cc4400); }
+        .cube.yellow { background: linear-gradient(145deg, #ffff44, #cccc00); }
+        .cube.blue { background: linear-gradient(145deg, #4444ff, #0000cc); }
+        .cube.purple { background: linear-gradient(145deg, #ff44ff, #cc00cc); }
+        .cube.green { background: linear-gradient(145deg, #44ff44, #00cc00); }
+
+        /* ========== ТЕЛЕМЕТРИЯ (ТОЧКИ ХАРАКТЕРИСТИК) ========== */
+        .f1-telemetry {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #e10600;
+            padding: 10px 20px;
+            border-radius: 0;
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+            z-index: 100;
+        }
+
+        .telemetry-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 0;
+            transform: rotate(45deg);
+            box-shadow: 0 0 10px currentColor;
+            transition: all 0.3s;
+        }
+
+        .telemetry-dot.red { background: #ff4444; }
+        .telemetry-dot.green { background: #44ff44; }
+        .telemetry-dot.blue { background: #4444ff; }
+        .telemetry-dot.yellow { background: #ffff44; }
+        .telemetry-dot.orange { background: #ff8844; }
+        .telemetry-dot.purple { background: #ff44ff; }
+
+        /* ========== КНОПКА ВЫХОДА ========== */
+        .exit-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: transparent;
+            border: 2px solid #e10600;
+            color: #e10600;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            backdrop-filter: blur(10px);
+            font-size: clamp(12px, 3vw, 14px);
+            z-index: 100;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+        }
+
+        .exit-btn:hover {
+            background: #e10600;
+            color: #000;
+        }
+
+        /* ========== УВЕДОМЛЕНИЯ ========== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e10600;
+            color: white;
+            padding: 12px 24px;
+            font-weight: bold;
+            z-index: 3000;
+            display: none;
+            font-size: 14px;
+            white-space: nowrap;
+            box-shadow: 0 0 30px #e10600;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-50%) translateY(-100%); }
+            to { transform: translateX(-50%) translateY(0); }
+        }
+
+        .notification.error {
+            background: #f0f;
+        }
+    </style>
 </head>
 <body>
-  <div class="cyber-bg"><div class="cyber-grid"></div></div>
+    <!-- Шашечная полоса -->
+    <div class="checkered-top"></div>
 
-  <div class="header">
-    <a href="menu.html" class="back-to-menu">← МЕНЮ</a>
-    <div class="coins-header" id="coinsDisplay">1000 🪙</div>
-  </div>
-
-  <div class="title"><h1>🔧 ТЮНИНГ 🔧</h1></div>
-
-  <!-- Панель характеристик -->
-  <div class="stats-panel">
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">⚡</div>
-        <div class="stat-name">СКОРОСТЬ</div>
-        <div class="stat-value" id="statSpeed">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">🚀</div>
-        <div class="stat-name">УСКОРЕНИЕ</div>
-        <div class="stat-value" id="statAccel">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">💨</div>
-        <div class="stat-name">МАКС. СКОР</div>
-        <div class="stat-value" id="statMaxSpeed">0</div>
-      </div>
+    <!-- Шапка -->
+    <div class="header">
+        <a href="index.html" class="back-to-menu">← МЕНЮ</a>
+        <div class="coins-header" id="coinsDisplay">1000 🪙</div>
     </div>
-  </div>
 
-  <!-- Основная сетка слотов и машины -->
-  <main class="main-grid">
-    <!-- Левая колонка слотов (3 шт) -->
-    <section class="car-slots" id="leftSlots"></section>
+    <!-- Заголовок -->
+    <div class="title"><h1>🔧 ГАРАЖ</h1></div>
 
-    <!-- Машина с деталями -->
-    <figure class="car-container" id="carContainer">
-      <!-- Базовая основа (полупрозрачная для наложения) -->
-      <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png" alt="base" id="carBase" style="opacity:0.3">
-      <!-- Детали -->
-      <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png"  id="part_body"    class="car-part" alt="body">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_spoiler" class="car-part" alt="spoiler">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_hood"    class="car-part" alt="hood">
-      <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png" id="part_wheels"  class="car-part" alt="wheels">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_lights"  class="car-part" alt="lights">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_exhaust" class="car-part" alt="exhaust">
-    </figure>
+    <!-- Панель характеристик -->
+    <div class="stats-panel">
+        <div class="stats-grid">
+            <div class="stat-card" id="statSpeed">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-name">СКОРОСТЬ</div>
+                <div class="stat-value" id="speedVal">0</div>
+            </div>
+            <div class="stat-card" id="statAccel">
+                <div class="stat-icon">🚀</div>
+                <div class="stat-name">УСКОРЕНИЕ</div>
+                <div class="stat-value" id="accelVal">0</div>
+            </div>
+            <div class="stat-card" id="statMaxSpeed">
+                <div class="stat-icon">💨</div>
+                <div class="stat-name">МАКС. СКОР</div>
+                <div class="stat-value" id="maxSpeedVal">0</div>
+            </div>
+        </div>
+    </div>
 
-    <!-- Правая колонка слотов (3 шт) -->
-    <section class="car-slots" id="rightSlots"></section>
-  </main>
+    <!-- Основная сетка слотов и машины -->
+    <main class="main-grid">
+        <!-- Левая колонка слотов (3 шт) -->
+        <section class="car-slots" id="leftSlots"></section>
 
-  <!-- Инвентарь -->
-  <section class="inventory">
-    <h2>📦 ИНВЕНТАРЬ</h2>
-    <div id="inventoryGrid" class="inventory-grid"></div>
-  </section>
+        <!-- Машина -->
+        <figure class="car-container">
+            <!-- Базовая основа (полупрозрачный кузов) -->
+            <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png" alt="base" id="carBase" style="opacity:0.3">
+            <!-- Детали (по умолчанию стандартные, будут заменяться через JS) -->
+            <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png"  id="part_body"    class="car-part" alt="body">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_spoiler" class="car-part" alt="spoiler">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_hood"    class="car-part" alt="hood">
+            <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png" id="part_wheels"  class="car-part" alt="wheels">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_lights"  class="car-part" alt="lights">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_exhaust" class="car-part" alt="exhaust">
+        </figure>
 
-  <div id="notification" class="notification"></div>
+        <!-- Правая колонка слотов (3 шт) -->
+        <section class="car-slots" id="rightSlots"></section>
+    </main>
 
-  <script>
-    // ========== НАСТРОЙКИ ==========
-    const COINS_KEY = 'playerCoins';
-    const GARAGE_KEY = 'garageCubes';
-    const INVENTORY_KEY = 'playerInventory';
+    <!-- Инвентарь -->
+    <section class="inventory">
+        <h2>📦 ИНВЕНТАРЬ</h2>
+        <div id="inventoryGrid" class="inventory-grid"></div>
+    </section>
 
-    // Соответствие индекса слота детали и допустимые цвета кубов
-    const slotToPart = [
-      { partId: 'part_body',     category: 'body',     allowedColors: ['red', 'orange', 'yellow'] },
-      { partId: 'part_spoiler',  category: 'spoiler',  allowedColors: ['orange', 'red'] },
-      { partId: 'part_hood',     category: 'hood',     allowedColors: ['yellow', 'orange'] },
-      { partId: 'part_wheels',   category: 'wheels',   allowedColors: ['blue', 'purple', 'green'] },
-      { partId: 'part_lights',   category: 'lights',   allowedColors: ['purple', 'blue'] },
-      { partId: 'part_exhaust',  category: 'exhaust',  allowedColors: ['green', 'yellow'] }
-    ];
+    <!-- Телеметрия (точки характеристик) -->
+    <div class="f1-telemetry" id="statsPreview">
+        <div class="telemetry-dot red" title="Скорость"></div>
+        <div class="telemetry-dot green" title="Ускорение"></div>
+        <div class="telemetry-dot blue" title="Макс скорость"></div>
+        <div class="telemetry-dot yellow" title="Удача"></div>
+        <div class="telemetry-dot orange" title="Турбо"></div>
+        <div class="telemetry-dot purple" title="Защита"></div>
+    </div>
 
-    const AVAILABLE_COLORS = ['red', 'orange', 'yellow', 'blue', 'purple', 'green'];
+    <!-- Кнопка выхода -->
+    <a href="#" class="exit-btn" onclick="window.Telegram?.WebApp?.close()">✖ ВЫХОД</a>
 
-    // Бонусы от кубов (в соответствии с магазином)
-    const bonuses = {
-      red:    { speed: 30, acceleration: 0, maxSpeed: 0 },   // скорость
-      green:  { speed: 0, acceleration: 3, maxSpeed: 0 },   // ускорение
-      blue:   { speed: 0, acceleration: 0, maxSpeed: 30 },  // макс скорость
-      yellow: { speed: 0, acceleration: 0, maxSpeed: 0 },   // удача
-      orange: { speed: 0, acceleration: 0, maxSpeed: 0 },   // турбо
-      purple: { speed: 0, acceleration: 0, maxSpeed: 0 }    // защита
-    };
+    <!-- Уведомление -->
+    <div id="notification" class="notification"></div>
 
-    let selectedCube = null;
+    <script>
+        // ========== НАСТРОЙКИ ==========
+        const COINS_KEY = 'playerCoins';
+        const GARAGE_KEY = 'garageCubes';
+        const INVENTORY_KEY = 'playerInventory';
 
-    // ========== МОНЕТЫ ==========
-    function getCoins() { return parseInt(localStorage.getItem(COINS_KEY)) || 1000; }
-    function setCoins(amount) { localStorage.setItem(COINS_KEY, amount); updateCoinsDisplay(); }
-    function updateCoinsDisplay() { document.getElementById('coinsDisplay').textContent = getCoins() + ' 🪙'; }
-    function addCoins(amount) { setCoins(getCoins() + amount); showNotification(`+${amount} монет`); }
+        // Соответствие индекса слота детали и допустимые цвета кубов
+        const slotToPart = [
+            { partId: 'part_body',     category: 'body',     allowedColors: ['red', 'orange', 'yellow'] },
+            { partId: 'part_spoiler',  category: 'spoiler',  allowedColors: ['orange', 'red'] },
+            { partId: 'part_hood',     category: 'hood',     allowedColors: ['yellow', 'orange'] },
+            { partId: 'part_wheels',   category: 'wheels',   allowedColors: ['blue', 'purple', 'green'] },
+            { partId: 'part_lights',   category: 'lights',   allowedColors: ['purple', 'blue'] },
+            { partId: 'part_exhaust',  category: 'exhaust',  allowedColors: ['green', 'yellow'] }
+        ];
 
-    function showNotification(text, isError = false) {
-      const n = document.getElementById('notification');
-      n.textContent = isError ? '❌ ' + text : '✨ ' + text;
-      n.className = `notification ${isError ? 'error' : ''} show`;
-      setTimeout(() => n.classList.remove('show'), 2000);
-    }
+        const AVAILABLE_COLORS = ['red', 'orange', 'yellow', 'blue', 'purple', 'green'];
 
-    // ========== СОЗДАНИЕ СЛОТОВ МАШИНЫ ==========
-    function createCarSlots() {
-      const left = document.getElementById('leftSlots');
-      const right = document.getElementById('rightSlots');
-      left.innerHTML = ''; right.innerHTML = '';
+        // Бонусы от кубов (в соответствии с магазином)
+        const bonuses = {
+            red:    { speed: 30, acceleration: 0, maxSpeed: 0 },
+            green:  { speed: 0, acceleration: 3, maxSpeed: 0 },
+            blue:   { speed: 0, acceleration: 0, maxSpeed: 30 },
+            yellow: { speed: 0, acceleration: 0, maxSpeed: 0 },
+            orange: { speed: 0, acceleration: 0, maxSpeed: 0 },
+            purple: { speed: 0, acceleration: 0, maxSpeed: 0 }
+        };
 
-      for (let i = 0; i < 3; i++) {
-        const slot = document.createElement('div');
-        slot.className = 'car-slot';
-        slot.dataset.index = i;
-        slot.dataset.category = slotToPart[i].category;
-        slot.dataset.filled = 'false';
-        left.appendChild(slot);
-      }
-      for (let i = 3; i < 6; i++) {
-        const slot = document.createElement('div');
-        slot.className = 'car-slot';
-        slot.dataset.index = i;
-        slot.dataset.category = slotToPart[i].category;
-        slot.dataset.filled = 'false';
-        right.appendChild(slot);
-      }
-    }
+        let selectedCube = null;
 
-    // ========== ИНИЦИАЛИЗАЦИЯ ИНВЕНТАРЯ ==========
-    function initInventory() {
-      const grid = document.getElementById('inventoryGrid');
-      grid.innerHTML = '';
-      for (let i = 0; i < 30; i++) {
-        const s = document.createElement('div');
-        s.className = 'inventory-slot';
-        s.dataset.index = i;
-        s.dataset.filled = 'false';
-        grid.appendChild(s);
-      }
+        // ========== МОНЕТЫ ==========
+        function getCoins() { return parseInt(localStorage.getItem(COINS_KEY)) || 1000; }
+        function setCoins(amount) { localStorage.setItem(COINS_KEY, amount); updateCoinsDisplay(); }
+        function updateCoinsDisplay() { document.getElementById('coinsDisplay').textContent = getCoins() + ' 🪙'; }
+        function addCoins(amount) { setCoins(getCoins() + amount); showNotification(`+${amount} монет`); }
 
-      const saved = JSON.parse(localStorage.getItem(INVENTORY_KEY)) || [];
-      if (saved.length > 0) {
-        saved.forEach((item, idx) => {
-          if (idx < 30) {
-            const slot = grid.children[idx];
-            let color, rarity;
-            if (typeof item === 'string') {
-              // Старый формат (просто цвет) — считаем обычным
-              color = item;
-              rarity = 'common';
+        function showNotification(text, isError = false) {
+            const n = document.getElementById('notification');
+            n.textContent = isError ? '❌ ' + text : '✨ ' + text;
+            n.className = `notification ${isError ? 'error' : ''} show`;
+            setTimeout(() => n.classList.remove('show'), 2000);
+        }
+
+        // ========== СОЗДАНИЕ СЛОТОВ МАШИНЫ ==========
+        function createCarSlots() {
+            const left = document.getElementById('leftSlots');
+            const right = document.getElementById('rightSlots');
+            left.innerHTML = ''; right.innerHTML = '';
+
+            for (let i = 0; i < 3; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'car-slot';
+                slot.dataset.index = i;
+                slot.dataset.category = slotToPart[i].category;
+                slot.dataset.filled = 'false';
+                left.appendChild(slot);
+            }
+            for (let i = 3; i < 6; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'car-slot';
+                slot.dataset.index = i;
+                slot.dataset.category = slotToPart[i].category;
+                slot.dataset.filled = 'false';
+                right.appendChild(slot);
+            }
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ИНВЕНТАРЯ ==========
+        function initInventory() {
+            const grid = document.getElementById('inventoryGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < 30; i++) {
+                const s = document.createElement('div');
+                s.className = 'inventory-slot';
+                s.dataset.index = i;
+                s.dataset.filled = 'false';
+                grid.appendChild(s);
+            }
+
+            const saved = JSON.parse(localStorage.getItem(INVENTORY_KEY)) || [];
+            if (saved.length > 0) {
+                saved.forEach((item, idx) => {
+                    if (idx < 30) {
+                        const slot = grid.children[idx];
+                        let color, rarity;
+                        if (typeof item === 'string') {
+                            color = item;
+                            rarity = 'common';
+                        } else {
+                            color = item.color;
+                            rarity = item.rarity || 'common';
+                        }
+                        const cube = createCube(color, rarity);
+                        slot.appendChild(cube);
+                        slot.dataset.filled = 'true';
+                    }
+                });
             } else {
-              color = item.color;
-              rarity = item.rarity || 'common';
+                AVAILABLE_COLORS.forEach((color, idx) => {
+                    const slot = grid.children[idx];
+                    const cube = createCube(color, 'common');
+                    slot.appendChild(cube);
+                    slot.dataset.filled = 'true';
+                });
+                saveInventory();
             }
-            const cube = createCube(color, rarity);
-            slot.appendChild(cube);
-            slot.dataset.filled = 'true';
-          }
-        });
-      } else {
-        // Начальные кубы: обычные
-        AVAILABLE_COLORS.forEach((color, idx) => {
-          const slot = grid.children[idx];
-          const cube = createCube(color, 'common');
-          slot.appendChild(cube);
-          slot.dataset.filled = 'true';
-        });
-        saveInventory();
-      }
-    }
-
-    function createCube(color, rarity = 'common') {
-      const cube = document.createElement('div');
-      cube.className = `cube ${color} ${rarity}`;
-      cube.dataset.color = color;
-      cube.dataset.rarity = rarity;
-      cube.title = rarity === 'rare' ? '⭐ Редкий куб' : 'Обычный куб';
-      return cube;
-    }
-
-    function saveInventory() {
-      const inv = [];
-      document.querySelectorAll('.inventory-slot').forEach(slot => {
-        const cube = slot.querySelector('.cube');
-        if (cube) {
-          inv.push({
-            color: cube.dataset.color,
-            rarity: cube.dataset.rarity || 'common'
-          });
         }
-      });
-      localStorage.setItem(INVENTORY_KEY, JSON.stringify(inv));
-    }
 
-    // ========== ЗАГРУЗКА СОХРАНЁННОЙ МАШИНЫ ==========
-    function loadSavedCar() {
-      const saved = JSON.parse(localStorage.getItem(GARAGE_KEY));
-      if (!saved) return;
-      const carSlots = document.querySelectorAll('.car-slot');
-      carSlots.forEach((slot, idx) => {
-        const part = slotToPart[idx];
-        if (!part) return;
-        if (saved[idx]) {
-          let color;
-          if (typeof saved[idx] === 'string') {
-            color = saved[idx];
-          } else {
-            color = saved[idx].color;
-          }
-          const inventoryCubes = document.querySelectorAll('.inventory-slot .cube');
-          let found = null;
-          for (let c of inventoryCubes) {
-            if (c.dataset.color === color && !c.closest('.car-slot')) {
-              found = c;
-              break;
+        function createCube(color, rarity = 'common') {
+            const cube = document.createElement('div');
+            cube.className = `cube ${color} ${rarity}`;
+            cube.dataset.color = color;
+            cube.dataset.rarity = rarity;
+            cube.title = rarity === 'rare' ? '⭐ Редкий куб' : 'Обычный куб';
+            return cube;
+        }
+
+        function saveInventory() {
+            const inv = [];
+            document.querySelectorAll('.inventory-slot').forEach(slot => {
+                const cube = slot.querySelector('.cube');
+                if (cube) {
+                    inv.push({
+                        color: cube.dataset.color,
+                        rarity: cube.dataset.rarity || 'common'
+                    });
+                }
+            });
+            localStorage.setItem(INVENTORY_KEY, JSON.stringify(inv));
+        }
+
+        // ========== ЗАГРУЗКА СОХРАНЁННОЙ МАШИНЫ ==========
+        function loadSavedCar() {
+            const saved = JSON.parse(localStorage.getItem(GARAGE_KEY));
+            if (!saved) return;
+            const carSlots = document.querySelectorAll('.car-slot');
+            carSlots.forEach((slot, idx) => {
+                const part = slotToPart[idx];
+                if (!part) return;
+                if (saved[idx]) {
+                    let color;
+                    if (typeof saved[idx] === 'string') {
+                        color = saved[idx];
+                    } else {
+                        color = saved[idx].color;
+                    }
+                    const inventoryCubes = document.querySelectorAll('.inventory-slot .cube');
+                    let found = null;
+                    for (let c of inventoryCubes) {
+                        if (c.dataset.color === color && !c.closest('.car-slot')) {
+                            found = c;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        const oldSlot = found.closest('.inventory-slot');
+                        oldSlot.removeChild(found);
+                        oldSlot.dataset.filled = 'false';
+                        slot.appendChild(found);
+                        slot.dataset.filled = 'true';
+                    }
+                } else {
+                    slot.dataset.filled = 'false';
+                }
+            });
+            updateCarParts();
+            updateStats();
+        }
+
+        // ========== СОХРАНЕНИЕ МАШИНЫ ==========
+        function saveCarState() {
+            const carSlots = document.querySelectorAll('.car-slot');
+            const state = [];
+            carSlots.forEach(slot => {
+                if (slot.dataset.filled === 'true') {
+                    const cube = slot.querySelector('.cube');
+                    state.push(cube ? cube.dataset.color : null);
+                } else {
+                    state.push(null);
+                }
+            });
+            localStorage.setItem(GARAGE_KEY, JSON.stringify(state));
+            updateCarParts();
+            updateStats();
+        }
+
+        // ========== ОБНОВЛЕНИЕ ДЕТАЛЕЙ МАШИНЫ ==========
+        function updateCarParts() {
+            const carSlots = document.querySelectorAll('.car-slot');
+            const baseUrl = 'https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/';
+
+            // Кузов (индекс 0)
+            const bodySlot = carSlots[0];
+            const bodyImg = document.getElementById('part_body');
+            if (bodySlot && bodyImg) {
+                if (bodySlot.dataset.filled === 'true') {
+                    const cube = bodySlot.querySelector('.cube');
+                    if (cube) {
+                        if (cube.dataset.color === 'red') {
+                            bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%812.png';
+                        } else {
+                            bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png';
+                        }
+                    }
+                } else {
+                    bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png';
+                }
             }
-          }
-          if (found) {
-            const oldSlot = found.closest('.inventory-slot');
-            oldSlot.removeChild(found);
-            oldSlot.dataset.filled = 'false';
-            slot.appendChild(found);
-            slot.dataset.filled = 'true';
-          }
-        } else {
-          slot.dataset.filled = 'false';
+
+            // Колёса (индекс 3)
+            const wheelsSlot = carSlots[3];
+            const wheelsImg = document.getElementById('part_wheels');
+            if (wheelsSlot && wheelsImg) {
+                if (wheelsSlot.dataset.filled === 'true') {
+                    const cube = wheelsSlot.querySelector('.cube');
+                    if (cube) {
+                        if (cube.dataset.color === 'blue') {
+                            wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B05.png';
+                        } else {
+                            wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png';
+                        }
+                    }
+                } else {
+                    wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png';
+                }
+            }
         }
-      });
-      updateCarParts();
-      updateStats();
-    }
 
-    // ========== СОХРАНЕНИЕ МАШИНЫ ==========
-    function saveCarState() {
-      const carSlots = document.querySelectorAll('.car-slot');
-      const state = [];
-      carSlots.forEach(slot => {
-        if (slot.dataset.filled === 'true') {
-          const cube = slot.querySelector('.cube');
-          state.push(cube ? cube.dataset.color : null);
-        } else {
-          state.push(null);
+        // ========== ОБНОВЛЕНИЕ ХАРАКТЕРИСТИК ==========
+        function updateStats() {
+            const carSlots = document.querySelectorAll('.car-slot');
+
+            let speed = 50;
+            let acceleration = 5;
+            let maxSpeed = 100;
+
+            carSlots.forEach(slot => {
+                if (slot.dataset.filled === 'true') {
+                    const cube = slot.querySelector('.cube');
+                    if (cube) {
+                        const color = cube.dataset.color;
+                        const bonus = bonuses[color];
+                        if (bonus) {
+                            speed += bonus.speed;
+                            acceleration += bonus.acceleration;
+                            maxSpeed += bonus.maxSpeed;
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('speedVal').textContent = speed;
+            document.getElementById('accelVal').textContent = acceleration;
+            document.getElementById('maxSpeedVal').textContent = maxSpeed;
+
+            localStorage.setItem('playerCarStats', JSON.stringify({ speed, acceleration, maxSpeed }));
         }
-      });
-      localStorage.setItem(GARAGE_KEY, JSON.stringify(state));
-      updateCarParts();
-      updateStats();
-    }
 
-    // ========== ОБНОВЛЕНИЕ ДЕТАЛЕЙ МАШИНЫ ==========
-    function updateCarParts() {
-      const carSlots = document.querySelectorAll('.car-slot');
-      const baseUrl = 'https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/';
+        // ========== ВОЗВРАТ КУБА В ИНВЕНТАРЬ ==========
+        function returnCubeToInventory(carSlot, cube) {
+            const inventorySlots = document.querySelectorAll('.inventory-slot');
+            let emptySlot = null;
+            for (let slot of inventorySlots) {
+                if (slot.dataset.filled === 'false') {
+                    emptySlot = slot;
+                    break;
+                }
+            }
 
-      // Кузов (индекс 0)
-      const bodySlot = carSlots[0];
-      const bodyImg = document.getElementById('part_body');
-      if (bodySlot && bodyImg) {
-        if (bodySlot.dataset.filled === 'true') {
-          const cube = bodySlot.querySelector('.cube');
-          if (cube) {
-            if (cube.dataset.color === 'red') {
-              bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%812.png';
+            if (emptySlot) {
+                carSlot.removeChild(cube);
+                carSlot.dataset.filled = 'false';
+                emptySlot.appendChild(cube);
+                emptySlot.dataset.filled = 'true';
+                saveCarState();
+                saveInventory();
+                showNotification('Куб снят');
             } else {
-              bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png';
+                for (let slot of inventorySlots) {
+                    if (slot.dataset.filled === 'true') {
+                        const inventoryCube = slot.querySelector('.cube');
+                        if (inventoryCube) {
+                            carSlot.removeChild(cube);
+                            slot.removeChild(inventoryCube);
+                            carSlot.appendChild(inventoryCube);
+                            slot.appendChild(cube);
+                            saveCarState();
+                            saveInventory();
+                            showNotification('Куб обменян');
+                            return;
+                        }
+                    }
+                }
+                showNotification('Ошибка: нет места в инвентаре', true);
             }
-          }
-        } else {
-          bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png';
         }
-      }
 
-      // Колёса (индекс 3)
-      const wheelsSlot = carSlots[3];
-      const wheelsImg = document.getElementById('part_wheels');
-      if (wheelsSlot && wheelsImg) {
-        if (wheelsSlot.dataset.filled === 'true') {
-          const cube = wheelsSlot.querySelector('.cube');
-          if (cube) {
-            if (cube.dataset.color === 'blue') {
-              wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B05.png';
-            } else {
-              wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png';
+        // ========== ВЫДЕЛЕНИЕ И ПЕРЕМЕЩЕНИЕ ==========
+        function clearSelection() {
+            document.querySelectorAll('.cube').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.inventory-slot').forEach(s => s.classList.remove('selected'));
+            document.querySelectorAll('.car-slot').forEach(s => s.classList.remove('available'));
+            selectedCube = null;
+        }
+
+        document.addEventListener('click', (e) => {
+            const cube = e.target.closest('.cube');
+            const invSlot = e.target.closest('.inventory-slot');
+            const carSlot = e.target.closest('.car-slot');
+
+            if (cube && cube.closest('.inventory-slot')) {
+                e.stopPropagation();
+                if (selectedCube === cube) { clearSelection(); return; }
+                clearSelection();
+                cube.classList.add('selected');
+                cube.closest('.inventory-slot').classList.add('selected');
+                selectedCube = cube;
+
+                const cubeColor = cube.dataset.color;
+                document.querySelectorAll('.car-slot').forEach((slot, idx) => {
+                    const part = slotToPart[idx];
+                    if (part && part.allowedColors.includes(cubeColor) && slot.dataset.filled === 'false') {
+                        slot.classList.add('available');
+                    }
+                });
+                return;
             }
-          }
-        } else {
-          wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png';
-        }
-      }
-    }
 
-    // ========== ОБНОВЛЕНИЕ ХАРАКТЕРИСТИК ==========
-    function updateStats() {
-      const carSlots = document.querySelectorAll('.car-slot');
-      
-      let speed = 50;
-      let acceleration = 5;
-      let maxSpeed = 100;
-
-      carSlots.forEach(slot => {
-        if (slot.dataset.filled === 'true') {
-          const cube = slot.querySelector('.cube');
-          if (cube) {
-            const color = cube.dataset.color;
-            const bonus = bonuses[color];
-            if (bonus) {
-              speed += bonus.speed;
-              acceleration += bonus.acceleration;
-              maxSpeed += bonus.maxSpeed;
+            if (invSlot && selectedCube && invSlot.dataset.filled === 'false') {
+                e.stopPropagation();
+                const oldSlot = selectedCube.closest('.inventory-slot');
+                oldSlot.removeChild(selectedCube);
+                oldSlot.dataset.filled = 'false';
+                oldSlot.classList.remove('selected');
+                invSlot.appendChild(selectedCube);
+                invSlot.dataset.filled = 'true';
+                clearSelection();
+                saveInventory();
+                return;
             }
-          }
-        }
-      });
 
-      document.getElementById('statSpeed').textContent = speed;
-      document.getElementById('statAccel').textContent = acceleration;
-      document.getElementById('statMaxSpeed').textContent = maxSpeed;
-
-      localStorage.setItem('playerCarStats', JSON.stringify({ speed, acceleration, maxSpeed }));
-    }
-
-    // ========== ВОЗВРАТ КУБА В ИНВЕНТАРЬ ==========
-    function returnCubeToInventory(carSlot, cube) {
-      const inventorySlots = document.querySelectorAll('.inventory-slot');
-      let emptySlot = null;
-      for (let slot of inventorySlots) {
-        if (slot.dataset.filled === 'false') {
-          emptySlot = slot;
-          break;
-        }
-      }
-
-      if (emptySlot) {
-        carSlot.removeChild(cube);
-        carSlot.dataset.filled = 'false';
-        emptySlot.appendChild(cube);
-        emptySlot.dataset.filled = 'true';
-        saveCarState();
-        saveInventory();
-        showNotification('Куб снят');
-      } else {
-        for (let slot of inventorySlots) {
-          if (slot.dataset.filled === 'true') {
-            const inventoryCube = slot.querySelector('.cube');
-            if (inventoryCube) {
-              carSlot.removeChild(cube);
-              slot.removeChild(inventoryCube);
-              carSlot.appendChild(inventoryCube);
-              slot.appendChild(cube);
-              saveCarState();
-              saveInventory();
-              showNotification('Куб обменян');
-              return;
+            if (invSlot && selectedCube && invSlot.dataset.filled === 'true') {
+                e.stopPropagation();
+                const targetCube = invSlot.querySelector('.cube');
+                if (targetCube && targetCube !== selectedCube) {
+                    const oldSlot = selectedCube.closest('.inventory-slot');
+                    oldSlot.removeChild(selectedCube);
+                    invSlot.removeChild(targetCube);
+                    oldSlot.appendChild(targetCube);
+                    invSlot.appendChild(selectedCube);
+                    clearSelection();
+                    saveInventory();
+                }
+                return;
             }
-          }
-        }
-        showNotification('Ошибка: нет места в инвентаре', true);
-      }
-    }
 
-    // ========== ВЫДЕЛЕНИЕ И ПЕРЕМЕЩЕНИЕ ==========
-    function clearSelection() {
-      document.querySelectorAll('.cube').forEach(c => c.classList.remove('selected'));
-      document.querySelectorAll('.inventory-slot').forEach(s => s.classList.remove('selected'));
-      document.querySelectorAll('.car-slot').forEach(s => s.classList.remove('available'));
-      selectedCube = null;
-    }
+            if (carSlot) {
+                e.stopPropagation();
 
-    document.addEventListener('click', (e) => {
-      const cube = e.target.closest('.cube');
-      const invSlot = e.target.closest('.inventory-slot');
-      const carSlot = e.target.closest('.car-slot');
+                if (selectedCube) {
+                    const idx = parseInt(carSlot.dataset.index);
+                    const part = slotToPart[idx];
+                    const cubeColor = selectedCube.dataset.color;
 
-      if (cube && cube.closest('.inventory-slot')) {
-        e.stopPropagation();
-        if (selectedCube === cube) { clearSelection(); return; }
-        clearSelection();
-        cube.classList.add('selected');
-        cube.closest('.inventory-slot').classList.add('selected');
-        selectedCube = cube;
+                    if (!part.allowedColors.includes(cubeColor)) {
+                        showNotification('❌ Сюда нельзя поставить этот куб', true);
+                        return;
+                    }
 
-        const cubeColor = cube.dataset.color;
-        document.querySelectorAll('.car-slot').forEach((slot, idx) => {
-          const part = slotToPart[idx];
-          if (part && part.allowedColors.includes(cubeColor) && slot.dataset.filled === 'false') {
-            slot.classList.add('available');
-          }
+                    const invSlotOrigin = selectedCube.closest('.inventory-slot');
+
+                    if (carSlot.dataset.filled === 'false') {
+                        invSlotOrigin.removeChild(selectedCube);
+                        invSlotOrigin.dataset.filled = 'false';
+                        carSlot.appendChild(selectedCube);
+                        carSlot.dataset.filled = 'true';
+                        clearSelection();
+                        addCoins(10);
+                        saveCarState();
+                        saveInventory();
+                    } else {
+                        const carCube = carSlot.querySelector('.cube');
+                        if (carCube) {
+                            invSlotOrigin.removeChild(selectedCube);
+                            carSlot.removeChild(carCube);
+                            invSlotOrigin.appendChild(carCube);
+                            carSlot.appendChild(selectedCube);
+                            clearSelection();
+                            addCoins(5);
+                            saveCarState();
+                            saveInventory();
+                        }
+                    }
+                    return;
+                }
+
+                if (carSlot.dataset.filled === 'true') {
+                    const cubeInSlot = carSlot.querySelector('.cube');
+                    if (cubeInSlot) {
+                        returnCubeToInventory(carSlot, cubeInSlot);
+                    }
+                    return;
+                }
+            }
+
+            if (!cube && !invSlot && !carSlot) {
+                clearSelection();
+            }
         });
-        return;
-      }
 
-      if (invSlot && selectedCube && invSlot.dataset.filled === 'false') {
-        e.stopPropagation();
-        const oldSlot = selectedCube.closest('.inventory-slot');
-        oldSlot.removeChild(selectedCube);
-        oldSlot.dataset.filled = 'false';
-        oldSlot.classList.remove('selected');
-        invSlot.appendChild(selectedCube);
-        invSlot.dataset.filled = 'true';
-        clearSelection();
-        saveInventory();
-        return;
-      }
-
-      if (invSlot && selectedCube && invSlot.dataset.filled === 'true') {
-        e.stopPropagation();
-        const targetCube = invSlot.querySelector('.cube');
-        if (targetCube && targetCube !== selectedCube) {
-          const oldSlot = selectedCube.closest('.inventory-slot');
-          oldSlot.removeChild(selectedCube);
-          invSlot.removeChild(targetCube);
-          oldSlot.appendChild(targetCube);
-          invSlot.appendChild(selectedCube);
-          clearSelection();
-          saveInventory();
-        }
-        return;
-      }
-
-      if (carSlot) {
-        e.stopPropagation();
-
-        if (selectedCube) {
-          const idx = parseInt(carSlot.dataset.index);
-          const part = slotToPart[idx];
-          const cubeColor = selectedCube.dataset.color;
-
-          if (!part.allowedColors.includes(cubeColor)) {
-            showNotification('❌ Сюда нельзя поставить этот куб', true);
-            return;
-          }
-
-          const invSlotOrigin = selectedCube.closest('.inventory-slot');
-
-          if (carSlot.dataset.filled === 'false') {
-            invSlotOrigin.removeChild(selectedCube);
-            invSlotOrigin.dataset.filled = 'false';
-            carSlot.appendChild(selectedCube);
-            carSlot.dataset.filled = 'true';
-            clearSelection();
-            addCoins(10);
-            saveCarState();
-            saveInventory();
-          } else {
-            const carCube = carSlot.querySelector('.cube');
-            if (carCube) {
-              invSlotOrigin.removeChild(selectedCube);
-              carSlot.removeChild(carCube);
-              invSlotOrigin.appendChild(carCube);
-              carSlot.appendChild(selectedCube);
-              clearSelection();
-              addCoins(5);
-              saveCarState();
-              saveInventory();
-            }
-          }
-          return;
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        function init() {
+            createCarSlots();
+            initInventory();
+            loadSavedCar();
+            updateCoinsDisplay();
+            updateStats();
         }
 
-        if (carSlot.dataset.filled === 'true') {
-          const cubeInSlot = carSlot.querySelector('.cube');
-          if (cubeInSlot) {
-            returnCubeToInventory(carSlot, cubeInSlot);
-          }
-          return;
-        }
-      }
-
-      if (!cube && !invSlot && !carSlot) {
-        clearSelection();
-      }
-    });
-
-    // ========== ИНИЦИАЛИЗАЦИЯ ==========
-    function init() {
-      createCarSlots();
-      initInventory();
-      loadSavedCar();
-      updateCoinsDisplay();
-      updateStats();
-    }
-
-    init();
-  </script>
+        init();
+    </script>
 </body>
-  </html>
+</html>
