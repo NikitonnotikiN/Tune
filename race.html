@@ -6,7 +6,7 @@
     <title>Ton Racing – Гонка</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* ========== ГЛОБАЛЬНЫЕ СБРОСЫ ========== */
+        /* ========== СТИЛИ (полностью как в предыдущей версии) ========== */
         * {
             margin: 0;
             padding: 0;
@@ -27,7 +27,6 @@
                               radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
         }
 
-        /* Карбоновая текстура */
         body::before {
             content: '';
             position: fixed;
@@ -40,7 +39,6 @@
             z-index: -1;
         }
 
-        /* Шашечная полоса сверху */
         .checkered-top {
             position: fixed;
             top: 0;
@@ -52,7 +50,6 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
 
-        /* ========== ШАПКА ========== */
         .header {
             position: fixed;
             top: 8px;
@@ -96,7 +93,6 @@
             box-shadow: 0 0 20px #e10600;
         }
 
-        /* ========== ЗАГОЛОВОК ========== */
         .title {
             text-align: center;
             margin: 80px 0 20px 0;
@@ -111,10 +107,9 @@
             letter-spacing: 4px;
         }
 
-        /* ========== ПАНЕЛЬ ХАРАКТЕРИСТИК (ТАБЛО) ========== */
         .stats-panel {
-            width: 100%;
             max-width: 1000px;
+            width: 100%;
             background: rgba(0, 0, 0, 0.7);
             border: 2px solid #e10600;
             padding: 20px;
@@ -157,7 +152,6 @@
             color: white;
         }
 
-        /* ========== АРЕНА ========== */
         .race-arena {
             max-width: 1000px;
             width: 100%;
@@ -183,7 +177,6 @@
             50% { opacity: 0.5; }
         }
 
-        /* Треки */
         .tracks {
             display: flex;
             flex-direction: column;
@@ -228,7 +221,6 @@
             100% { background-position: 100px 0; }
         }
 
-        /* Машины */
         .car {
             position: absolute;
             bottom: 20px;
@@ -272,7 +264,6 @@
             50% { box-shadow: 0 0 40px #ff0; }
         }
 
-        /* Инфо о гонке */
         .race-info {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -305,7 +296,6 @@
         .player .info-value { color: #e10600; }
         .enemy .info-value { color: #fff; }
 
-        /* Кнопки управления */
         .race-controls {
             display: flex;
             justify-content: center;
@@ -352,7 +342,6 @@
             cursor: not-allowed;
         }
 
-        /* Результат */
         .race-result {
             text-align: center;
             padding: 30px;
@@ -395,7 +384,6 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* ========== ТЕЛЕМЕТРИЯ (ТОЧКИ ХАРАКТЕРИСТИК) ========== */
         .f1-telemetry {
             position: fixed;
             bottom: 20px;
@@ -425,7 +413,6 @@
         .telemetry-dot.orange { background: #ff8844; }
         .telemetry-dot.purple { background: #ff44ff; }
 
-        /* ========== КНОПКА ВЫХОДА ========== */
         .exit-btn {
             position: fixed;
             bottom: 20px;
@@ -451,7 +438,6 @@
             color: #000;
         }
 
-        /* ========== УВЕДОМЛЕНИЯ ========== */
         .notification {
             position: fixed;
             top: 20px;
@@ -483,7 +469,6 @@
             background: #f0f;
         }
 
-        /* Предупреждение */
         .warning {
             text-align: center;
             color: #e10600;
@@ -499,7 +484,6 @@
             50% { opacity: 0.5; }
         }
 
-        /* Стили для сундука */
         .chest-container {
             text-align: center;
             margin: 20px 0;
@@ -523,19 +507,15 @@
     </style>
 </head>
 <body>
-    <!-- Шашечная полоса -->
     <div class="checkered-top"></div>
 
-    <!-- Шапка -->
     <div class="header">
         <a href="index.html" class="back-to-menu">← МЕНЮ</a>
-        <div class="coins-header" id="coinsDisplay">1000 🪙</div>
+        <div class="coins-header" id="playerCoins">1000 🪙</div>
     </div>
 
-    <!-- Заголовок -->
     <div class="title"><h1>🏁 ГОНКА</h1></div>
 
-    <!-- Панель характеристик машины -->
     <div class="stats-panel">
         <div class="stats-title">🚗 ТВОЙ БОЛИД</div>
         <div class="stats-grid" id="carStats">
@@ -574,12 +554,10 @@
         </div>
     </div>
 
-    <!-- Арена -->
     <div class="race-arena">
         <div class="race-status" id="raceStatus">НАЖМИ СТАРТ</div>
 
         <div class="tracks">
-            <!-- Трек игрока -->
             <div class="track player">
                 <div class="track-lines"></div>
                 <div class="car player" id="playerCar" style="left: 20px;">
@@ -595,7 +573,6 @@
                 <div class="finish-line"></div>
             </div>
 
-            <!-- Трек противника -->
             <div class="track enemy">
                 <div class="track-lines"></div>
                 <div class="car enemy" id="enemyCar" style="left: 20px;">
@@ -612,7 +589,6 @@
             </div>
         </div>
 
-        <!-- Инфо -->
         <div class="race-info">
             <div class="info-block player">
                 <div class="info-label">ТВОЯ СКОРОСТЬ</div>
@@ -628,17 +604,14 @@
             </div>
         </div>
 
-        <!-- Кнопки -->
         <div class="race-controls">
             <button class="race-btn start" id="startRaceBtn" onclick="startRace()">🏁 СТАРТ</button>
             <button class="race-btn stop" id="stopRaceBtn" onclick="stopRace()" disabled>⏹ СТОП</button>
         </div>
 
-        <!-- Результат -->
         <div id="raceResult" style="display: none;"></div>
     </div>
 
-    <!-- Телеметрия (точки) -->
     <div class="f1-telemetry" id="statsPreview">
         <div class="telemetry-dot red" title="Скорость"></div>
         <div class="telemetry-dot green" title="Ускорение"></div>
@@ -648,19 +621,23 @@
         <div class="telemetry-dot purple" title="Защита"></div>
     </div>
 
-    <!-- Кнопка выхода -->
     <a href="#" class="exit-btn" onclick="window.Telegram?.WebApp?.close()">✖ ВЫХОД</a>
 
-    <!-- Предупреждение -->
     <div id="warning" class="warning" style="display: none;">⚠️ СОБЕРИ МАШИНУ В ГАРАЖЕ ⚠️</div>
-
-    <!-- Уведомление -->
     <div id="notification" class="notification"></div>
 
     <script>
-        // ========== МОНЕТЫ ==========
+        // ========== TELEGRAM ==========
+        let tg = null;
+        if (window.Telegram?.WebApp) {
+            tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+        }
+
+        // ========== КЛЮЧИ ХРАНЕНИЯ ==========
         const COINS_KEY = 'playerCoins';
-        const GARAGE_KEY = 'garageCubes';
+        const GARAGE_SLOTS_KEY = 'garageSlots';   // ключ, используемый в гараже
         const INVENTORY_KEY = 'playerInventory';
 
         function getCoins() {
@@ -673,7 +650,7 @@
         }
 
         function updateCoinsDisplay() {
-            document.getElementById('coinsDisplay').textContent = getCoins() + ' 🪙';
+            document.getElementById('playerCoins').textContent = getCoins() + ' 🪙';
         }
 
         function addCoins(amount) {
@@ -710,24 +687,29 @@
             arena.appendChild(chestDiv);
         }
 
-        // ========== ЗАГРУЗКА МАШИНЫ ИЗ ГАРАЖА ==========
+        // ========== ЗАГРУЗКА МАШИНЫ ИЗ ГАРАЖА (НОВАЯ ВЕРСИЯ) ==========
         function loadCarFromGarage() {
-            const garageArray = JSON.parse(localStorage.getItem(GARAGE_KEY)) || [];
+            // Читаем массив слотов из localStorage (тот же ключ, что в гараже)
+            const garageSlots = JSON.parse(localStorage.getItem(GARAGE_SLOTS_KEY)) || [];
 
+            // Преобразуем в объект с флагами наличия кубов по цветам
+            // Индексы: 0-red, 1-green, 2-blue, 3-yellow, 4-orange, 5-purple
+            const colorIndices = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
             const garageData = {
                 red: false, green: false, blue: false,
                 yellow: false, orange: false, purple: false
             };
 
-            const colorIndices = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
-
-            garageArray.forEach((color, index) => {
-                if (color && index < colorIndices.length) {
+            garageSlots.forEach((slot, index) => {
+                if (slot && index < colorIndices.length) {
                     const colorName = colorIndices[index];
                     garageData[colorName] = true;
                 }
             });
 
+            console.log('Машина из гаража:', garageData);
+
+            // База
             let speed = 50;
             let acceleration = 5;
             let maxSpeed = 100;
@@ -735,6 +717,7 @@
             let turbo = 0;
             let defense = 0;
 
+            // Расчёт характеристик
             if (garageData.red) {
                 speed += 30;
                 document.getElementById('redStat').textContent = '+30';
@@ -792,6 +775,7 @@
             document.getElementById('speedStat').textContent = speed;
             document.getElementById('accelStat').textContent = acceleration;
 
+            // Проверка: есть ли хоть один куб?
             const hasCubes = Object.values(garageData).some(v => v === true);
 
             return {
@@ -970,15 +954,33 @@
             document.getElementById('raceStatus').textContent = 'ГОНКА ОСТАНОВЛЕНА';
         }
 
+        // ========== ТОЧКИ ХАРАКТЕРИСТИК ИЗ ГАРАЖА ==========
+        function loadCarPreview() {
+            const garageSlots = JSON.parse(localStorage.getItem(GARAGE_SLOTS_KEY)) || [];
+            const dots = document.querySelectorAll('.telemetry-dot');
+            const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
+            dots.forEach((dot, index) => {
+                if (garageSlots[index]) {
+                    dot.style.opacity = '1';
+                    dot.style.boxShadow = '0 0 20px currentColor';
+                } else {
+                    dot.style.opacity = '0.3';
+                    dot.style.boxShadow = 'none';
+                }
+            });
+        }
+
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         updateCoinsDisplay();
         loadCarFromGarage();
+        loadCarPreview();
 
         window.addEventListener('storage', function(e) {
-            if (e.key === GARAGE_KEY) {
+            if (e.key === GARAGE_SLOTS_KEY) {
                 loadCarFromGarage();
+                loadCarPreview();
             }
         });
     </script>
 </body>
-              </html>
+                            </html>
