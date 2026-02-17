@@ -6,7 +6,6 @@
     <title>Ton Racing</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* ========== ГЛОБАЛЬНЫЕ СБРОСЫ ========== */
         * {
             margin: 0;
             padding: 0;
@@ -28,7 +27,6 @@
                               radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
         }
 
-        /* Карбоновый фон */
         body::before {
             content: '';
             position: fixed;
@@ -41,7 +39,6 @@
             z-index: -1;
         }
 
-        /* Шашечная полоса сверху */
         .checkered-top {
             position: fixed;
             top: 0;
@@ -53,7 +50,6 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
 
-        /* ========== ШАПКА ========== */
         .header {
             position: fixed;
             top: 8px;
@@ -65,7 +61,7 @@
             padding: 12px 16px;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
-            border-bottom: 2px solid #e10600; /* Ferrari red */
+            border-bottom: 2px solid #e10600;
             box-shadow: 0 0 30px rgba(225, 6, 0, 0.5);
             z-index: 1000;
         }
@@ -103,7 +99,6 @@
             clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
         }
 
-        /* ========== ЗАГРУЗЧИК (СТИЛЬ F1) ========== */
         .loader-container {
             position: fixed;
             inset: 0;
@@ -136,17 +131,9 @@
             animation: flicker 1.5s infinite;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes flicker { 50% { opacity: 0.6; text-shadow: 0 0 40px #e10600; } }
 
-        @keyframes flicker {
-            0%, 100% { opacity: 1; text-shadow: 0 0 20px #e10600; }
-            50% { opacity: 0.6; text-shadow: 0 0 40px #e10600; }
-        }
-
-        /* ========== ЗАГОЛОВОК ========== */
         .title {
             text-align: center;
             margin: 80px 0 20px 0;
@@ -175,7 +162,6 @@
             margin-top: -10px;
         }
 
-        /* ========== СТАТИСТИКА (КАК ТАБЛО) ========== */
         .stats-panel {
             background: rgba(0, 0, 0, 0.7);
             border: 2px solid #e10600;
@@ -211,7 +197,6 @@
             letter-spacing: 1px;
         }
 
-        /* ========== МЕНЮ (КНОПКИ КАК НА РУЛЕ) ========== */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -257,14 +242,12 @@
             filter: drop-shadow(0 0 5px #e10600);
         }
 
-        /* Цвета для разных пунктов (акценты) */
         .menu-item.garage { border-color: #ff4d4d; }
         .menu-item.race { border-color: #fff; }
         .menu-item.shop { border-color: #ffaa00; }
         .menu-item.rating { border-color: #00ccff; }
         .menu-item.bonus { border-color: #00ff88; }
 
-        /* ========== ЕЖЕДНЕВНЫЙ БОНУС (ТАБЛО) ========== */
         .daily-gift {
             position: fixed;
             top: 80px;
@@ -290,7 +273,6 @@
             cursor: default;
         }
 
-        /* ========== МОДАЛКА БОНУСА ========== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -355,21 +337,11 @@
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
         }
 
-        .modal-btn.claim {
-            border-color: #0f0;
-        }
-        .modal-btn.claim:hover {
-            background: #0f0;
-            color: #000;
-        }
-        .modal-btn.cancel {
-            border-color: #e10600;
-        }
-        .modal-btn.cancel:hover {
-            background: #e10600;
-        }
+        .modal-btn.claim { border-color: #0f0; }
+        .modal-btn.claim:hover { background: #0f0; color: #000; }
+        .modal-btn.cancel { border-color: #e10600; }
+        .modal-btn.cancel:hover { background: #e10600; }
 
-        /* ========== ПАНЕЛЬ ХАРАКТЕРИСТИК (ТОЧКИ ВНИЗУ) ========== */
         .f1-telemetry {
             position: fixed;
             bottom: 20px;
@@ -399,7 +371,6 @@
         .telemetry-dot.orange { background: #ff8844; }
         .telemetry-dot.purple { background: #ff44ff; }
 
-        /* ========== КНОПКА ВЫХОДА ========== */
         .exit-btn {
             position: fixed;
             bottom: 20px;
@@ -420,12 +391,8 @@
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
         }
 
-        .exit-btn:hover {
-            background: #e10600;
-            color: #000;
-        }
+        .exit-btn:hover { background: #e10600; color: #000; }
 
-        /* Уведомления */
         .notification {
             position: fixed;
             top: 20px;
@@ -443,22 +410,13 @@
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
         }
 
-        .notification.show {
-            display: block;
-            animation: slideIn 0.3s;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(-50%) translateY(-100%); }
-            to { transform: translateX(-50%) translateY(0); }
-        }
+        .notification.show { display: block; animation: slideIn 0.3s; }
+        @keyframes slideIn { from { transform: translateX(-50%) translateY(-100%); } }
     </style>
 </head>
 <body>
-    <!-- Шашечная полоса -->
     <div class="checkered-top"></div>
 
-    <!-- Шапка -->
     <div class="header">
         <div class="user-badge" id="userBadge" style="display: none;">
             <img id="userAvatar" src="" alt="avatar">
@@ -467,23 +425,19 @@
         <div class="coins-badge" id="coinsDisplay">1000 🪙</div>
     </div>
 
-    <!-- Ежедневный подарок (в стиле табло) -->
     <div class="daily-gift" id="dailyGift" onclick="openDailyBonus()">🎁</div>
 
-    <!-- Загрузчик -->
     <div id="loader-container" class="loader-container">
         <div class="f1-loader"></div>
         <div class="loader-text">ЗАПУСК ДВИГАТЕЛЯ</div>
     </div>
 
-    <!-- Основной контент -->
     <section id="content-section" style="display: none; width: 100%;">
         <div class="title">
-            <h1>КИРЮХА F1</h1>
-            <div class="subtitle">RACING TEAM</div>
+            <h1>TON RACING</h1>
+            <div class="subtitle">F1 TEAM</div>
         </div>
 
-        <!-- Статистика как табло -->
         <div class="stats-panel">
             <div class="stats-grid">
                 <div class="stat-item">
@@ -501,7 +455,6 @@
             </div>
         </div>
 
-        <!-- Меню -->
         <nav class="menu-grid">
             <a href="garage.html" class="menu-item garage">
                 <div class="menu-emoji">🔧</div>
@@ -526,7 +479,6 @@
         </nav>
     </section>
 
-    <!-- Телеметрия (точки характеристик) -->
     <div class="f1-telemetry" id="statsPreview">
         <div class="telemetry-dot red" title="Скорость"></div>
         <div class="telemetry-dot green" title="Ускорение"></div>
@@ -536,10 +488,8 @@
         <div class="telemetry-dot purple" title="Защита"></div>
     </div>
 
-    <!-- Кнопка выхода -->
     <a href="#" class="exit-btn" onclick="window.Telegram?.WebApp?.close()">✖ ВЫХОД</a>
 
-    <!-- Модальное окно бонуса -->
     <div class="modal-overlay" id="bonusModal" onclick="if(event.target===this) closeModal()">
         <div class="modal-content">
             <h2>🎁 БОНУС</h2>
@@ -552,64 +502,38 @@
         </div>
     </div>
 
-    <!-- Уведомление -->
     <div id="notification" class="notification"></div>
 
     <script>
-        // ========== TELEGRAM ==========
         const $ = id => document.getElementById(id);
         let tg = null;
-
-        let playerData = {
-            level: 1,
-            money: 1000,
-            races: 0
-        };
+        let playerData = { level: 1, money: 1000, races: 0 };
 
         if (window.Telegram?.WebApp) {
             tg = window.Telegram.WebApp;
             tg.ready();
             tg.expand();
-
             const user = tg.initDataUnsafe?.user;
             if (user) {
                 $('userAvatar').src = user.photo_url || 'https://ui-avatars.com/api/?name=' + (user.first_name || 'Player') + '&background=e10600';
                 $('userName').textContent = user.first_name || 'Игрок';
                 $('userBadge').style.display = 'flex';
             }
-
             tg.MainButton.setText('СТАРТ');
             tg.MainButton.show();
             tg.MainButton.onClick(() => window.location.href = 'race.html');
-
             tg.BackButton.show();
             tg.BackButton.onClick(() => history.back());
         }
 
-        // ========== МОНЕТЫ ==========
         const COINS_KEY = 'playerCoins';
         const DAILY_KEY = 'dailyBonusMenu';
         const GARAGE_KEY = 'garageCubes';
 
-        function getCoins() {
-            return parseInt(localStorage.getItem(COINS_KEY)) || 1000;
-        }
-
-        function setCoins(amount) {
-            localStorage.setItem(COINS_KEY, amount);
-            updateCoinsDisplay();
-        }
-
-        function updateCoinsDisplay() {
-            $('coinsDisplay').textContent = getCoins() + ' 🪙';
-            $('player-money').textContent = getCoins();
-        }
-
-        function addCoins(amount) {
-            setCoins(getCoins() + amount);
-            showNotification(`+${amount} монет`);
-        }
-
+        function getCoins() { return parseInt(localStorage.getItem(COINS_KEY)) || 1000; }
+        function setCoins(amount) { localStorage.setItem(COINS_KEY, amount); updateCoinsDisplay(); }
+        function updateCoinsDisplay() { $('coinsDisplay').textContent = getCoins() + ' 🪙'; $('player-money').textContent = getCoins(); }
+        function addCoins(amount) { setCoins(getCoins() + amount); showNotification(`+${amount} монет`); }
         function showNotification(text, isError = false) {
             const n = $('notification');
             n.textContent = isError ? '❌ ' + text : '✨ ' + text;
@@ -621,9 +545,7 @@
             if (tg?.initDataUnsafe?.user?.id) {
                 try {
                     const saved = localStorage.getItem(`player_${tg.initDataUnsafe.user.id}`);
-                    if (saved) {
-                        playerData = JSON.parse(saved);
-                    }
+                    if (saved) { playerData = JSON.parse(saved); }
                 } catch (e) {}
             }
             playerData.money = getCoins();
@@ -632,28 +554,20 @@
             $('player-races').textContent = playerData.races || 0;
         }
 
-        // ========== ЕЖЕДНЕВНЫЙ БОНУС ==========
         const dailyRewards = [100, 150, 200, 250, 300, 350, 500];
-
         function checkDailyBonus() {
             const today = new Date().toDateString();
             let dailyData = JSON.parse(localStorage.getItem(DAILY_KEY)) || { lastClaim: null, day: 0 };
             const claimedToday = dailyData.lastClaim === today;
             const gift = $('dailyGift');
-            if (claimedToday) {
-                gift.classList.add('claimed');
-            } else {
-                gift.classList.remove('claimed');
-            }
+            if (claimedToday) gift.classList.add('claimed');
+            else gift.classList.remove('claimed');
             return { claimedToday, day: dailyData.day };
         }
 
         function openDailyBonus() {
             const { claimedToday, day } = checkDailyBonus();
-            if (claimedToday) {
-                showNotification('Сегодня уже забирал!', true);
-                return;
-            }
+            if (claimedToday) { showNotification('Сегодня уже забирал!', true); return; }
             const modal = $('bonusModal');
             const currentDay = day % 7;
             $('bonusDayText').textContent = `День ${currentDay + 1}`;
@@ -661,17 +575,10 @@
             modal.classList.add('show');
         }
 
-        function closeModal() {
-            $('bonusModal').classList.remove('show');
-        }
-
+        function closeModal() { $('bonusModal').classList.remove('show'); }
         function claimDailyBonus() {
             const { claimedToday, day } = checkDailyBonus();
-            if (claimedToday) {
-                closeModal();
-                showNotification('Уже получал!', true);
-                return;
-            }
+            if (claimedToday) { closeModal(); showNotification('Уже получал!', true); return; }
             const today = new Date().toDateString();
             const currentDay = day % 7;
             addCoins(dailyRewards[currentDay]);
@@ -681,7 +588,6 @@
             if (tg?.HapticFeedback) tg.HapticFeedback.notification('success');
         }
 
-        // ========== ЗАГРУЗКА ХАРАКТЕРИСТИК (точки) ==========
         function loadCarPreview() {
             const garageArray = JSON.parse(localStorage.getItem(GARAGE_KEY)) || [];
             const dots = document.querySelectorAll('.telemetry-dot');
@@ -697,12 +603,10 @@
             });
         }
 
-        // ========== ЗАГРУЗЧИК ==========
         function startLoader() {
             loadPlayerData();
             checkDailyBonus();
             loadCarPreview();
-
             setTimeout(() => {
                 $('loader-container').style.opacity = '0';
                 setTimeout(() => {
@@ -713,13 +617,7 @@
             }, 2000);
         }
 
-        window.addEventListener('focus', () => {
-            updateCoinsDisplay();
-            loadPlayerData();
-            loadCarPreview();
-            checkDailyBonus();
-        });
-
+        window.addEventListener('focus', () => { updateCoinsDisplay(); loadPlayerData(); loadCarPreview(); checkDailyBonus(); });
         startLoader();
     </script>
 </body>
