@@ -47,15 +47,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.7);
             border: 2px solid #e10600;
             padding: 12px 20px;
             clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
             pointer-events: auto;
             backdrop-filter: blur(5px);
-            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(225,6,0,0.5);
         }
 
         .back-to-menu {
@@ -129,7 +130,7 @@
             clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
             pointer-events: auto;
             backdrop-filter: blur(5px);
-            width: 280px;
+            width: 260px; /* немного уже */
             z-index: 20;
         }
 
@@ -159,39 +160,42 @@
             color: white;
         }
 
-        /* Инвентарь (внизу по центру) */
+        /* Инвентарь (внизу по центру) – исправлен, стал компактнее */
         .inventory-panel {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.6);
             border: 2px solid #e10600;
-            padding: 15px;
+            padding: 10px;
             clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
             pointer-events: auto;
             backdrop-filter: blur(5px);
-            width: 600px;
-            max-width: 90vw;
+            width: auto;          /* автоматическая ширина по содержимому */
+            max-width: 95vw;
             z-index: 20;
         }
 
         .inventory-title {
             color: #e10600;
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 20px;
+            margin-bottom: 8px;
+            font-size: 18px;
             text-transform: uppercase;
         }
 
         .inventory-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
+            gap: 5px;
+            justify-content: center;
         }
 
+        /* Фиксированный размер ячеек, чтобы инвентарь не раздувался */
         .inventory-slot {
-            aspect-ratio: 1;
+            width: 55px;
+            height: 55px;
             background: rgba(255,255,255,0.1);
             border: 2px solid #e10600;
             display: flex;
@@ -219,7 +223,7 @@
             top: 2px;
             right: 5px;
             color: #00ff00;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             text-shadow: 0 0 10px #00ff00;
         }
@@ -310,6 +314,33 @@
             from { transform: translateX(-50%) translateY(-100%); }
             to { transform: translateX(-50%) translateY(0); }
         }
+
+        /* Адаптация для узких экранов */
+        @media (max-width: 600px) {
+            .stats-panel {
+                width: 200px;
+                padding: 10px;
+                left: 10px;
+                top: 100px;
+            }
+            .inventory-slot {
+                width: 45px;
+                height: 45px;
+            }
+            .inventory-title {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .inventory-slot {
+                width: 40px;
+                height: 40px;
+            }
+            .inventory-panel {
+                padding: 5px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -318,7 +349,6 @@
 
     <!-- Интерфейс поверх 3D -->
     <div id="ui-container">
-        <!-- Верхняя панель с навигацией и монетами -->
         <div>
             <div class="header">
                 <a href="index.html" class="back-to-menu">← МЕНЮ</a>
@@ -362,7 +392,7 @@
             </div>
         </div>
 
-        <!-- Инвентарь 5x6 (внизу по центру) -->
+        <!-- Инвентарь 5x6 (компактный) -->
         <div class="inventory-panel">
             <div class="inventory-title">📦 ИНВЕНТАРЬ</div>
             <div id="inventoryGrid" class="inventory-grid"></div>
@@ -531,7 +561,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- ЛОГИКА ИНВЕНТАРЯ И АКТИВНЫХ КУБОВ (как в предыдущей версии) ---
+        // --- ЛОГИКА ИНВЕНТАРЯ И АКТИВНЫХ КУБОВ (без изменений) ---
         const colorList = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
         const cubeStats = {
             red:    [30, 0, 0, 0, 0, 0],
@@ -690,4 +720,4 @@
         });
     </script>
 </body>
-</html>
+    </html>
