@@ -73,8 +73,7 @@
   <h2>Магазин</h2><p>Здесь будут товары.</p>
 </template>
 
-<!-- ==========  Г А Р А Ж  (полный код)  ========== -->
-<!-- ================  ГАРАЖ (с кнопкой и без выпирания)  ================ -->
+<!-- =================  ГАРАЖ (исправленный)  ================= -->
 <template id="tpl-garage">
   <style>
     :root{
@@ -82,33 +81,45 @@
       --clr-yellow:#f1c40f; --clr-orange:#e67e22; --clr-purple:#8e44ad;
       --radius:.6rem; --shadow:0 2px 7px rgba(0,0,0,.15);
     }
-    .garage-body{width:100%;max-width:900px;margin:0 auto;color:#fff;
-                 background:#f0f0f0;background-image: linear-gradient(to top,#808080,#a0a0a0);
-                 border-radius:var(--radius);padding:1rem 1.5rem 2rem;box-sizing:border-box;
-                 position:relative; /* вместо fixed */
-                 /* центрируем по вертикали при желании */
-                 display:flex;flex-direction:column;align-items:center}
-    #coinsDisplay{font-weight:bold;font-size:18px;margin-bottom:20px}
-    .main-grid{display:grid;gap:1.5rem;place-items:center;
-               grid-template-areas:"left car right"
-                                  "inv inv inv";width:100%}
-    .slots{display:flex;flex-direction:column;gap:1rem}
+    .garage-body{
+      width:100%; max-width:900px; margin:0 auto; color:#fff;
+      background:#f0f0f0; background-image:linear-gradient(to top,#808080,#a0a0a0);
+      border-radius:var(--radius); padding:1rem 1.5rem 2rem; box-sizing:border-box;
+      position:relative; display:flex; flex-direction:column; align-items:center;
+    }
+    #coinsDisplay{font-weight:bold; font-size:18px; margin-bottom:20px}
+    .main-grid{
+      display:grid; gap:1.25rem; place-items:center;
+      grid-template-areas:"left car right"
+                        "inv inv inv"; width:100%;
+    }
+    .slots{display:flex; flex-direction:column; gap:.75rem}
     .slots--left{grid-area:left}.slots--right{grid-area:right}
     .car{grid-area:car}
-    .inventory{grid-area:inv;display:grid;grid-template-columns:repeat(auto-fit,60px);gap:.75rem}
-    .slot{width:60px;height:60px;border:2px dashed #666;border-radius:var(--radius);
-          background:#f7f7f7;display:grid;place-content:center;position:relative}
-    .slot.drag-over{border-color:#2980b9;background:#d0e7ff}
+    .inventory{
+      grid-area:inv; display:grid;
+      grid-template-columns:repeat(auto-fit, 50px); gap:.6rem;
+    }
+    .slot{
+      width:50px; height:50px; border:2px dashed #666;
+      border-radius:var(--radius); background:#f7f7f7;
+      display:grid; place-content:center; position:relative;
+    }
+    .slot.drag-over{border-color:#2980b9; background:#d0e7ff}
     .slot[data-filled=true]{border-style:solid}
-    .cube{width:54px;height:54px;border-radius:var(--radius);cursor:grab;
-          box-shadow:var(--shadow);transition:transform .15s}
-    .cube:active{cursor:grabbing;transform:scale(1.1)}
-    .red{background:var(--clr-red)} .green{background:var(--clr-green)} .blue{background:var(--clr-blue)}
-    .yellow{background:var(--clr-yellow)} .orange{background:var(--clr-orange)} .purple{background:var(--clr-purple)}
+    .cube{width:46px; height:46px; border-radius:var(--radius);
+          cursor:grab; box-shadow:var(--shadow); transition:transform .15s}
+    .cube:active{cursor:grabbing; transform:scale(1.1)}
+    .red{background:var(--clr-red)} .green{background:var(--clr-green)}
+    .blue{background:var(--clr-blue)} .yellow{background:var(--clr-yellow)}
+    .orange{background:var(--clr-orange)} .purple{background:var(--clr-purple)}
 
     /* Кнопка НАЗАД */
-    .back-btn{position:absolute;top:.5rem;left:.7rem;background:#2980b9;color:#fff;
-              border:0;padding:.45rem .85rem;border-radius:.4rem;font-size:14px;cursor:pointer}
+    .back-btn{
+      position:absolute; top:.5rem; left:.7rem; background:#2980b9;
+      color:#fff; border:0; padding:.45rem .85rem; border-radius:.4rem;
+      font-size:14px; cursor:pointer; z-index:10;
+    }
     .back-btn:hover{background:#1c6fa4}
   </style>
 
@@ -121,7 +132,7 @@
     <main class="main-grid">
       <section class="slots slots--left" aria-label="Левые цветовые слоты">
         <div class="slot" data-allowed="red" tabindex="0" title="Красный слот"></div>
-        <div class="slot" data-allowed="green" tabindex="0" title="Зелёный слот"></div>
+        <div class="slot" data-allowed="green" tabindex="0" title="Зёленый слот"></div>
         <div class="slot" data-allowed="blue" tabindex="0" title="Синий слот"></div>
       </section>
 
@@ -141,18 +152,19 @@
 
   <script>
     (function(){
-      const COINS_KEY='playerCoins', coinsDisplay=document.getElementById('coinsDisplay');
-      const getCoins=()=>parseInt(localStorage.getItem(COINS_KEY))||0;
-      const setCoins=v=>{localStorage.setItem(COINS_KEY,v);updateCoins()};
-      const updateCoins=()=>coinsDisplay.textContent=`Монеты: ${getCoins()}`;
-      const addCoins=x=>{setCoins(getCoins()+x)};
+      const COINS_KEY='playerCoins',
+            coinsDisplay=document.getElementById('coinsDisplay'),
+            getCoins = ()=>parseInt(localStorage.getItem(COINS_KEY))||0,
+            setCoins = v=>{localStorage.setItem(COINS_KEY,v); updateCoins()},
+            updateCoins = ()=>coinsDisplay.textContent=`Монеты: ${getCoins()}`,
+            addCoins = x=>setCoins(getCoins()+x);
       updateCoins();
 
-      const COLORS=['red','green','blue','yellow','orange','purple'];
-      const inv=document.getElementById('inventory');
+      const COLORS=['red','green','blue','yellow','orange','purple'],
+            inv=document.getElementById('inventory');
       let dragged=null;
 
-      /* создаём 30 слотов инвентаря и закидываем по одному кубу */
+      /* 30 слотов инвентаря */
       for(let i=0;i<30;i++){
         const s=Object.assign(document.createElement('div'),{className:'slot',tabIndex:-1});
         s.dataset.pos=i; inv.appendChild(s);
@@ -161,11 +173,12 @@
 
       function makeCube(color){
         const el=document.createElement('div');
-        el.className=`cube ${color}`; el.draggable=true; el.dataset.color=color; el.title=`${color} куб`;
+        el.className=`cube ${color}`; el.draggable=true;
+        el.dataset.color=color; el.title=`${color} куб`;
         return el;
       }
 
-      /* ------------- drag & drop ------------- */
+      /* ---------- drag & drop ---------- */
       document.addEventListener('dragstart',e=>{
         if(!e.target.classList.contains('cube'))return;
         dragged=e.target; e.dataTransfer.effectAllowed='move';
@@ -193,10 +206,11 @@
         s.classList.remove('drag-over');
         addCoins(10);
       });
-      /* ------------- /drag & drop ------------- */
+      /* ---------- /drag & drop ---------- */
     })();
   </script>
 </template>
+
 
 <template id="tpl-race">
   <h2>Заезд</h2><p>Гонка начнётся скоро…</p>
