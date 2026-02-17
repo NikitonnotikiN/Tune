@@ -74,6 +74,7 @@
 </template>
 
 <!-- ==========  Г А Р А Ж  (полный код)  ========== -->
+<!-- ================  ГАРАЖ (с кнопкой и без выпирания)  ================ -->
 <template id="tpl-garage">
   <style>
     :root{
@@ -81,35 +82,38 @@
       --clr-yellow:#f1c40f; --clr-orange:#e67e22; --clr-purple:#8e44ad;
       --radius:.6rem; --shadow:0 2px 7px rgba(0,0,0,.15);
     }
-    .garage-body{margin:0 auto;font-family:system-ui,Arial;
-                 background:#808080;display:flex;flex-direction:column;
-                 align-items:center;min-height:100vh;color:#fff}
+    .garage-body{width:100%;max-width:900px;margin:0 auto;color:#fff;
+                 background:#f0f0f0;background-image: linear-gradient(to top,#808080,#a0a0a0);
+                 border-radius:var(--radius);padding:1rem 1.5rem 2rem;box-sizing:border-box;
+                 position:relative; /* вместо fixed */
+                 /* центрируем по вертикали при желании */
+                 display:flex;flex-direction:column;align-items:center}
     #coinsDisplay{font-weight:bold;font-size:18px;margin-bottom:20px}
     .main-grid{display:grid;gap:1.5rem;place-items:center;
                grid-template-areas:"left car right"
-                                  "inv inv inv";
-               max-width:900px;width:100%;padding:0 1rem}
+                                  "inv inv inv";width:100%}
     .slots{display:flex;flex-direction:column;gap:1rem}
     .slots--left{grid-area:left}.slots--right{grid-area:right}
     .car{grid-area:car}
-    .inventory{grid-area:inv;display:grid;grid-template-columns:repeat(6,60px);gap:.75rem}
-
+    .inventory{grid-area:inv;display:grid;grid-template-columns:repeat(auto-fit,60px);gap:.75rem}
     .slot{width:60px;height:60px;border:2px dashed #666;border-radius:var(--radius);
           background:#f7f7f7;display:grid;place-content:center;position:relative}
-    .slot:focus-visible{outline:3px solid #2980b9;outline-offset:2px}
     .slot.drag-over{border-color:#2980b9;background:#d0e7ff}
     .slot[data-filled=true]{border-style:solid}
-
-    .cube{width:54px;height:54px;border-radius:var(--radius);
-          cursor:grab;box-shadow:var(--shadow);transition:transform .15s}
+    .cube{width:54px;height:54px;border-radius:var(--radius);cursor:grab;
+          box-shadow:var(--shadow);transition:transform .15s}
     .cube:active{cursor:grabbing;transform:scale(1.1)}
-    .red{background:var(--clr-red)}
-    .green{background:var(--clr-green)}
-    .blue{background:var(--clr-blue)}
-    .yellow{background:var(--clr-yellow)}
-    .orange{background:var(--clr-orange)}
-    .purple{background:var(--clr-purple)}
+    .red{background:var(--clr-red)} .green{background:var(--clr-green)} .blue{background:var(--clr-blue)}
+    .yellow{background:var(--clr-yellow)} .orange{background:var(--clr-orange)} .purple{background:var(--clr-purple)}
+
+    /* Кнопка НАЗАД */
+    .back-btn{position:absolute;top:.5rem;left:.7rem;background:#2980b9;color:#fff;
+              border:0;padding:.45rem .85rem;border-radius:.4rem;font-size:14px;cursor:pointer}
+    .back-btn:hover{background:#1c6fa4}
   </style>
+
+  <!-- кнопка «Назад» -->
+  <button class="back-btn" onclick="route('/')">◀ Назад</button>
 
   <div class="garage-body">
     <div id="coinsDisplay">Монеты: 0</div>
@@ -122,8 +126,7 @@
       </section>
 
       <figure class="car">
-        <img src="https://astra-faq.ru/wp-content/uploads/2025/12/wx1-3207.png"
-             alt="ВАЗ-2107" width="280" />
+        <img src="https://astra-faq.ru/wp-content/uploads/2025/12/wx1-3207.png" alt="ВАЗ-2107" width="280"/>
       </figure>
 
       <section class="slots slots--right" aria-label="Правые цветовые слоты">
@@ -138,92 +141,59 @@
 
   <script>
     (function(){
-      const COINS_KEY = 'playerCoins';
-      const coinsDisplay = document.getElementById('coinsDisplay');
-      function getCoins() { return parseInt(localStorage.getItem(COINS_KEY)) || 0; }
-      function setCoins(amount) { localStorage.setItem(COINS_KEY, amount); updateCoinsDisplay(); }
-      function updateCoinsDisplay() { coinsDisplay.textContent = `Монеты: ${getCoins()}`; }
-      function addCoins(amount) { setCoins(getCoins() + amount); }
-      updateCoinsDisplay();
+      const COINS_KEY='playerCoins', coinsDisplay=document.getElementById('coinsDisplay');
+      const getCoins=()=>parseInt(localStorage.getItem(COINS_KEY))||0;
+      const setCoins=v=>{localStorage.setItem(COINS_KEY,v);updateCoins()};
+      const updateCoins=()=>coinsDisplay.textContent=`Монеты: ${getCoins()}`;
+      const addCoins=x=>{setCoins(getCoins()+x)};
+      updateCoins();
 
-      const COLORS = ['red','green','blue','yellow','orange','purple'];
-      const inventory = document.getElementById('inventory');
-      let dragged = null;
+      const COLORS=['red','green','blue','yellow','orange','purple'];
+      const inv=document.getElementById('inventory');
+      let dragged=null;
 
-      // создаём 30 ячеек инвентаря
-      for (let i = 0; i < 30; i++) {
-        const slot = Object.assign(document.createElement('div'), { className: 'slot', tabIndex: -1 });
-        slot.dataset.pos = i;
-        inventory.appendChild(slot);
+      /* создаём 30 слотов инвентаря и закидываем по одному кубу */
+      for(let i=0;i<30;i++){
+        const s=Object.assign(document.createElement('div'),{className:'slot',tabIndex:-1});
+        s.dataset.pos=i; inv.appendChild(s);
       }
-      // кладём по одному кубу
-      COLORS.forEach((c, i) => inventory.children[i].appendChild(makeCube(c)));
+      COLORS.forEach((c,i)=>inv.children[i].appendChild(makeCube(c)));
 
-      function makeCube(color) {
-        const el = document.createElement('div');
-        el.className = `cube ${color}`;
-        el.draggable = true;
-        el.dataset.color = color;
-        el.title = `${color} куб`;
+      function makeCube(color){
+        const el=document.createElement('div');
+        el.className=`cube ${color}`; el.draggable=true; el.dataset.color=color; el.title=`${color} куб`;
         return el;
       }
 
-      // делегирование drag-drop
-      document.addEventListener('dragstart', e => {
-        if (!e.target.classList.contains('cube')) return;
-        dragged = e.target;
-        e.dataTransfer.effectAllowed = 'move';
-        requestAnimationFrame(() => dragged.style.visibility = 'hidden');
-      }, { passive: true });
-
-      document.addEventListener('dragend', () => {
-        if (!dragged) return;
-        dragged.style.visibility = '';
-        dragged = null;
-        document.querySelectorAll('.drag-over').forEach(s => s.classList.remove('drag-over'));
+      /* ------------- drag & drop ------------- */
+      document.addEventListener('dragstart',e=>{
+        if(!e.target.classList.contains('cube'))return;
+        dragged=e.target; e.dataTransfer.effectAllowed='move';
+        requestAnimationFrame(()=>dragged.style.visibility='hidden');
       });
-
-      document.addEventListener('dragover', e => {
-        const slot = e.target.closest('.slot');
-        if (!slot || slot.dataset.filled === 'true') { e.dataTransfer.dropEffect = 'none'; return; }
-        const need = slot.dataset.allowed, have = dragged.dataset.color;
-        if (need && need !== have) { e.dataTransfer.dropEffect = 'none'; return; }
-        slot.classList.add('drag-over');
+      document.addEventListener('dragend',()=>{
+        if(!dragged)return;
+        dragged.style.visibility=''; dragged=null;
+      });
+      document.addEventListener('dragover',e=>{
+        const s=e.target.closest('.slot');
+        if(!s||s.dataset.filled==='true')return;
+        if(s.dataset.allowed&&s.dataset.allowed!==dragged.dataset.color)return;
         e.preventDefault();
+        s.classList.add('drag-over');
       });
-
-      document.addEventListener('dragleave', e => {
-        e.target.closest('.slot')?.classList.remove('drag-over');
-      });
-
-      document.addEventListener('drop', e => {
-        const slot = e.target.closest('.slot');
-        if (!slot || slot.dataset.filled === 'true') return;
-        const need = slot.dataset.allowed, have = dragged.dataset.color;
-        if (need && need !== have) return;
-
-        dragged.parentElement.dataset.filled = 'false';
-        slot.appendChild(dragged);
-        slot.dataset.filled = 'true';
-        slot.classList.remove('drag-over');
+      document.addEventListener('dragleave',e=>e.target.closest('.slot')?.classList.remove('drag-over'));
+      document.addEventListener('drop',e=>{
+        const s=e.target.closest('.slot');
+        if(!s||s.dataset.filled==='true')return;
+        const need=s.dataset.allowed, have=dragged.dataset.color;
+        if(need&&need!==have)return;
+        dragged.parentElement.dataset.filled='false';
+        s.appendChild(dragged); s.dataset.filled='true';
+        s.classList.remove('drag-over');
         addCoins(10);
       });
-
-      // клавиатурный drop
-      document.addEventListener('keydown', e => {
-        const cube = e.target.closest('.cube');
-        if (!cube || !(e.key === 'Enter' || e.key === ' ')) return;
-        e.preventDefault();
-        const emptySlot = [...document.querySelectorAll('.slot')]
-          .find(s => s.dataset.filled !== 'true' &&
-                (!s.dataset.allowed || s.dataset.allowed === cube.dataset.color));
-        if (emptySlot) {
-          cube.parentElement.dataset.filled = 'false';
-          emptySlot.appendChild(cube);
-          emptySlot.dataset.filled = 'true';
-          addCoins(10);
-        }
-      });
+      /* ------------- /drag & drop ------------- */
     })();
   </script>
 </template>
