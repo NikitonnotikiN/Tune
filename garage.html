@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ru">
 <head>
@@ -111,7 +110,7 @@
       letter-spacing: clamp(2px, 2vw, 4px);
     }
 
-    /* Панель характеристик */
+    /* Панель характеристик (заготовка) */
     .stats-panel {
       width: 100%;
       max-width: 800px;
@@ -125,7 +124,7 @@
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
 
@@ -135,11 +134,6 @@
       padding: 12px 8px;
       text-align: center;
       border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .stat-card.active {
-      border-color: #0ff;
-      box-shadow: 0 0 20px #0ff;
     }
 
     .stat-icon { font-size: 24px; margin-bottom: 5px; }
@@ -182,7 +176,7 @@
       cursor: pointer;
     }
 
-    /* Цветные рамки для слотов (можно оставить или убрать) */
+    /* Цветные рамки для категорий */
     .car-slot[data-category="body"] { border-color: #ff4444; }
     .car-slot[data-category="spoiler"] { border-color: #ff8844; }
     .car-slot[data-category="hood"] { border-color: #ffff44; }
@@ -294,7 +288,7 @@
     .cube:active::after { left: 100%; }
     .cube.selected { transform: scale(1.1); box-shadow: 0 0 30px currentColor; }
 
-    /* Цвета кубов (пример) */
+    /* Цвета кубов */
     .cube.red { background: linear-gradient(145deg, #ff4444, #cc0000); }
     .cube.orange { background: linear-gradient(145deg, #ff8844, #cc4400); }
     .cube.yellow { background: linear-gradient(145deg, #ffff44, #cccc00); }
@@ -333,29 +327,31 @@
 
   <div class="title"><h1>🔧 ТЮНИНГ 🔧</h1></div>
 
-  <!-- Панель характеристик (будет заполняться позже) -->
+  <!-- Панель характеристик (заготовка) -->
   <div class="stats-panel">
-    <div class="stats-grid" id="statsGrid"></div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-name">СКОРОСТЬ</div><div class="stat-value" id="statSpeed">0</div></div>
+      <div class="stat-card"><div class="stat-icon">🚀</div><div class="stat-name">УСКОРЕНИЕ</div><div class="stat-value" id="statAccel">0</div></div>
+      <div class="stat-card"><div class="stat-icon">💨</div><div class="stat-name">МАКС. СКОР</div><div class="stat-value" id="statMaxSpeed">0</div></div>
+    </div>
   </div>
 
   <!-- Основная сетка слотов и машины -->
   <main class="main-grid">
     <!-- Левая колонка слотов (3 шт) -->
-    <section class="car-slots" id="leftSlots">
-      <!-- будут заполнены из JS -->
-    </section>
+    <section class="car-slots" id="leftSlots"></section>
 
-    <!-- Машина с деталями -->
+    <!-- Машина с деталями (используем ваши ссылки) -->
     <figure class="car-container" id="carContainer">
-      <!-- Базовая основа (кузов без деталей) – замените на свой base.png -->
-      <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png">
-      <!-- Накладываемые детали (каждая часть) -->
-      <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%812.png"  id="part_body"    class="car-part" alt="body">
-      <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%91%D0%B5%D0%B7%20%D0%BD%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F288_20260217165850.png" id="part_spoiler" class="car-part" alt="spoiler">
-      <img src="https://example.com/parts/hood_default.png"   id="part_hood"    class="car-part" alt="hood">
-      <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B05.png" id="part_wheels"  class="car-part" alt="wheels">
-      <img src="https://example.com/parts/lights_default.png" id="part_lights"  class="car-part" alt="lights">
-      <img src="https://example.com/parts/exhaust_default.png" id="part_exhaust" class="car-part" alt="exhaust">
+      <!-- Базовая основа (можно использовать стандартный кузов как базу) -->
+      <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png" alt="base" id="carBase" style="opacity:0.5"> <!-- полупрозрачная подложка -->
+      <!-- Накладываемые детали -->
+      <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png"  id="part_body"    class="car-part" alt="body">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_spoiler" class="car-part" alt="spoiler"> <!-- прозрачный заглушка -->
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_hood"    class="car-part" alt="hood">
+      <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png" id="part_wheels"  class="car-part" alt="wheels">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_lights"  class="car-part" alt="lights">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_exhaust" class="car-part" alt="exhaust">
     </figure>
 
     <!-- Правая колонка слотов (3 шт) -->
@@ -376,17 +372,17 @@
     const GARAGE_KEY = 'garageCubes';
     const INVENTORY_KEY = 'playerInventory';
 
-    // Соответствие индекса слота и детали + допустимые цвета кубов
+    // Соответствие индекса слота детали и допустимые цвета кубов
     const slotToPart = [
-      { partId: 'part_body',     category: 'body',     allowedColors: ['red', 'red_dark', 'red_light'] },   // красные тона
-      { partId: 'part_spoiler',  category: 'spoiler',  allowedColors: ['orange', 'orange_dark'] },          // оранжевые
-      { partId: 'part_hood',     category: 'hood',     allowedColors: ['yellow', 'yellow_light'] },         // жёлтые
-      { partId: 'part_wheels',   category: 'wheels',   allowedColors: ['blue', 'blue_dark', 'cyan'] },      // синие
-      { partId: 'part_lights',   category: 'lights',   allowedColors: ['purple', 'violet'] },               // фиолетовые
-      { partId: 'part_exhaust',  category: 'exhaust',  allowedColors: ['green', 'lime'] }                   // зелёные
+      { partId: 'part_body',     category: 'body',     allowedColors: ['red', 'orange', 'yellow'] },   // красные/оранжевые/жёлтые для кузова
+      { partId: 'part_spoiler',  category: 'spoiler',  allowedColors: ['orange', 'red'] },              // пока заглушка
+      { partId: 'part_hood',     category: 'hood',     allowedColors: ['yellow', 'orange'] },           // заглушка
+      { partId: 'part_wheels',   category: 'wheels',   allowedColors: ['blue', 'purple', 'green'] },    // синие/фиолетовые/зелёные для колёс
+      { partId: 'part_lights',   category: 'lights',   allowedColors: ['purple', 'blue'] },             // заглушка
+      { partId: 'part_exhaust',  category: 'exhaust',  allowedColors: ['green', 'yellow'] }             // заглушка
     ];
 
-    // Цвета для генерации кубов (для начального инвентаря)
+    // Доступные цвета для начального инвентаря (по одному каждого)
     const AVAILABLE_COLORS = ['red', 'orange', 'yellow', 'blue', 'purple', 'green'];
 
     let selectedCube = null;
@@ -410,7 +406,7 @@
       const right = document.getElementById('rightSlots');
       left.innerHTML = ''; right.innerHTML = '';
 
-      // Первые 3 слота (0,1,2) – левая сторона
+      // Слоты 0,1,2 – левая сторона
       for (let i = 0; i < 3; i++) {
         const slot = document.createElement('div');
         slot.className = 'car-slot';
@@ -460,7 +456,7 @@
           slot.appendChild(cube);
           slot.dataset.filled = 'true';
         });
-        saveInventory(); // сохраняем начальное состояние
+        saveInventory();
       }
     }
 
@@ -488,8 +484,6 @@
       carSlots.forEach((slot, idx) => {
         const part = slotToPart[idx];
         if (!part) return;
-        // saved может содержать массив цветов для каждого слота или объект
-        // Предположим, saved — массив из 6 элементов (цвет или null)
         if (saved[idx]) {
           const color = saved[idx];
           // Ищем куб такого цвета в инвентаре
@@ -510,7 +504,6 @@
           }
         } else {
           slot.dataset.filled = 'false';
-          // Если в слоте есть куб, вернуть его в инвентарь? лучше не трогать, т.к. сохранение уже учтено
         }
       });
       updateCarParts();
@@ -530,31 +523,61 @@
       });
       localStorage.setItem(GARAGE_KEY, JSON.stringify(state));
       updateCarParts();
-      updateStats(); // если есть статистика
+      updateStats();
     }
 
     // ========== ОБНОВЛЕНИЕ ДЕТАЛЕЙ МАШИНЫ ==========
     function updateCarParts() {
       const carSlots = document.querySelectorAll('.car-slot');
-      carSlots.forEach((slot, idx) => {
-        const partInfo = slotToPart[idx];
-        if (!partInfo) return;
-        const img = document.getElementById(partInfo.partId);
-        if (!img) return;
+      
+      // Базовый URL вашего репозитория
+      const baseUrl = 'https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/';
 
-        if (slot.dataset.filled === 'true') {
-          const cube = slot.querySelector('.cube');
+      // Обновление кузова (индекс 0)
+      const bodySlot = carSlots[0];
+      const bodyImg = document.getElementById('part_body');
+      if (bodySlot && bodyImg) {
+        if (bodySlot.dataset.filled === 'true') {
+          const cube = bodySlot.querySelector('.cube');
           if (cube) {
-            const color = cube.dataset.color;
-            // Пример пути: "parts/body_red.png". Замените на свои URL
-            img.src = `https://example.com/parts/${partInfo.category}_${color}.png`;
-          } else {
-            img.src = `https://example.com/parts/${partInfo.category}_default.png`;
+            // Если красный куб — ставим Корпус2.png, иначе Корпус.png
+            if (cube.dataset.color === 'red') {
+              bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%812.png'; // Корпус2
+            } else {
+              bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png'; // Корпус
+            }
           }
         } else {
-          img.src = `https://example.com/parts/${partInfo.category}_default.png`;
+          bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png'; // стандарт
         }
-      });
+      }
+
+      // Обновление колёс (индекс 3)
+      const wheelsSlot = carSlots[3];
+      const wheelsImg = document.getElementById('part_wheels');
+      if (wheelsSlot && wheelsImg) {
+        if (wheelsSlot.dataset.filled === 'true') {
+          const cube = wheelsSlot.querySelector('.cube');
+          if (cube) {
+            // Если синий куб — ставим Колеса5.png, иначе Колеса.png
+            if (cube.dataset.color === 'blue') {
+              wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B05.png'; // Колеса5
+            } else {
+              wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png'; // Колеса
+            }
+          }
+        } else {
+          wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png'; // стандарт
+        }
+      }
+
+      // Остальные детали пока не трогаем (они с прозрачными заглушками)
+    }
+
+    // ========== СТАТИСТИКА (заготовка) ==========
+    function updateStats() {
+      // Здесь можно добавить логику расчёта характеристик от установленных кубов
+      // Пока оставим заглушку
     }
 
     // ========== ВЫДЕЛЕНИЕ И ПЕРЕМЕЩЕНИЕ ==========
@@ -579,7 +602,6 @@
         cube.closest('.inventory-slot').classList.add('selected');
         selectedCube = cube;
 
-        // Подсветить доступные слоты машины
         const cubeColor = cube.dataset.color;
         document.querySelectorAll('.car-slot').forEach((slot, idx) => {
           const part = slotToPart[idx];
@@ -635,7 +657,6 @@
         const invSlotOrigin = selectedCube.closest('.inventory-slot');
 
         if (carSlot.dataset.filled === 'false') {
-          // Пустой слот – ставим куб
           invSlotOrigin.removeChild(selectedCube);
           invSlotOrigin.dataset.filled = 'false';
           carSlot.appendChild(selectedCube);
@@ -645,7 +666,6 @@
           saveCarState();
           saveInventory();
         } else {
-          // В слоте уже есть куб – меняем
           const carCube = carSlot.querySelector('.cube');
           if (carCube) {
             invSlotOrigin.removeChild(selectedCube);
@@ -661,17 +681,10 @@
         return;
       }
 
-      // Клик вне всего – сброс
       if (!cube && !invSlot && !carSlot) clearSelection();
     });
 
-    // ========== СТАТИСТИКА (ЗАГОТОВКА) ==========
-    function updateStats() {
-      // Здесь можно добавить отображение характеристик от кубов
-      // Пока оставим заглушку
-    }
-
-    // ========== ЗАПУСК ==========
+    // ========== ИНИЦИАЛИЗАЦИЯ ==========
     function init() {
       createCarSlots();
       initInventory();
@@ -683,4 +696,4 @@
     init();
   </script>
 </body>
-  </html>
+</html>
