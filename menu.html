@@ -55,6 +55,7 @@
             100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
         }
 
+        /* Шапка */
         .header {
             position: fixed;
             top: 0;
@@ -102,6 +103,7 @@
             font-size: clamp(16px, 5vw, 20px);
         }
 
+        /* Заголовок */
         .title {
             text-align: center;
             margin: 80px 0 30px 0;
@@ -125,6 +127,7 @@
             50% { text-shadow: 0 0 60px #0ff; }
         }
 
+        /* Сетка меню */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -201,6 +204,7 @@
             letter-spacing: 1px;
         }
 
+        /* Кнопка назад (выход) */
         .back-btn {
             position: fixed;
             bottom: 20px;
@@ -223,6 +227,160 @@
 
         .back-btn:active {
             transform: scale(0.9);
+        }
+
+        /* Превью характеристик */
+        .stats-preview {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 40px;
+            border: 1px solid #0ff;
+            z-index: 100;
+        }
+
+        .stat-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .stat-dot.red { background: #ff4444; }
+        .stat-dot.green { background: #44ff44; }
+        .stat-dot.blue { background: #4444ff; }
+        .stat-dot.yellow { background: #ffff44; }
+        .stat-dot.orange { background: #ff8844; }
+        .stat-dot.purple { background: #ff44ff; }
+
+        /* ========== ЕЖЕДНЕВНЫЙ БОНУС ========== */
+        .daily-gift {
+            position: fixed;
+            top: 70px;
+            left: 16px;
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid #ffaa00;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 0 30px #ffaa00;
+            transition: all 0.3s;
+            animation: giftPulse 2s infinite;
+        }
+
+        .daily-gift.claimed {
+            opacity: 0.5;
+            border-color: #666;
+            box-shadow: none;
+            animation: none;
+            cursor: default;
+        }
+
+        @keyframes giftPulse {
+            0% { transform: scale(1); box-shadow: 0 0 30px #ffaa00; }
+            50% { transform: scale(1.1); box-shadow: 0 0 50px #ffaa00; }
+            100% { transform: scale(1); box-shadow: 0 0 30px #ffaa00; }
+        }
+
+        /* Модальное окно */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 2px solid #ffaa00;
+            border-radius: 40px;
+            padding: 30px;
+            max-width: 300px;
+            width: 90%;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 70px #ffaa00;
+            animation: modalPop 0.3s;
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-content h2 {
+            color: #ffaa00;
+            font-size: 28px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .modal-reward {
+            font-size: 48px;
+            margin: 20px 0;
+            background: linear-gradient(45deg, #f0f, #0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            background: transparent;
+            border: 2px solid;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .modal-btn.claim {
+            border-color: #0f0;
+        }
+        .modal-btn.claim:hover {
+            background: #0f0;
+            color: #000;
+        }
+        .modal-btn.cancel {
+            border-color: #f00;
+        }
+        .modal-btn.cancel:hover {
+            background: #f00;
+            color: #000;
         }
 
         .loader-container {
@@ -254,33 +412,37 @@
             100% { transform: rotate(360deg); }
         }
 
-        .stats-preview {
+        /* Уведомление */
+        .notification {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            gap: 8px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 12px 20px;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0ff;
+            color: #000;
+            padding: 12px 24px;
             border-radius: 40px;
-            border: 1px solid #0ff;
-            z-index: 100;
+            font-weight: bold;
+            z-index: 3000;
+            display: none;
+            font-size: clamp(12px, 3vw, 14px);
+            white-space: nowrap;
+            box-shadow: 0 0 30px #0ff;
         }
 
-        .stat-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            box-shadow: 0 0 10px currentColor;
+        .notification.show {
+            display: block;
+            animation: slide 0.3s;
         }
 
-        .stat-dot.red { background: #ff4444; }
-        .stat-dot.green { background: #44ff44; }
-        .stat-dot.blue { background: #4444ff; }
-        .stat-dot.yellow { background: #ffff44; }
-        .stat-dot.orange { background: #ff8844; }
-        .stat-dot.purple { background: #ff44ff; }
+        .notification.error {
+            background: #f0f;
+        }
+
+        @keyframes slide {
+            from { transform: translateX(-50%) translateY(-100%); }
+            to { transform: translateX(-50%) translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -288,6 +450,7 @@
         <div class="cyber-grid"></div>
     </div>
 
+    <!-- Шапка -->
     <div class="header">
         <div class="user-badge" id="userBadge">
             <img id="userAvatar" src="" alt="avatar">
@@ -296,10 +459,15 @@
         <div class="coins-badge" id="coinsDisplay">1000 🪙</div>
     </div>
 
+    <!-- Ежедневный подарок -->
+    <div class="daily-gift" id="dailyGift" onclick="openDailyBonus()">🎁</div>
+
+    <!-- Заголовок -->
     <div class="title">
         <h1>КИРЮХА RACING</h1>
     </div>
 
+    <!-- Меню -->
     <div class="menu-grid">
         <a href="garage.html" class="menu-item garage">
             <div class="menu-emoji">🔧</div>
@@ -333,14 +501,32 @@
         <div class="stat-dot purple" title="Защита"></div>
     </div>
 
+    <!-- Кнопка выхода -->
     <a href="#" class="back-btn" onclick="window.Telegram?.WebApp?.close()">✖ ВЫХОД</a>
 
+    <!-- Модальное окно для бонуса -->
+    <div class="modal-overlay" id="bonusModal" onclick="if(event.target===this) closeModal()">
+        <div class="modal-content">
+            <h2>🎁 ЕЖЕДНЕВНЫЙ БОНУС</h2>
+            <p id="bonusDayText">День 1</p>
+            <div class="modal-reward" id="bonusReward">100 🪙</div>
+            <div class="modal-buttons">
+                <button class="modal-btn claim" onclick="claimDailyBonus()">ЗАБРАТЬ</button>
+                <button class="modal-btn cancel" onclick="closeModal()">ПОТОМ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Загрузчик -->
     <div class="loader-container" id="loader">
         <div class="loader"></div>
     </div>
 
     <script>
-        // Telegram Integration
+        // ========== TELEGRAM ==========
         if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
@@ -352,23 +538,137 @@
             }
         }
 
-        // Монеты
+        // ========== МОНЕТЫ ==========
+        const COINS_KEY = 'playerCoins';
+        const DAILY_KEY = 'dailyBonusMenu';
+
         function getCoins() {
-            return parseInt(localStorage.getItem('playerCoins')) || 1000;
+            return parseInt(localStorage.getItem(COINS_KEY)) || 1000;
         }
 
-        function updateCoins() {
+        function setCoins(amount) {
+            localStorage.setItem(COINS_KEY, amount);
+            updateCoinsDisplay();
+        }
+
+        function updateCoinsDisplay() {
             document.getElementById('coinsDisplay').textContent = getCoins() + ' 🪙';
         }
 
-        // Загрузка характеристик из гаража (подсветка точек)
+        function addCoins(amount) {
+            setCoins(getCoins() + amount);
+            showNotification(`+${amount} монет`);
+        }
+
+        function showNotification(text, isError = false) {
+            const n = document.getElementById('notification');
+            n.textContent = isError ? '❌ ' + text : '✨ ' + text;
+            n.className = `notification ${isError ? 'error' : ''} show`;
+            setTimeout(() => n.classList.remove('show'), 2000);
+        }
+
+        // ========== ЕЖЕДНЕВНЫЙ БОНУС ==========
+        const dailyRewards = [100, 150, 200, 250, 300, 350, 500]; // 7 дней
+
+        function checkDailyBonus() {
+            const today = new Date().toDateString();
+            let dailyData = JSON.parse(localStorage.getItem(DAILY_KEY));
+
+            if (!dailyData || dailyData.lastClaim !== today) {
+                // Можно начинать новый день (сбрасывать или продолжать?)
+                // Сделаем классическую систему: каждый день награда, но если пропустил, то день сбрасывается.
+                const lastClaim = dailyData ? new Date(dailyData.lastClaim) : null;
+                const now = new Date();
+                const diffDays = lastClaim ? Math.floor((now - lastClaim) / (1000 * 60 * 60 * 24)) : 99;
+
+                if (!dailyData || diffDays >= 1) {
+                    // Новый день, начинаем с первого дня
+                    dailyData = {
+                        lastClaim: null, // пока не получали сегодня
+                        day: 0,
+                        streak: 0
+                    };
+                }
+            }
+
+            // Проверяем, получали ли сегодня
+            const claimedToday = dailyData.lastClaim === today;
+            const gift = document.getElementById('dailyGift');
+            if (claimedToday) {
+                gift.classList.add('claimed');
+                gift.style.animation = 'none';
+            } else {
+                gift.classList.remove('claimed');
+                gift.style.animation = 'giftPulse 2s infinite';
+            }
+
+            return { claimedToday, day: dailyData.day };
+        }
+
+        function openDailyBonus() {
+            const { claimedToday, day } = checkDailyBonus();
+            if (claimedToday) {
+                showNotification('Сегодня уже забирал!', true);
+                return;
+            }
+
+            // Показываем модальное окно
+            const modal = document.getElementById('bonusModal');
+            const dayText = document.getElementById('bonusDayText');
+            const rewardDiv = document.getElementById('bonusReward');
+
+            const currentDay = day % 7; // циклично по 7 дням
+            const reward = dailyRewards[currentDay];
+            dayText.textContent = `День ${currentDay + 1}`;
+            rewardDiv.textContent = `${reward} 🪙`;
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('bonusModal').classList.remove('show');
+        }
+
+        function claimDailyBonus() {
+            const { claimedToday, day } = checkDailyBonus();
+            if (claimedToday) {
+                closeModal();
+                showNotification('Уже получал!', true);
+                return;
+            }
+
+            const today = new Date().toDateString();
+            const currentDay = day % 7;
+            const reward = dailyRewards[currentDay];
+
+            // Начисляем награду
+            addCoins(reward);
+
+            // Сохраняем
+            const dailyData = {
+                lastClaim: today,
+                day: day + 1,
+                streak: day + 1
+            };
+            localStorage.setItem(DAILY_KEY, JSON.stringify(dailyData));
+
+            // Обновляем иконку
+            checkDailyBonus();
+            closeModal();
+
+            // Эффект
+            if (window.Telegram?.WebApp?.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.notification('success');
+            }
+        }
+
+        // ========== ЗАГРУЗКА ХАРАКТЕРИСТИК (точки) ==========
         function loadCarPreview() {
             const garageArray = JSON.parse(localStorage.getItem('garageCubes')) || [];
             const dots = document.querySelectorAll('.stat-dot');
             const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
             
             dots.forEach((dot, index) => {
-                // Проверяем, есть ли куб в соответствующем слоте (по индексу)
                 if (garageArray[index]) {
                     dot.style.opacity = '1';
                     dot.style.boxShadow = '0 0 20px currentColor';
@@ -379,7 +679,7 @@
             });
         }
 
-        // Загрузчик
+        // ========== ЗАГРУЗЧИК ==========
         setTimeout(() => {
             document.getElementById('loader').style.opacity = '0';
             setTimeout(() => {
@@ -387,13 +687,16 @@
             }, 500);
         }, 1000);
 
-        updateCoins();
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        updateCoinsDisplay();
         loadCarPreview();
+        checkDailyBonus(); // проверка бонуса
 
         window.addEventListener('focus', function() {
-            updateCoins();
+            updateCoinsDisplay();
             loadCarPreview();
+            checkDailyBonus();
         });
     </script>
 </body>
-</html>
+    </html>
