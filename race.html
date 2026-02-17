@@ -625,13 +625,13 @@
         const objLoader = new OBJLoader();
 
         mtlLoader.load(
-            'models/VAZ2107.mtl',
+            'models/2107.mtl',
             (materials) => {
                 materials.preload();
                 objLoader.setMaterials(materials);
                 
                 objLoader.load(
-                    'models/VAZ2107.obj',
+                    'models/2107.obj',
                     (object) => {
                         object.scale.set(0.01, 0.01, 0.01);
                         
