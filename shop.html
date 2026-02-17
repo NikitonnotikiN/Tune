@@ -18,7 +18,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 16px;
+      padding: 12px;
       position: relative;
       color: white;
     }
@@ -53,31 +53,34 @@
       100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
     }
 
+    /* Навигация */
     .nav {
       display: flex;
       justify-content: center;
-      gap: 20px;
-      padding: 20px;
+      gap: clamp(8px, 2vw, 15px);
+      padding: 12px 10px;
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(10px);
       border-bottom: 2px solid #f0f;
       box-shadow: 0 0 30px #f0f;
       z-index: 10;
       width: 100%;
-      margin-bottom: 20px;
+      flex-wrap: wrap;
     }
 
     .nav a {
       color: #fff;
       text-decoration: none;
       font-weight: bold;
-      padding: 10px 25px;
+      padding: 8px 16px;
       border-radius: 30px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #0ff;
       transition: all 0.3s;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
+      font-size: clamp(12px, 3vw, 14px);
+      white-space: nowrap;
     }
 
     .nav a:hover {
@@ -93,28 +96,30 @@
       box-shadow: 0 0 40px #f0f;
     }
 
+    /* Монеты игрока */
     .player-coins {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      top: 12px;
+      right: 12px;
       background: linear-gradient(135deg, #f0f, #0ff);
-      padding: 12px 25px;
+      padding: clamp(8px, 2vw, 12px) clamp(16px, 4vw, 25px);
       border-radius: 40px;
       font-weight: bold;
-      font-size: 24px;
+      font-size: clamp(18px, 5vw, 24px);
       color: #000;
       box-shadow: 0 0 50px #f0f;
       z-index: 100;
     }
 
+    /* Заголовок */
     .title {
       text-align: center;
-      margin: 70px 0 20px 0;
+      margin: 70px 0 15px 0;
       width: 100%;
     }
 
     .title h1 {
-      font-size: clamp(32px, 8vw, 48px);
+      font-size: clamp(28px, 8vw, 48px);
       font-weight: 900;
       text-transform: uppercase;
       color: transparent;
@@ -123,75 +128,88 @@
       letter-spacing: clamp(2px, 2vw, 4px);
     }
 
+    /* Контейнер магазина */
     .shop-container {
-      max-width: 1000px;
+      max-width: 1200px;
       width: 100%;
       background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(10px);
       border: 2px solid #f0f;
-      border-radius: 50px;
-      padding: 30px;
+      border-radius: 40px;
+      padding: 20px 15px;
       box-shadow: 0 0 70px rgba(255, 0, 255, 0.4);
+      margin-bottom: 20px;
     }
 
+    /* Разделы */
     .shop-section {
-      margin-bottom: 40px;
+      margin-bottom: 30px;
+    }
+
+    .shop-section:last-child {
+      margin-bottom: 0;
     }
 
     .shop-section h2 {
       color: #0ff;
-      font-size: 28px;
+      font-size: clamp(20px, 5vw, 28px);
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       text-transform: uppercase;
       letter-spacing: 2px;
     }
 
+    /* Сетка товаров (адаптивная) */
     .shop-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
     }
 
+    /* Карточка товара */
     .shop-item {
       background: rgba(255, 255, 255, 0.05);
       border: 2px solid;
-      border-radius: 30px;
-      padding: 20px;
+      border-radius: 20px;
+      padding: 15px 10px;
       text-align: center;
       transition: all 0.3s;
       cursor: pointer;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .shop-item:hover {
-      transform: translateY(-10px) scale(1.05);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
     }
 
     .shop-item.rare {
       border-color: gold !important;
-      box-shadow: 0 0 30px gold;
+      box-shadow: 0 0 20px gold;
       animation: rareShopGlow 2s infinite;
     }
 
     @keyframes rareShopGlow {
-      0% { box-shadow: 0 0 20px gold; }
-      50% { box-shadow: 0 0 40px gold, 0 0 60px #ffaa00; }
+      0% { box-shadow: 0 0 15px gold; }
+      50% { box-shadow: 0 0 30px gold, 0 0 45px #ffaa00; }
     }
 
     .rarity-badge {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 5px;
+      right: 5px;
       background: gold;
       color: #000;
-      padding: 4px 8px;
+      padding: 3px 6px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: bold;
     }
 
+    /* Цветные рамки */
     .shop-item.red { border-color: #ff4444; }
     .shop-item.green { border-color: #44ff44; }
     .shop-item.blue { border-color: #4444ff; }
@@ -199,11 +217,12 @@
     .shop-item.orange { border-color: #ff8844; }
     .shop-item.purple { border-color: #ff44ff; }
 
+    /* Превью куба */
     .cube-preview {
-      width: 80px;
-      height: 80px;
-      border-radius: 20px;
-      margin: 0 auto 15px;
+      width: clamp(60px, 15vw, 80px);
+      height: clamp(60px, 15vw, 80px);
+      border-radius: 18px;
+      margin: 0 auto 10px;
     }
 
     .cube-preview.red { background: linear-gradient(145deg, #ff4444, #cc0000); }
@@ -213,37 +232,42 @@
     .cube-preview.orange { background: linear-gradient(145deg, #ff8844, #cc4400); }
     .cube-preview.purple { background: linear-gradient(145deg, #ff44ff, #cc00cc); }
 
+    /* Название и описание */
     .shop-item h3 {
       color: #fff;
-      font-size: 20px;
-      margin-bottom: 10px;
+      font-size: clamp(14px, 4vw, 18px);
+      margin-bottom: 5px;
     }
 
     .shop-item p {
       color: #0ff;
-      font-size: 14px;
-      margin-bottom: 15px;
+      font-size: clamp(11px, 3vw, 13px);
+      margin-bottom: 10px;
     }
 
+    /* Цена */
     .price {
-      font-size: 24px;
+      font-size: clamp(16px, 5vw, 22px);
       font-weight: bold;
       background: linear-gradient(45deg, #f0f, #0ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin: 15px 0;
+      margin: 8px 0;
     }
 
+    /* Кнопка покупки */
     .buy-btn {
       background: transparent;
       border: 2px solid;
       color: #fff;
-      padding: 10px 30px;
+      padding: 8px 12px;
       border-radius: 30px;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s;
       width: 100%;
+      max-width: 120px;
+      font-size: clamp(12px, 3vw, 14px);
     }
 
     .shop-item.red .buy-btn { border-color: #ff4444; }
@@ -256,25 +280,28 @@
     .buy-btn:hover:not(:disabled) {
       background: currentColor;
       color: #000;
-      box-shadow: 0 0 30px currentColor;
+      box-shadow: 0 0 20px currentColor;
     }
 
+    /* Кнопка назад */
     .back-btn {
       position: fixed;
-      bottom: 30px;
-      left: 30px;
+      bottom: 20px;
+      left: 20px;
       background: transparent;
       border: 2px solid #f0f;
       color: #f0f;
-      padding: 12px 30px;
+      padding: 10px 20px;
       border-radius: 40px;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s;
       text-decoration: none;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       backdrop-filter: blur(10px);
+      font-size: clamp(12px, 3vw, 14px);
+      z-index: 100;
     }
 
     .back-btn:hover {
@@ -283,6 +310,7 @@
       box-shadow: 0 0 50px #f0f;
     }
 
+    /* Уведомления */
     .notification {
       position: fixed;
       top: 20px;
@@ -297,6 +325,7 @@
       display: none;
       font-size: clamp(12px, 3vw, 14px);
       white-space: nowrap;
+      box-shadow: 0 0 30px #0ff;
     }
 
     .notification.show {
@@ -311,6 +340,39 @@
     @keyframes slide {
       from { transform: translateX(-50%) translateY(-100%); }
       to { transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Медиа-запросы для очень маленьких экранов */
+    @media (max-width: 480px) {
+      .shop-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      
+      .shop-item {
+        padding: 12px 8px;
+      }
+      
+      .nav {
+        gap: 5px;
+      }
+      
+      .nav a {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+      
+      .back-btn {
+        padding: 8px 15px;
+        bottom: 15px;
+        left: 15px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .shop-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -366,27 +428,30 @@
     }
 
     const commonItems = [
-      { color: 'red', name: 'Красный куб', desc: '+30 скорости', price: 500 },
-      { color: 'green', name: 'Зелёный куб', desc: '+3 ускорения', price: 500 },
-      { color: 'blue', name: 'Синий куб', desc: '+30 макс. скорости', price: 500 },
-      { color: 'yellow', name: 'Жёлтый куб', desc: '20% удача', price: 500 },
-      { color: 'orange', name: 'Оранжевый куб', desc: 'Турбо x1.5', price: 500 },
-      { color: 'purple', name: 'Фиолетовый куб', desc: '30% защиты', price: 500 }
+      { color: 'red', name: 'Красный', desc: '+30 скорости', price: 500 },
+      { color: 'green', name: 'Зелёный', desc: '+3 ускорения', price: 500 },
+      { color: 'blue', name: 'Синий', desc: '+30 макс. скорости', price: 500 },
+      { color: 'yellow', name: 'Жёлтый', desc: '20% удача', price: 500 },
+      { color: 'orange', name: 'Оранжевый', desc: 'Турбо x1.5', price: 500 },
+      { color: 'purple', name: 'Фиолетовый', desc: '30% защиты', price: 500 }
     ];
 
     const rareItems = [
-      { color: 'red', name: 'Красный редкий', desc: '+30 скорости (⭐)', price: 1500 },
-      { color: 'green', name: 'Зелёный редкий', desc: '+3 ускорения (⭐)', price: 1500 },
-      { color: 'blue', name: 'Синий редкий', desc: '+30 макс. скорости (⭐)', price: 1500 },
-      { color: 'yellow', name: 'Жёлтый редкий', desc: '20% удача (⭐)', price: 1500 },
-      { color: 'orange', name: 'Оранжевый редкий', desc: 'Турбо x1.5 (⭐)', price: 1500 },
-      { color: 'purple', name: 'Фиолетовый редкий', desc: '30% защиты (⭐)', price: 1500 }
+      { color: 'red', name: 'Красный редкий', desc: '+30 скорости ⭐', price: 1500 },
+      { color: 'green', name: 'Зелёный редкий', desc: '+3 ускорения ⭐', price: 1500 },
+      { color: 'blue', name: 'Синий редкий', desc: '+30 макс. скорости ⭐', price: 1500 },
+      { color: 'yellow', name: 'Жёлтый редкий', desc: '20% удача ⭐', price: 1500 },
+      { color: 'orange', name: 'Оранжевый редкий', desc: 'Турбо x1.5 ⭐', price: 1500 },
+      { color: 'purple', name: 'Фиолетовый редкий', desc: '30% защиты ⭐', price: 1500 }
     ];
 
     function loadShop() {
       const commonDiv = document.getElementById('commonShop');
       const rareDiv = document.getElementById('rareShop');
       
+      commonDiv.innerHTML = '';
+      rareDiv.innerHTML = '';
+
       commonItems.forEach(item => {
         commonDiv.innerHTML += `
           <div class="shop-item ${item.color}">
@@ -440,4 +505,4 @@
     init();
   </script>
 </body>
-</html>
+    </html>
