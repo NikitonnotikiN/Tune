@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ton Racing</title>
+    <title>Ton Racing – 3D Меню</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -15,55 +15,48 @@
         body {
             font-family: 'Racing Sans One', 'Segoe UI', system-ui, sans-serif;
             background: #0c0c0c;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            position: relative;
             color: white;
-            background-image: radial-gradient(circle at 20% 30%, rgba(255, 0, 0, 0.15) 0%, transparent 30%),
-                              radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
+            overflow: hidden;
         }
 
-        body::before {
-            content: '';
+        #canvas-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: repeating-linear-gradient(45deg, rgba(30, 30, 30, 0.8) 0px, rgba(30, 30, 30, 0.8) 2px, 
-                              rgba(20, 20, 20, 0.8) 2px, rgba(20, 20, 20, 0.8) 4px);
-            z-index: -1;
+            z-index: 1;
         }
 
-        .checkered-top {
-            position: fixed;
+        #ui-container {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 8px;
-            background: repeating-linear-gradient(90deg, #fff, #fff 20px, #000 20px, #000 40px);
-            z-index: 1001;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
         }
 
+        /* Шапка */
         .header {
-            position: fixed;
-            top: 8px;
-            left: 0;
-            right: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            border-bottom: 2px solid #e10600;
-            box-shadow: 0 0 30px rgba(225, 6, 0, 0.5);
-            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #e10600;
+            padding: 12px 20px;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            pointer-events: auto;
+            backdrop-filter: blur(5px);
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(225,6,0,0.5);
         }
 
         .user-badge {
@@ -85,292 +78,76 @@
             color: white;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: clamp(14px, 4vw, 16px);
         }
 
-        .coins-badge {
+        .coins-header {
             background: linear-gradient(135deg, #e10600, #ff4d4d);
-            padding: 8px 16px;
-            border-radius: 0;
+            padding: 8px 20px;
             font-weight: bold;
-            color: white;
-            box-shadow: 0 0 20px #e10600;
-            font-size: clamp(16px, 5vw, 20px);
+            font-size: 18px;
             clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
         }
 
-        .loader-container {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: #0c0c0c;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 30px;
-            transition: opacity 0.5s;
+        /* Центральное меню */
+        .menu-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 100%;
+            pointer-events: none;
         }
 
-        .f1-loader {
-            width: 100px;
-            height: 100px;
-            border: 4px solid #333;
-            border-top: 4px solid #e10600;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .game-title {
+            font-size: clamp(40px, 12vw, 80px);
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 0 20px #e10600, 0 0 40px #e10600, 4px 4px 0 rgba(0,0,0,0.5);
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 30px;
+            animation: titleGlow 2s infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 20px #e10600, 0 0 40px #e10600, 4px 4px 0 rgba(0,0,0,0.5); }
+            to { text-shadow: 0 0 30px #e10600, 0 0 60px #ff4d4d, 4px 4px 0 rgba(0,0,0,0.5); }
+        }
+
+        .menu-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            pointer-events: auto;
+        }
+
+        .menu-btn {
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #e10600;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 15px 40px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            min-width: 180px;
+            box-shadow: 0 0 20px rgba(225,6,0,0.3);
+        }
+
+        .menu-btn:hover {
+            background: #e10600;
+            color: black;
+            transform: scale(1.05);
             box-shadow: 0 0 40px #e10600;
         }
 
-        .loader-text {
-            font-size: 24px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: white;
-            letter-spacing: 4px;
-            animation: flicker 1.5s infinite;
-        }
-
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes flicker { 50% { opacity: 0.6; text-shadow: 0 0 40px #e10600; } }
-
-        .title {
-            text-align: center;
-            margin: 80px 0 20px 0;
-            width: 100%;
-        }
-
-        .title h1 {
-            font-family: 'Racing Sans One', cursive;
-            font-size: clamp(40px, 12vw, 70px);
-            font-weight: 900;
-            text-transform: uppercase;
-            color: white;
-            text-shadow: 4px 4px 0 #e10600, 8px 8px 0 rgba(0,0,0,0.5);
-            letter-spacing: 4px;
-            line-height: 1.1;
-        }
-
-        .subtitle {
-            color: #ccc;
-            font-size: 14px;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            border-bottom: 2px solid #e10600;
-            display: inline-block;
-            padding-bottom: 5px;
-            margin-top: -10px;
-        }
-
-        .stats-panel {
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #e10600;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 500px;
-            width: 100%;
-            backdrop-filter: blur(5px);
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
-        }
-
-        .stats-grid {
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-        }
-
-        .stat-item {
-            flex: 1;
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #e10600;
-            text-shadow: 0 0 15px #e10600;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #aaa;
-            letter-spacing: 1px;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            width: 100%;
-            max-width: 500px;
-            margin: 20px auto;
-        }
-
-        .menu-item {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #e10600;
-            padding: 20px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            color: white;
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 2px;
-            font-size: 18px;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
-            box-shadow: 0 5px 0 #7a0300;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .menu-item:active {
-            transform: translateY(4px);
-            box-shadow: 0 1px 0 #7a0300;
-        }
-
-        .menu-item span {
-            font-size: 14px;
-            color: #e10600;
-        }
-
-        .menu-emoji {
-            font-size: 28px;
-            filter: drop-shadow(0 0 5px #e10600);
-        }
-
-        .menu-item.garage { border-color: #ff4d4d; }
-        .menu-item.race { border-color: #fff; }
-        .menu-item.shop { border-color: #ffaa00; }
-        .menu-item.rating { border-color: #00ccff; }
-        .menu-item.bonus { border-color: #00ff88; }
-
-        .daily-gift {
-            position: fixed;
-            top: 80px;
-            left: 16px;
-            width: 50px;
-            height: 50px;
-            background: #e10600;
-            border: 2px solid white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 0 30px #e10600;
-            transition: all 0.2s;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
-        }
-
-        .daily-gift.claimed {
-            opacity: 0.4;
-            box-shadow: none;
-            cursor: default;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: 0.3s;
-        }
-
-        .modal-overlay.show {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-content {
-            background: #111;
-            border: 3px solid #e10600;
-            padding: 30px;
-            max-width: 300px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 0 70px #e10600;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
-        }
-
-        .modal-content h2 {
-            color: #e10600;
-            font-size: 28px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .modal-reward {
-            font-size: 48px;
-            font-weight: bold;
-            color: #fff;
-            margin: 20px 0;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-
-        .modal-btn {
-            background: transparent;
-            border: 2px solid;
-            color: #fff;
-            padding: 12px 30px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 16px;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
-        }
-
-        .modal-btn.claim { border-color: #0f0; }
-        .modal-btn.claim:hover { background: #0f0; color: #000; }
-        .modal-btn.cancel { border-color: #e10600; }
-        .modal-btn.cancel:hover { background: #e10600; }
-
-        .f1-telemetry {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            gap: 8px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #e10600;
-            padding: 10px 20px;
-            border-radius: 0;
-            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
-            z-index: 100;
-        }
-
-        .telemetry-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 0;
-            transform: rotate(45deg);
-            box-shadow: 0 0 10px currentColor;
-        }
-
-        .telemetry-dot.red { background: #ff4444; }
-        .telemetry-dot.green { background: #44ff44; }
-        .telemetry-dot.blue { background: #4444ff; }
-        .telemetry-dot.yellow { background: #ffff44; }
-        .telemetry-dot.orange { background: #ff8844; }
-        .telemetry-dot.purple { background: #ff44ff; }
-
+        /* Кнопка выхода */
         .exit-btn {
             position: fixed;
             bottom: 20px;
@@ -386,239 +163,339 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             backdrop-filter: blur(10px);
-            font-size: clamp(12px, 3vw, 14px);
-            z-index: 100;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
-        }
-
-        .exit-btn:hover { background: #e10600; color: #000; }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #e10600;
-            color: white;
-            padding: 12px 24px;
-            font-weight: bold;
-            z-index: 3000;
-            display: none;
             font-size: 14px;
-            white-space: nowrap;
-            box-shadow: 0 0 30px #e10600;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
+            z-index: 100;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+            pointer-events: auto;
         }
 
-        .notification.show { display: block; animation: slideIn 0.3s; }
-        @keyframes slideIn { from { transform: translateX(-50%) translateY(-100%); } }
+        .exit-btn:hover {
+            background: #e10600;
+            color: #000;
+        }
+
+        /* Телеметрия (декоративные точки) */
+        .f1-telemetry {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid #e10600;
+            padding: 10px 20px;
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .telemetry-dot {
+            width: 16px;
+            height: 16px;
+            transform: rotate(45deg);
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .telemetry-dot.red { background: #ff4444; }
+        .telemetry-dot.green { background: #44ff44; }
+        .telemetry-dot.blue { background: #4444ff; }
+        .telemetry-dot.yellow { background: #ffff44; }
+        .telemetry-dot.orange { background: #ff8844; }
+        .telemetry-dot.purple { background: #ff44ff; }
     </style>
 </head>
 <body>
-    <div class="checkered-top"></div>
+    <!-- 3D сцена -->
+    <div id="canvas-container"></div>
 
-    <div class="header">
-        <div class="user-badge" id="userBadge" style="display: none;">
-            <img id="userAvatar" src="" alt="avatar">
-            <span id="userName">Загрузка...</span>
-        </div>
-        <div class="coins-badge" id="coinsDisplay">1000 🪙</div>
-    </div>
-
-    <div class="daily-gift" id="dailyGift" onclick="openDailyBonus()">🎁</div>
-
-    <div id="loader-container" class="loader-container">
-        <div class="f1-loader"></div>
-        <div class="loader-text">ЗАПУСК ДВИГАТЕЛЯ</div>
-    </div>
-
-    <section id="content-section" style="display: none; width: 100%;">
-        <div class="title">
-            <h1>TON RACING</h1>
-            <div class="subtitle">F1 TEAM</div>
+    <!-- UI -->
+    <div id="ui-container">
+        <div class="header">
+            <div class="user-badge" id="userBadge">
+                <img id="userAvatar" src="" alt="avatar">
+                <span id="userName">Загрузка...</span>
+            </div>
+            <div class="coins-header" id="coinsDisplay">1000 🪙</div>
         </div>
 
-        <div class="stats-panel">
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-value" id="player-level">1</div>
-                    <div class="stat-label">УРОВЕНЬ</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="player-money">1000</div>
-                    <div class="stat-label">МОНЕТЫ</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="player-races">0</div>
-                    <div class="stat-label">ГОНКИ</div>
-                </div>
+        <div class="menu-center">
+            <div class="game-title">TON RACING</div>
+            <div class="menu-buttons">
+                <a href="garage.html" class="menu-btn">ГАРАЖ</a>
+                <a href="race.html" class="menu-btn">ГОНКА</a>
+                <a href="shop.html" class="menu-btn">МАГАЗИН</a>
+                <a href="rating.html" class="menu-btn">РЕЙТИНГ</a>
             </div>
         </div>
 
-        <nav class="menu-grid">
-            <a href="garage.html" class="menu-item garage">
-                <div class="menu-emoji">🔧</div>
-                <span>ГАРАЖ</span>
-            </a>
-            <a href="race.html" class="menu-item race">
-                <div class="menu-emoji">🏁</div>
-                <span>ГОНКА</span>
-            </a>
-            <a href="shop.html" class="menu-item shop">
-                <div class="menu-emoji">🛒</div>
-                <span>МАГАЗИН</span>
-            </a>
-            <a href="rating.html" class="menu-item rating">
-                <div class="menu-emoji">📊</div>
-                <span>РЕЙТИНГ</span>
-            </a>
-            <a href="bonus.html" class="menu-item bonus">
-                <div class="menu-emoji">🎁</div>
-                <span>БОНУСЫ</span>
-            </a>
-        </nav>
-    </section>
-
-    <div class="f1-telemetry" id="statsPreview">
-        <div class="telemetry-dot red" title="Скорость"></div>
-        <div class="telemetry-dot green" title="Ускорение"></div>
-        <div class="telemetry-dot blue" title="Макс скорость"></div>
-        <div class="telemetry-dot yellow" title="Удача"></div>
-        <div class="telemetry-dot orange" title="Турбо"></div>
-        <div class="telemetry-dot purple" title="Защита"></div>
+        <div class="f1-telemetry">
+            <div class="telemetry-dot red"></div>
+            <div class="telemetry-dot green"></div>
+            <div class="telemetry-dot blue"></div>
+            <div class="telemetry-dot yellow"></div>
+            <div class="telemetry-dot orange"></div>
+            <div class="telemetry-dot purple"></div>
+        </div>
     </div>
 
     <a href="#" class="exit-btn" onclick="window.Telegram?.WebApp?.close()">✖ ВЫХОД</a>
 
-    <div class="modal-overlay" id="bonusModal" onclick="if(event.target===this) closeModal()">
-        <div class="modal-content">
-            <h2>🎁 БОНУС</h2>
-            <p id="bonusDayText">День 1</p>
-            <div class="modal-reward" id="bonusReward">100 🪙</div>
-            <div class="modal-buttons">
-                <button class="modal-btn claim" onclick="claimDailyBonus()">ЗАБРАТЬ</button>
-                <button class="modal-btn cancel" onclick="closeModal()">ПОТОМ</button>
-            </div>
-        </div>
-    </div>
+    <!-- Подключаем Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
 
-    <div id="notification" class="notification"></div>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js';
 
-    <script>
-        const $ = id => document.getElementById(id);
-        let tg = null;
-        let playerData = { level: 1, money: 1000, races: 0 };
+        // --- Инициализация ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050510);
 
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(4, 2, 6);
+        camera.lookAt(0, 0.5, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.bias = 0.0001;
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // --- Освещение (эффектное) ---
+        // Основной красноватый свет
+        const mainLight = new THREE.PointLight(0xff3366, 1.5, 10);
+        mainLight.position.set(2, 3, 4);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 1024;
+        mainLight.shadow.mapSize.height = 1024;
+        scene.add(mainLight);
+
+        // Синий свет сбоку
+        const blueLight = new THREE.PointLight(0x3366ff, 1.2, 10);
+        blueLight.position.set(-3, 2, 3);
+        scene.add(blueLight);
+
+        // Подсветка снизу
+        const bottomLight = new THREE.PointLight(0xaa44ff, 0.8, 8);
+        bottomLight.position.set(0, -2, 2);
+        scene.add(bottomLight);
+
+        // Задний свет
+        const backLight = new THREE.PointLight(0x44aaff, 0.6, 12);
+        backLight.position.set(0, 1, -5);
+        scene.add(backLight);
+
+        // Атмосферный свет
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        scene.add(ambientLight);
+
+        // --- Пол с отражением ---
+        const planeGeometry = new THREE.CircleGeometry(8, 64);
+        const planeMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x111122, 
+            roughness: 0.2, 
+            metalness: 0.8,
+            emissive: 0x050510
+        });
+        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.rotation.x = -Math.PI / 2;
+        plane.position.y = -0.5;
+        plane.receiveShadow = true;
+        scene.add(plane);
+
+        // Декоративная сетка
+        const gridHelper = new THREE.GridHelper(10, 20, 0xe10600, 0x333344);
+        gridHelper.position.y = -0.49;
+        scene.add(gridHelper);
+
+        // --- Сборка автомобиля (более детализированного) ---
+        const carGroup = new THREE.Group();
+        carGroup.position.y = 0.2;
+
+        // Кузов (основной)
+        const bodyGeo = new THREE.BoxGeometry(1.4, 0.5, 2.4);
+        const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff3333, roughness: 0.3, metalness: 0.2, emissive: 0x330000 });
+        const body = new THREE.Mesh(bodyGeo, bodyMat);
+        body.castShadow = true;
+        body.receiveShadow = true;
+        body.position.set(0, 0.4, 0);
+        carGroup.add(body);
+
+        // Капот
+        const hoodGeo = new THREE.BoxGeometry(0.9, 0.25, 0.9);
+        const hoodMat = new THREE.MeshStandardMaterial({ color: 0xff8844, roughness: 0.2, metalness: 0.3 });
+        const hood = new THREE.Mesh(hoodGeo, hoodMat);
+        hood.castShadow = true;
+        hood.receiveShadow = true;
+        hood.position.set(0, 0.7, 0.7);
+        carGroup.add(hood);
+
+        // Спойлер
+        const spoilerGeo = new THREE.BoxGeometry(1.2, 0.15, 0.3);
+        const spoilerMat = new THREE.MeshStandardMaterial({ color: 0xffff44, roughness: 0.1, metalness: 0.4 });
+        const spoiler = new THREE.Mesh(spoilerGeo, spoilerMat);
+        spoiler.castShadow = true;
+        spoiler.receiveShadow = true;
+        spoiler.position.set(0, 0.85, -1.1);
+        carGroup.add(spoiler);
+
+        // Колёса (4 штуки)
+        const wheelGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.25, 32);
+        const wheelMat = new THREE.MeshStandardMaterial({ color: 0x4444ff, roughness: 0.1, metalness: 0.7 });
+        const wheelPositions = [
+            [-0.8, 0.25, 0.9],
+            [0.8, 0.25, 0.9],
+            [-0.8, 0.25, -0.9],
+            [0.8, 0.25, -0.9]
+        ];
+        wheelPositions.forEach(pos => {
+            const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+            wheel.rotation.z = Math.PI/2;
+            wheel.position.set(pos[0], pos[1], pos[2]);
+            wheel.castShadow = true;
+            wheel.receiveShadow = true;
+            carGroup.add(wheel);
+        });
+
+        // Выхлопные трубы
+        const exhaustGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.6);
+        const exhaustMat = new THREE.MeshStandardMaterial({ color: 0x44ff44, roughness: 0.2, metalness: 0.8 });
+        const exhaust1 = new THREE.Mesh(exhaustGeo, exhaustMat);
+        exhaust1.rotation.x = Math.PI/2;
+        exhaust1.position.set(-0.5, 0.15, -1.1);
+        exhaust1.castShadow = true;
+        carGroup.add(exhaust1);
+
+        const exhaust2 = new THREE.Mesh(exhaustGeo, exhaustMat);
+        exhaust2.rotation.x = Math.PI/2;
+        exhaust2.position.set(0.5, 0.15, -1.1);
+        exhaust2.castShadow = true;
+        carGroup.add(exhaust2);
+
+        // Фары
+        const lightGeo = new THREE.SphereGeometry(0.18, 16, 16);
+        const lightMat = new THREE.MeshStandardMaterial({ color: 0xff44ff, emissive: 0x440044 });
+        const lightLeft = new THREE.Mesh(lightGeo, lightMat);
+        lightLeft.position.set(-0.5, 0.5, 1.25);
+        lightLeft.castShadow = true;
+        carGroup.add(lightLeft);
+
+        const lightRight = new THREE.Mesh(lightGeo, lightMat);
+        lightRight.position.set(0.5, 0.5, 1.25);
+        lightRight.castShadow = true;
+        carGroup.add(lightRight);
+
+        // Маленькие детали (ручки, зеркала)
+        const mirrorGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+        const mirrorMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.9, roughness: 0.1 });
+        const mirrorLeft = new THREE.Mesh(mirrorGeo, mirrorMat);
+        mirrorLeft.position.set(-0.8, 0.7, 0.4);
+        carGroup.add(mirrorLeft);
+        const mirrorRight = new THREE.Mesh(mirrorGeo, mirrorMat);
+        mirrorRight.position.set(0.8, 0.7, 0.4);
+        carGroup.add(mirrorRight);
+
+        scene.add(carGroup);
+
+        // --- Частицы (эффект искр) ---
+        const particleCount = 500;
+        const particleGeo = new THREE.BufferGeometry();
+        const particlePositions = new Float32Array(particleCount * 3);
+        const particleColors = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount; i++) {
+            // Случайное распределение в сфере
+            const r = 2 + Math.random() * 3;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            particlePositions[i*3] = Math.sin(phi) * Math.cos(theta) * r;
+            particlePositions[i*3+1] = Math.sin(phi) * Math.sin(theta) * r * 0.5 + 1;
+            particlePositions[i*3+2] = Math.cos(phi) * r;
+
+            // Цвета от красного до синего
+            const color = new THREE.Color().setHSL(0.6 + Math.random()*0.4, 1, 0.5);
+            particleColors[i*3] = color.r;
+            particleColors[i*3+1] = color.g;
+            particleColors[i*3+2] = color.b;
+        }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        particleGeo.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
+
+        const particleMat = new THREE.PointsMaterial({ size: 0.1, vertexColors: true, blending: THREE.AdditiveBlending, transparent: true });
+        const particles = new THREE.Points(particleGeo, particleMat);
+        scene.add(particles);
+
+        // Небольшая сфера света вокруг машины
+        const glowSphereGeo = new THREE.SphereGeometry(1.2, 32, 32);
+        const glowSphereMat = new THREE.MeshBasicMaterial({ color: 0x330000, transparent: true, opacity: 0.1, side: THREE.BackSide });
+        const glowSphere = new THREE.Mesh(glowSphereGeo, glowSphereMat);
+        glowSphere.position.copy(carGroup.position);
+        scene.add(glowSphere);
+
+        // --- Управление камерой (вращение вокруг машины) ---
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 1.5;
+        controls.enableZoom = false;
+        controls.enablePan = false;
+        controls.maxPolarAngle = Math.PI / 2.2;
+        controls.target.set(0, 0.5, 0);
+
+        // --- Анимация ---
+        let clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+            const time = performance.now() * 0.001;
+
+            // Вращаем частицы
+            particles.rotation.y += 0.0005;
+
+            // Подсветка пульсирует
+            const pulse = Math.sin(time * 3) * 0.2 + 0.8;
+            mainLight.intensity = 1.5 + pulse * 0.3;
+            blueLight.intensity = 1.2 + pulse * 0.2;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // --- Ресайз ---
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- Telegram и монеты ---
         if (window.Telegram?.WebApp) {
-            tg = window.Telegram.WebApp;
-            tg.ready();
-            tg.expand();
-            const user = tg.initDataUnsafe?.user;
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+            const user = window.Telegram.WebApp.initDataUnsafe?.user;
             if (user) {
-                $('userAvatar').src = user.photo_url || 'https://ui-avatars.com/api/?name=' + (user.first_name || 'Player') + '&background=e10600';
-                $('userName').textContent = user.first_name || 'Игрок';
-                $('userBadge').style.display = 'flex';
+                document.getElementById('userAvatar').src = user.photo_url || 'https://ui-avatars.com/api/?name=' + (user.first_name || 'Player') + '&background=e10600';
+                document.getElementById('userName').textContent = user.first_name || 'Игрок';
             }
-            tg.MainButton.setText('СТАРТ');
-            tg.MainButton.show();
-            tg.MainButton.onClick(() => window.location.href = 'race.html');
-            tg.BackButton.show();
-            tg.BackButton.onClick(() => history.back());
         }
 
-        const COINS_KEY = 'playerCoins';
-        const DAILY_KEY = 'dailyBonusMenu';
-        const GARAGE_KEY = 'garageCubes';
-
-        function getCoins() { return parseInt(localStorage.getItem(COINS_KEY)) || 1000; }
-        function setCoins(amount) { localStorage.setItem(COINS_KEY, amount); updateCoinsDisplay(); }
-        function updateCoinsDisplay() { $('coinsDisplay').textContent = getCoins() + ' 🪙'; $('player-money').textContent = getCoins(); }
-        function addCoins(amount) { setCoins(getCoins() + amount); showNotification(`+${amount} монет`); }
-        function showNotification(text, isError = false) {
-            const n = $('notification');
-            n.textContent = isError ? '❌ ' + text : '✨ ' + text;
-            n.classList.add('show');
-            setTimeout(() => n.classList.remove('show'), 2000);
+        function getCoins() {
+            return parseInt(localStorage.getItem('playerCoins')) || 1000;
         }
-
-        function loadPlayerData() {
-            if (tg?.initDataUnsafe?.user?.id) {
-                try {
-                    const saved = localStorage.getItem(`player_${tg.initDataUnsafe.user.id}`);
-                    if (saved) { playerData = JSON.parse(saved); }
-                } catch (e) {}
-            }
-            playerData.money = getCoins();
-            $('player-level').textContent = playerData.level || 1;
-            $('player-money').textContent = playerData.money;
-            $('player-races').textContent = playerData.races || 0;
-        }
-
-        const dailyRewards = [100, 150, 200, 250, 300, 350, 500];
-        function checkDailyBonus() {
-            const today = new Date().toDateString();
-            let dailyData = JSON.parse(localStorage.getItem(DAILY_KEY)) || { lastClaim: null, day: 0 };
-            const claimedToday = dailyData.lastClaim === today;
-            const gift = $('dailyGift');
-            if (claimedToday) gift.classList.add('claimed');
-            else gift.classList.remove('claimed');
-            return { claimedToday, day: dailyData.day };
-        }
-
-        function openDailyBonus() {
-            const { claimedToday, day } = checkDailyBonus();
-            if (claimedToday) { showNotification('Сегодня уже забирал!', true); return; }
-            const modal = $('bonusModal');
-            const currentDay = day % 7;
-            $('bonusDayText').textContent = `День ${currentDay + 1}`;
-            $('bonusReward').textContent = `${dailyRewards[currentDay]} 🪙`;
-            modal.classList.add('show');
-        }
-
-        function closeModal() { $('bonusModal').classList.remove('show'); }
-        function claimDailyBonus() {
-            const { claimedToday, day } = checkDailyBonus();
-            if (claimedToday) { closeModal(); showNotification('Уже получал!', true); return; }
-            const today = new Date().toDateString();
-            const currentDay = day % 7;
-            addCoins(dailyRewards[currentDay]);
-            localStorage.setItem(DAILY_KEY, JSON.stringify({ lastClaim: today, day: day + 1 }));
-            checkDailyBonus();
-            closeModal();
-            if (tg?.HapticFeedback) tg.HapticFeedback.notification('success');
-        }
-
-        function loadCarPreview() {
-            const garageArray = JSON.parse(localStorage.getItem(GARAGE_KEY)) || [];
-            const dots = document.querySelectorAll('.telemetry-dot');
-            const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
-            dots.forEach((dot, index) => {
-                if (garageArray[index]) {
-                    dot.style.opacity = '1';
-                    dot.style.boxShadow = '0 0 20px currentColor';
-                } else {
-                    dot.style.opacity = '0.3';
-                    dot.style.boxShadow = 'none';
-                }
-            });
-        }
-
-        function startLoader() {
-            loadPlayerData();
-            checkDailyBonus();
-            loadCarPreview();
-            setTimeout(() => {
-                $('loader-container').style.opacity = '0';
-                setTimeout(() => {
-                    $('loader-container').style.display = 'none';
-                    $('content-section').style.display = 'block';
-                    if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-                }, 500);
-            }, 2000);
-        }
-
-        window.addEventListener('focus', () => { updateCoinsDisplay(); loadPlayerData(); loadCarPreview(); checkDailyBonus(); });
-        startLoader();
+        document.getElementById('coinsDisplay').textContent = getCoins() + ' 🪙';
     </script>
 </body>
 </html>
