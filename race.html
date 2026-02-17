@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>🏁 КИРЮХА RACING — ГОНКА</title>
   <style>
+    /* Стили без изменений (как в предыдущей версии) */
     * {
       margin: 0;
       padding: 0;
@@ -756,10 +757,12 @@
         return;
       }
       
+      // ===== УЛУЧШЕННЫЙ ПРОТИВНИК =====
+      // Теперь его характеристики составляют 90–110% от твоих
       const enemyStats = {
-        speed: playerStats.speed + (Math.random() * 40 - 20),
-        acceleration: playerStats.acceleration + (Math.random() * 4 - 2),
-        maxSpeed: playerStats.maxSpeed + (Math.random() * 30 - 15)
+        speed: playerStats.speed * (0.9 + Math.random() * 0.2),
+        acceleration: playerStats.acceleration * (0.9 + Math.random() * 0.2),
+        maxSpeed: playerStats.maxSpeed * (0.9 + Math.random() * 0.2)
       };
       
       playerPos = 20;
@@ -783,6 +786,7 @@
         
         raceTime++;
         
+        // Игрок
         if (playerSpeed < playerStats.maxSpeed) {
           playerSpeed += playerStats.acceleration * (0.8 + Math.random() * 0.4);
         }
@@ -799,10 +803,12 @@
           playerSpeed *= 0.5;
         }
         
+        // Противник (используем его stats)
         if (enemySpeed < enemyStats.maxSpeed) {
           enemySpeed += enemyStats.acceleration * (0.7 + Math.random() * 0.6);
         }
         
+        // Случайные события для противника (немного, но не слишком часто)
         if (Math.random() < 0.02) enemySpeed *= 0.3;
         if (Math.random() < 0.01) enemySpeed *= 1.5;
         
@@ -907,4 +913,4 @@
     });
   </script>
 </body>
-  </html>
+              </html>
