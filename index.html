@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Кирюха Racing</title>
+    <title>Ton Racing</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         /* ========== ГЛОБАЛЬНЫЕ СБРОСЫ ========== */
@@ -14,8 +14,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #0a0a0f;
+            font-family: 'Racing Sans One', 'Segoe UI', system-ui, sans-serif;
+            background: #0c0c0c;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -24,54 +24,50 @@
             padding: 16px;
             position: relative;
             color: white;
+            background-image: radial-gradient(circle at 20% 30%, rgba(255, 0, 0, 0.15) 0%, transparent 30%),
+                              radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
         }
 
-        /* ========== КИБЕРПАНК-ФОН ========== */
-        .cyber-bg {
+        /* Карбоновый фон */
+        body::before {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background-image: repeating-linear-gradient(45deg, rgba(30, 30, 30, 0.8) 0px, rgba(30, 30, 30, 0.8) 2px, 
+                              rgba(20, 20, 20, 0.8) 2px, rgba(20, 20, 20, 0.8) 4px);
             z-index: -1;
-            background: radial-gradient(circle at 30% 50%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%);
         }
 
-        .cyber-grid {
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background-image: 
-                linear-gradient(rgba(255, 0, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: min(30px, 5vw) min(30px, 5vw);
-            transform: perspective(500px) rotateX(60deg);
-            animation: gridMove 20s linear infinite;
-            top: -50%;
-            left: -50%;
-        }
-
-        @keyframes gridMove {
-            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+        /* Шашечная полоса сверху */
+        .checkered-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(90deg, #fff, #fff 20px, #000 20px, #000 40px);
+            z-index: 1001;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
 
         /* ========== ШАПКА ========== */
         .header {
             position: fixed;
-            top: 0;
+            top: 8px;
             left: 0;
             right: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid #f0f;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid #e10600; /* Ferrari red */
+            box-shadow: 0 0 30px rgba(225, 6, 0, 0.5);
+            z-index: 1000;
         }
 
         .user-badge {
@@ -84,33 +80,35 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            border: 2px solid #0ff;
-            box-shadow: 0 0 20px #0ff;
+            border: 2px solid #e10600;
+            box-shadow: 0 0 15px #e10600;
         }
 
         .user-badge span {
             font-weight: bold;
-            color: #0ff;
-            text-shadow: 0 0 10px #0ff;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             font-size: clamp(14px, 4vw, 16px);
         }
 
         .coins-badge {
-            background: linear-gradient(135deg, #f0f, #0ff);
+            background: linear-gradient(135deg, #e10600, #ff4d4d);
             padding: 8px 16px;
-            border-radius: 40px;
+            border-radius: 0;
             font-weight: bold;
-            color: #000;
-            box-shadow: 0 0 30px #f0f;
+            color: white;
+            box-shadow: 0 0 20px #e10600;
             font-size: clamp(16px, 5vw, 20px);
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
         }
 
-        /* ========== ЗАГРУЗЧИК (КИБЕР-СТИЛЬ) ========== */
+        /* ========== ЗАГРУЗЧИК (СТИЛЬ F1) ========== */
         .loader-container {
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: #0a0a0f;
+            background: #0c0c0c;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -119,25 +117,23 @@
             transition: opacity 0.5s;
         }
 
-        .cyber-loader {
-            width: 120px;
-            height: 120px;
-            border: 4px solid #f0f;
-            border-top: 4px solid transparent;
+        .f1-loader {
+            width: 100px;
+            height: 100px;
+            border: 4px solid #333;
+            border-top: 4px solid #e10600;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            box-shadow: 0 0 50px #f0f, 0 0 100px #0ff;
+            animation: spin 0.8s linear infinite;
+            box-shadow: 0 0 40px #e10600;
         }
 
         .loader-text {
             font-size: 24px;
             font-weight: bold;
             text-transform: uppercase;
-            color: transparent;
-            -webkit-text-stroke: 1px #0ff;
-            text-shadow: 0 0 20px #0ff;
+            color: white;
             letter-spacing: 4px;
-            animation: textFlicker 2s infinite;
+            animation: flicker 1.5s infinite;
         }
 
         @keyframes spin {
@@ -145,164 +141,170 @@
             100% { transform: rotate(360deg); }
         }
 
-        @keyframes textFlicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; text-shadow: 0 0 20px #e10600; }
+            50% { opacity: 0.6; text-shadow: 0 0 40px #e10600; }
         }
 
         /* ========== ЗАГОЛОВОК ========== */
         .title {
             text-align: center;
-            margin: 80px 0 30px 0;
+            margin: 80px 0 20px 0;
             width: 100%;
         }
 
         .title h1 {
-            font-size: clamp(32px, 10vw, 64px);
+            font-family: 'Racing Sans One', cursive;
+            font-size: clamp(40px, 12vw, 70px);
             font-weight: 900;
             text-transform: uppercase;
-            color: transparent;
-            -webkit-text-stroke: 2px #f0f;
-            text-shadow: 0 0 30px #f0f;
-            letter-spacing: clamp(2px, 2vw, 8px);
-            animation: titlePulse 2s infinite;
-            line-height: 1.2;
-        }
-
-        @keyframes titlePulse {
-            0%, 100% { text-shadow: 0 0 30px #f0f; }
-            50% { text-shadow: 0 0 60px #0ff; }
-        }
-
-        /* ========== СЕТКА МЕНЮ ========== */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: clamp(12px, 3vw, 20px);
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .menu-item {
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            border: 2px solid;
-            border-radius: clamp(20px, 5vw, 30px);
-            padding: clamp(15px, 4vw, 25px) clamp(10px, 3vw, 15px);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
             color: white;
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            text-shadow: 4px 4px 0 #e10600, 8px 8px 0 rgba(0,0,0,0.5);
+            letter-spacing: 4px;
+            line-height: 1.1;
         }
 
-        .menu-item::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transform: rotate(45deg);
-            animation: shine 6s infinite;
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            20% { transform: translateX(100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        .menu-item:active {
-            transform: scale(0.95);
-        }
-
-        .menu-item.garage { border-color: #0ff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); }
-        .menu-item.race { border-color: #f0f; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3); }
-        .menu-item.shop { border-color: #ff0; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3); }
-        .menu-item.rating { border-color: #0f0; box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
-        .menu-item.bonus { border-color: #ffaa00; box-shadow: 0 0 20px #ffaa00; }
-
-        .menu-emoji {
-            font-size: clamp(32px, 10vw, 48px);
-            margin-bottom: 8px;
-            filter: drop-shadow(0 0 10px currentColor);
-            animation: float 3s infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .menu-item h2 {
-            font-size: clamp(14px, 4vw, 20px);
-            font-weight: bold;
+        .subtitle {
+            color: #ccc;
+            font-size: 14px;
+            letter-spacing: 6px;
             text-transform: uppercase;
+            border-bottom: 2px solid #e10600;
+            display: inline-block;
+            padding-bottom: 5px;
+            margin-top: -10px;
+        }
+
+        /* ========== СТАТИСТИКА (КАК ТАБЛО) ========== */
+        .stats-panel {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #e10600;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(5px);
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+        }
+
+        .stats-grid {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #e10600;
+            text-shadow: 0 0 15px #e10600;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #aaa;
             letter-spacing: 1px;
         }
 
-        /* ========== ЕЖЕДНЕВНЫЙ ПОДАРОК ========== */
+        /* ========== МЕНЮ (КНОПКИ КАК НА РУЛЕ) ========== */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+
+        .menu-item {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #e10600;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-size: 18px;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            box-shadow: 0 5px 0 #7a0300;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .menu-item:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #7a0300;
+        }
+
+        .menu-item span {
+            font-size: 14px;
+            color: #e10600;
+        }
+
+        .menu-emoji {
+            font-size: 28px;
+            filter: drop-shadow(0 0 5px #e10600);
+        }
+
+        /* Цвета для разных пунктов (акценты) */
+        .menu-item.garage { border-color: #ff4d4d; }
+        .menu-item.race { border-color: #fff; }
+        .menu-item.shop { border-color: #ffaa00; }
+        .menu-item.rating { border-color: #00ccff; }
+        .menu-item.bonus { border-color: #00ff88; }
+
+        /* ========== ЕЖЕДНЕВНЫЙ БОНУС (ТАБЛО) ========== */
         .daily-gift {
             position: fixed;
-            top: 70px;
+            top: 80px;
             left: 16px;
-            width: 60px;
-            height: 60px;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            border: 2px solid #ffaa00;
-            border-radius: 30px;
+            width: 50px;
+            height: 50px;
+            background: #e10600;
+            border: 2px solid white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 28px;
             cursor: pointer;
             z-index: 1000;
-            box-shadow: 0 0 30px #ffaa00;
-            transition: all 0.3s;
-            animation: giftPulse 2s infinite;
+            box-shadow: 0 0 30px #e10600;
+            transition: all 0.2s;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
         }
 
         .daily-gift.claimed {
-            opacity: 0.5;
-            border-color: #666;
+            opacity: 0.4;
             box-shadow: none;
-            animation: none;
             cursor: default;
         }
 
-        @keyframes giftPulse {
-            0% { transform: scale(1); box-shadow: 0 0 30px #ffaa00; }
-            50% { transform: scale(1.1); box-shadow: 0 0 50px #ffaa00; }
-            100% { transform: scale(1); box-shadow: 0 0 30px #ffaa00; }
-        }
-
-        /* ========== МОДАЛЬНОЕ ОКНО БОНУСА ========== */
+        /* ========== МОДАЛКА БОНУСА ========== */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 2000;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s;
+            transition: 0.3s;
         }
 
         .modal-overlay.show {
@@ -311,25 +313,18 @@
         }
 
         .modal-content {
-            background: linear-gradient(145deg, #1a1a2e, #16213e);
-            border: 2px solid #ffaa00;
-            border-radius: 40px;
+            background: #111;
+            border: 3px solid #e10600;
             padding: 30px;
             max-width: 300px;
             width: 90%;
             text-align: center;
-            color: white;
-            box-shadow: 0 0 70px #ffaa00;
-            animation: modalPop 0.3s;
-        }
-
-        @keyframes modalPop {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            box-shadow: 0 0 70px #e10600;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
         }
 
         .modal-content h2 {
-            color: #ffaa00;
+            color: #e10600;
             font-size: 28px;
             margin-bottom: 15px;
             text-transform: uppercase;
@@ -337,10 +332,9 @@
 
         .modal-reward {
             font-size: 48px;
+            font-weight: bold;
+            color: #fff;
             margin: 20px 0;
-            background: linear-gradient(45deg, #f0f, #0ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .modal-buttons {
@@ -354,11 +348,11 @@
             border: 2px solid;
             color: #fff;
             padding: 12px 30px;
-            border-radius: 40px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: 0.3s;
             font-size: 16px;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
         }
 
         .modal-btn.claim {
@@ -369,41 +363,41 @@
             color: #000;
         }
         .modal-btn.cancel {
-            border-color: #f00;
+            border-color: #e10600;
         }
         .modal-btn.cancel:hover {
-            background: #f00;
-            color: #000;
+            background: #e10600;
         }
 
-        /* ========== ПАНЕЛЬ ХАРАКТЕРИСТИК (ТОЧКИ) ========== */
-        .stats-preview {
+        /* ========== ПАНЕЛЬ ХАРАКТЕРИСТИК (ТОЧКИ ВНИЗУ) ========== */
+        .f1-telemetry {
             position: fixed;
             bottom: 20px;
             right: 20px;
             display: flex;
             gap: 8px;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 12px 20px;
-            border-radius: 40px;
-            border: 1px solid #0ff;
+            border: 1px solid #e10600;
+            padding: 10px 20px;
+            border-radius: 0;
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
             z-index: 100;
         }
 
-        .stat-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
+        .telemetry-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 0;
+            transform: rotate(45deg);
             box-shadow: 0 0 10px currentColor;
         }
 
-        .stat-dot.red { background: #ff4444; }
-        .stat-dot.green { background: #44ff44; }
-        .stat-dot.blue { background: #4444ff; }
-        .stat-dot.yellow { background: #ffff44; }
-        .stat-dot.orange { background: #ff8844; }
-        .stat-dot.purple { background: #ff44ff; }
+        .telemetry-dot.red { background: #ff4444; }
+        .telemetry-dot.green { background: #44ff44; }
+        .telemetry-dot.blue { background: #4444ff; }
+        .telemetry-dot.yellow { background: #ffff44; }
+        .telemetry-dot.orange { background: #ff8844; }
+        .telemetry-dot.purple { background: #ff44ff; }
 
         /* ========== КНОПКА ВЫХОДА ========== */
         .exit-btn {
@@ -411,99 +405,60 @@
             bottom: 20px;
             left: 20px;
             background: transparent;
-            border: 2px solid #f0f;
-            color: #f0f;
-            padding: 12px 24px;
-            border-radius: 40px;
+            border: 2px solid #e10600;
+            color: #e10600;
+            padding: 10px 20px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: 0.3s;
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 2px;
             backdrop-filter: blur(10px);
             font-size: clamp(12px, 3vw, 14px);
             z-index: 100;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
         }
 
-        .exit-btn:active {
-            transform: scale(0.9);
+        .exit-btn:hover {
+            background: #e10600;
+            color: #000;
         }
 
-        /* ========== УВЕДОМЛЕНИЯ ========== */
+        /* Уведомления */
         .notification {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: #0ff;
-            color: #000;
+            background: #e10600;
+            color: white;
             padding: 12px 24px;
-            border-radius: 40px;
             font-weight: bold;
             z-index: 3000;
             display: none;
-            font-size: clamp(12px, 3vw, 14px);
+            font-size: 14px;
             white-space: nowrap;
-            box-shadow: 0 0 30px #0ff;
+            box-shadow: 0 0 30px #e10600;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
         }
 
         .notification.show {
             display: block;
-            animation: slide 0.3s;
+            animation: slideIn 0.3s;
         }
 
-        .notification.error {
-            background: #f0f;
-        }
-
-        @keyframes slide {
+        @keyframes slideIn {
             from { transform: translateX(-50%) translateY(-100%); }
             to { transform: translateX(-50%) translateY(0); }
-        }
-
-        /* ========== СТАТИСТИКА НА ГЛАВНОЙ ========== */
-        .welcome-card {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            border: 2px solid #f0f;
-            border-radius: 30px;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .stats-row {
-            display: flex;
-            justify-content: space-around;
-            margin: 15px 0;
-        }
-
-        .stat-block {
-            text-align: center;
-        }
-
-        .stat-block .value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #0ff;
-        }
-
-        .stat-block .label {
-            font-size: 14px;
-            color: #f0f;
-            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
-    <!-- Киберпанк-фон -->
-    <div class="cyber-bg">
-        <div class="cyber-grid"></div>
-    </div>
+    <!-- Шашечная полоса -->
+    <div class="checkered-top"></div>
 
-    <!-- Шапка с пользователем и монетами -->
+    <!-- Шапка -->
     <div class="header">
         <div class="user-badge" id="userBadge" style="display: none;">
             <img id="userAvatar" src="" alt="avatar">
@@ -512,82 +467,82 @@
         <div class="coins-badge" id="coinsDisplay">1000 🪙</div>
     </div>
 
-    <!-- Ежедневный подарок -->
+    <!-- Ежедневный подарок (в стиле табло) -->
     <div class="daily-gift" id="dailyGift" onclick="openDailyBonus()">🎁</div>
 
     <!-- Загрузчик -->
     <div id="loader-container" class="loader-container">
-        <div class="cyber-loader"></div>
-        <div class="loader-text">ЗАГРУЗКА...</div>
+        <div class="f1-loader"></div>
+        <div class="loader-text">ЗАПУСК ДВИГАТЕЛЯ</div>
     </div>
 
-    <!-- Основной контент (скрыт до загрузки) -->
+    <!-- Основной контент -->
     <section id="content-section" style="display: none; width: 100%;">
         <div class="title">
-            <h1>КИРЮХА RACING</h1>
+            <h1>КИРЮХА F1</h1>
+            <div class="subtitle">RACING TEAM</div>
         </div>
 
-        <!-- Карточка со статистикой игрока -->
-        <div class="welcome-card">
-            <div class="stats-row">
-                <div class="stat-block">
-                    <div class="value" id="player-level">1</div>
-                    <div class="label">Уровень</div>
+        <!-- Статистика как табло -->
+        <div class="stats-panel">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="player-level">1</div>
+                    <div class="stat-label">УРОВЕНЬ</div>
                 </div>
-                <div class="stat-block">
-                    <div class="value" id="player-money">1000</div>
-                    <div class="label">Монет</div>
+                <div class="stat-item">
+                    <div class="stat-value" id="player-money">1000</div>
+                    <div class="stat-label">МОНЕТЫ</div>
                 </div>
-                <div class="stat-block">
-                    <div class="value" id="player-races">0</div>
-                    <div class="label">Гонок</div>
+                <div class="stat-item">
+                    <div class="stat-value" id="player-races">0</div>
+                    <div class="stat-label">ГОНКИ</div>
                 </div>
             </div>
         </div>
 
-        <!-- Сетка меню (6 пунктов) -->
+        <!-- Меню -->
         <nav class="menu-grid">
             <a href="garage.html" class="menu-item garage">
                 <div class="menu-emoji">🔧</div>
-                <h2>ГАРАЖ</h2>
+                <span>ГАРАЖ</span>
             </a>
             <a href="race.html" class="menu-item race">
                 <div class="menu-emoji">🏁</div>
-                <h2>ГОНКА</h2>
+                <span>ГОНКА</span>
             </a>
             <a href="shop.html" class="menu-item shop">
                 <div class="menu-emoji">🛒</div>
-                <h2>МАГАЗИН</h2>
+                <span>МАГАЗИН</span>
             </a>
             <a href="rating.html" class="menu-item rating">
                 <div class="menu-emoji">📊</div>
-                <h2>РЕЙТИНГ</h2>
+                <span>РЕЙТИНГ</span>
             </a>
             <a href="bonus.html" class="menu-item bonus">
                 <div class="menu-emoji">🎁</div>
-                <h2>БОНУСЫ</h2>
+                <span>БОНУСЫ</span>
             </a>
-            <!-- Можно добавить шестую кнопку, например "Настройки" или "Выход" -->
         </nav>
     </section>
 
-    <!-- Панель характеристик (точки) -->
-    <div class="stats-preview" id="statsPreview">
-        <div class="stat-dot red" title="Скорость"></div>
-        <div class="stat-dot green" title="Ускорение"></div>
-        <div class="stat-dot blue" title="Макс скорость"></div>
-        <div class="stat-dot yellow" title="Удача"></div>
-        <div class="stat-dot orange" title="Турбо"></div>
-        <div class="stat-dot purple" title="Защита"></div>
+    <!-- Телеметрия (точки характеристик) -->
+    <div class="f1-telemetry" id="statsPreview">
+        <div class="telemetry-dot red" title="Скорость"></div>
+        <div class="telemetry-dot green" title="Ускорение"></div>
+        <div class="telemetry-dot blue" title="Макс скорость"></div>
+        <div class="telemetry-dot yellow" title="Удача"></div>
+        <div class="telemetry-dot orange" title="Турбо"></div>
+        <div class="telemetry-dot purple" title="Защита"></div>
     </div>
 
     <!-- Кнопка выхода -->
     <a href="#" class="exit-btn" onclick="window.Telegram?.WebApp?.close()">✖ ВЫХОД</a>
 
-    <!-- Модальное окно для ежедневного бонуса -->
+    <!-- Модальное окно бонуса -->
     <div class="modal-overlay" id="bonusModal" onclick="if(event.target===this) closeModal()">
         <div class="modal-content">
-            <h2>🎁 ЕЖЕДНЕВНЫЙ БОНУС</h2>
+            <h2>🎁 БОНУС</h2>
             <p id="bonusDayText">День 1</p>
             <div class="modal-reward" id="bonusReward">100 🪙</div>
             <div class="modal-buttons">
@@ -601,11 +556,10 @@
     <div id="notification" class="notification"></div>
 
     <script>
-        // ========== TELEGRAM ИНИЦИАЛИЗАЦИЯ ==========
+        // ========== TELEGRAM ==========
         const $ = id => document.getElementById(id);
         let tg = null;
 
-        // Данные игрока
         let playerData = {
             level: 1,
             money: 1000,
@@ -617,17 +571,13 @@
             tg.ready();
             tg.expand();
 
-            const theme = tg.colorScheme || 'dark';
-            document.body.setAttribute('data-theme', theme);
-
             const user = tg.initDataUnsafe?.user;
             if (user) {
-                $('userAvatar').src = user.photo_url || 'https://ui-avatars.com/api/?name=' + (user.first_name || 'Player') + '&background=ff00ff';
+                $('userAvatar').src = user.photo_url || 'https://ui-avatars.com/api/?name=' + (user.first_name || 'Player') + '&background=e10600';
                 $('userName').textContent = user.first_name || 'Игрок';
                 $('userBadge').style.display = 'flex';
             }
 
-            // Кнопки Telegram (опционально)
             tg.MainButton.setText('СТАРТ');
             tg.MainButton.show();
             tg.MainButton.onClick(() => window.location.href = 'race.html');
@@ -636,7 +586,7 @@
             tg.BackButton.onClick(() => history.back());
         }
 
-        // ========== МОНЕТЫ И ДАННЫЕ ==========
+        // ========== МОНЕТЫ ==========
         const COINS_KEY = 'playerCoins';
         const DAILY_KEY = 'dailyBonusMenu';
         const GARAGE_KEY = 'garageCubes';
@@ -663,11 +613,10 @@
         function showNotification(text, isError = false) {
             const n = $('notification');
             n.textContent = isError ? '❌ ' + text : '✨ ' + text;
-            n.className = `notification ${isError ? 'error' : ''} show`;
+            n.classList.add('show');
             setTimeout(() => n.classList.remove('show'), 2000);
         }
 
-        // Загрузка данных игрока из localStorage
         function loadPlayerData() {
             if (tg?.initDataUnsafe?.user?.id) {
                 try {
@@ -675,23 +624,12 @@
                     if (saved) {
                         playerData = JSON.parse(saved);
                     }
-                } catch (e) {
-                    console.error('Ошибка загрузки:', e);
-                }
+                } catch (e) {}
             }
-            // Принудительно синхронизируем монеты из COINS_KEY
             playerData.money = getCoins();
-
             $('player-level').textContent = playerData.level || 1;
             $('player-money').textContent = playerData.money;
             $('player-races').textContent = playerData.races || 0;
-        }
-
-        // Сохранение данных игрока
-        function savePlayerData() {
-            if (tg?.initDataUnsafe?.user?.id) {
-                localStorage.setItem(`player_${tg.initDataUnsafe.user.id}`, JSON.stringify(playerData));
-            }
         }
 
         // ========== ЕЖЕДНЕВНЫЙ БОНУС ==========
@@ -699,32 +637,14 @@
 
         function checkDailyBonus() {
             const today = new Date().toDateString();
-            let dailyData = JSON.parse(localStorage.getItem(DAILY_KEY));
-
-            if (!dailyData || dailyData.lastClaim !== today) {
-                const lastClaim = dailyData ? new Date(dailyData.lastClaim) : null;
-                const now = new Date();
-                const diffDays = lastClaim ? Math.floor((now - lastClaim) / (1000 * 60 * 60 * 24)) : 99;
-
-                if (!dailyData || diffDays >= 1) {
-                    dailyData = {
-                        lastClaim: null,
-                        day: 0,
-                        streak: 0
-                    };
-                }
-            }
-
+            let dailyData = JSON.parse(localStorage.getItem(DAILY_KEY)) || { lastClaim: null, day: 0 };
             const claimedToday = dailyData.lastClaim === today;
             const gift = $('dailyGift');
             if (claimedToday) {
                 gift.classList.add('claimed');
-                gift.style.animation = 'none';
             } else {
                 gift.classList.remove('claimed');
-                gift.style.animation = 'giftPulse 2s infinite';
             }
-
             return { claimedToday, day: dailyData.day };
         }
 
@@ -734,16 +654,10 @@
                 showNotification('Сегодня уже забирал!', true);
                 return;
             }
-
             const modal = $('bonusModal');
-            const dayText = $('bonusDayText');
-            const rewardDiv = $('bonusReward');
-
             const currentDay = day % 7;
-            const reward = dailyRewards[currentDay];
-            dayText.textContent = `День ${currentDay + 1}`;
-            rewardDiv.textContent = `${reward} 🪙`;
-
+            $('bonusDayText').textContent = `День ${currentDay + 1}`;
+            $('bonusReward').textContent = `${dailyRewards[currentDay]} 🪙`;
             modal.classList.add('show');
         }
 
@@ -758,34 +672,20 @@
                 showNotification('Уже получал!', true);
                 return;
             }
-
             const today = new Date().toDateString();
             const currentDay = day % 7;
-            const reward = dailyRewards[currentDay];
-
-            addCoins(reward);
-
-            const dailyData = {
-                lastClaim: today,
-                day: day + 1,
-                streak: day + 1
-            };
-            localStorage.setItem(DAILY_KEY, JSON.stringify(dailyData));
-
+            addCoins(dailyRewards[currentDay]);
+            localStorage.setItem(DAILY_KEY, JSON.stringify({ lastClaim: today, day: day + 1 }));
             checkDailyBonus();
             closeModal();
-
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.notification('success');
-            }
+            if (tg?.HapticFeedback) tg.HapticFeedback.notification('success');
         }
 
-        // ========== ЗАГРУЗКА ХАРАКТЕРИСТИК (ТОЧКИ) ==========
+        // ========== ЗАГРУЗКА ХАРАКТЕРИСТИК (точки) ==========
         function loadCarPreview() {
             const garageArray = JSON.parse(localStorage.getItem(GARAGE_KEY)) || [];
-            const dots = document.querySelectorAll('.stat-dot');
+            const dots = document.querySelectorAll('.telemetry-dot');
             const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
-
             dots.forEach((dot, index) => {
                 if (garageArray[index]) {
                     dot.style.opacity = '1';
@@ -808,25 +708,19 @@
                 setTimeout(() => {
                     $('loader-container').style.display = 'none';
                     $('content-section').style.display = 'block';
-                    if (tg?.HapticFeedback) {
-                        tg.HapticFeedback.impactOccurred('medium');
-                    }
+                    if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
                 }, 500);
             }, 2000);
-
-            window.addEventListener('beforeunload', savePlayerData);
         }
 
-        // Обновление данных при фокусе
-        window.addEventListener('focus', function() {
+        window.addEventListener('focus', () => {
             updateCoinsDisplay();
             loadPlayerData();
             loadCarPreview();
             checkDailyBonus();
         });
 
-        // Старт
         startLoader();
     </script>
 </body>
-    </html>
+</html>
