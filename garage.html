@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -38,7 +39,6 @@
             z-index: 10;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             padding: 20px;
         }
 
@@ -83,6 +83,41 @@
             clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
         }
 
+        /* Панель характеристик (горизонтальная полоса) */
+        .stats-bar {
+            background: rgba(0,0,0,0.6);
+            border: 2px solid #e10600;
+            padding: 10px 20px;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            pointer-events: auto;
+            backdrop-filter: blur(5px);
+            max-width: 1200px;
+            margin: 10px auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: #e10600;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+        }
+
         /* Навигационное меню */
         .nav-menu {
             display: flex;
@@ -119,64 +154,21 @@
             box-shadow: 0 0 20px #e10600;
         }
 
-        /* Нижняя панель (характеристики + инвентарь) */
-        .bottom-panel {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            align-items: flex-end;
-            pointer-events: auto;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        /* Панель характеристик (теперь внизу слева) */
-        .stats-panel {
-            background: rgba(0,0,0,0.7);
-            border: 2px solid #e10600;
-            padding: 15px;
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-            backdrop-filter: blur(5px);
-            width: 260px;
-            flex-shrink: 0;
-        }
-
-        .stats-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e10600;
-            padding: 5px 0;
-        }
-
-        .stat-label {
-            color: #e10600;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-
-        .stat-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-        }
-
-        /* Инвентарь */
+        /* Инвентарь (внизу) */
         .inventory-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background: rgba(0,0,0,0.6);
             border: 2px solid #e10600;
             padding: 10px;
             clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            pointer-events: auto;
             backdrop-filter: blur(5px);
             width: auto;
-            max-width: 100%;
-            flex-shrink: 0;
+            max-width: 95vw;
+            z-index: 20;
         }
 
         .inventory-title {
@@ -316,32 +308,12 @@
             to { transform: translateX(-50%) translateY(0); }
         }
 
-        /* Адаптация для узких экранов */
+        /* Адаптация */
         @media (max-width: 700px) {
-            .bottom-panel {
+            .stats-bar {
                 flex-direction: column;
                 align-items: center;
-                gap: 10px;
-            }
-            .stats-panel {
-                width: 300px;
-                max-width: 90vw;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .inventory-slot {
-                width: 45px;
-                height: 45px;
-            }
-            .stats-panel {
-                padding: 10px;
-            }
-            .stat-label {
-                font-size: 12px;
-            }
-            .stat-value {
-                font-size: 16px;
+                gap: 5px;
             }
         }
     </style>
@@ -352,57 +324,52 @@
 
     <!-- Интерфейс поверх 3D -->
     <div id="ui-container">
-        <!-- Верхняя часть (шапка и навигация) -->
-        <div>
-            <div class="header">
-                <a href="index.html" class="back-to-menu">← МЕНЮ</a>
-                <div class="coins-header" id="coinsDisplay">1000 🪙</div>
+        <!-- Верхняя шапка -->
+        <div class="header">
+            <a href="index.html" class="back-to-menu">← МЕНЮ</a>
+            <div class="coins-header" id="coinsDisplay">1000 🪙</div>
+        </div>
+
+        <!-- Панель характеристик (горизонтальная полоса) -->
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <span class="stat-label">СКОРОСТЬ</span>
+                <span class="stat-value" id="statSpeed">50</span>
             </div>
-            <div class="nav-menu">
-                <a href="garage.html" class="nav-item active">🔧</a>
-                <a href="race.html" class="nav-item">🏁</a>
-                <a href="shop.html" class="nav-item">🛒</a>
-                <a href="rating.html" class="nav-item">📊</a>
+            <div class="stat-item">
+                <span class="stat-label">СЦЕПЛЕНИЕ</span>
+                <span class="stat-value" id="statGrip">50</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">РАЗГОН</span>
+                <span class="stat-value" id="statAccel">5</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">МАКС. СКОР</span>
+                <span class="stat-value" id="statMaxSpeed">100</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">РЫВОК</span>
+                <span class="stat-value" id="statLuck">0%</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">МОЩНОСТЬ</span>
+                <span class="stat-value" id="statPower">100%</span>
             </div>
         </div>
 
-        <!-- Нижняя панель (характеристики + инвентарь) -->
-        <div class="bottom-panel">
-            <!-- Панель характеристик -->
-            <div class="stats-panel">
-                <div class="stats-grid" id="statsGrid">
-                    <div class="stat-row">
-                        <span class="stat-label">СКОРОСТЬ</span>
-                        <span class="stat-value" id="statSpeed">50</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">СЦЕПЛЕНИЕ</span>
-                        <span class="stat-value" id="statGrip">50</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">РАЗГОН</span>
-                        <span class="stat-value" id="statAccel">5</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">МАКС. СКОР</span>
-                        <span class="stat-value" id="statMaxSpeed">100</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">РЫВОК</span>
-                        <span class="stat-value" id="statLuck">0%</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">МОЩНОСТЬ</span>
-                        <span class="stat-value" id="statPower">100%</span>
-                    </div>
-                </div>
-            </div>
+        <!-- Навигационное меню -->
+        <div class="nav-menu">
+            <a href="garage.html" class="nav-item active">🔧</a>
+            <a href="race.html" class="nav-item">🏁</a>
+            <a href="shop.html" class="nav-item">🛒</a>
+            <a href="rating.html" class="nav-item">📊</a>
+        </div>
 
-            <!-- Инвентарь 5x6 -->
-            <div class="inventory-panel">
-                <div class="inventory-title">📦 ИНВЕНТАРЬ</div>
-                <div id="inventoryGrid" class="inventory-grid"></div>
-            </div>
+        <!-- Инвентарь (внизу) -->
+        <div class="inventory-panel">
+            <div class="inventory-title">📦 ИНВЕНТАРЬ</div>
+            <div id="inventoryGrid" class="inventory-grid"></div>
         </div>
     </div>
 
@@ -568,7 +535,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- ЛОГИКА ИНВЕНТАРЯ И АКТИВНЫХ КУБОВ (без изменений) ---
+        // --- ЛОГИКА ИНВЕНТАРЯ И АКТИВНЫХ КУБОВ ---
         const colorList = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
         const cubeStats = {
             red:    [30, 0, 0, 0, 0, 0],
@@ -727,4 +694,4 @@
         });
     </script>
 </body>
-        </html>
+    </html>
