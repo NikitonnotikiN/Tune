@@ -6,74 +6,228 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Racing App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <style>
         /* ==========  RESET  ========== */
-        *{box-sizing:border-box;margin:0;padding:0}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-        body{
-            background:url(https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%91%D0%B5%D0%B7%20%D0%BD%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F284_20260215224953.jpg)
-                     center/cover no-repeat #111;
-            color:#fff;
-            font-family:Arial,Helvetica,sans-serif;
-            height:100vh;
-            padding-top:60px;          /* отступ под шапку */
+        body {
+            background: url(https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%91%D0%B5%D0%B7%20%D0%BD%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F284_20260215224953.jpg) center/cover no-repeat #111;
+            color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+            padding-top: 60px;
+        }
+
+        /* Адаптация под тему Telegram */
+        body[data-theme="light"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+
+        body[data-theme="light"] nav a {
+            border-color: #333;
+            color: #333;
+        }
+
+        body[data-theme="light"] nav a:hover {
+            background: rgba(0, 0, 0, 0.1);
         }
 
         /* ----------  USER BADGE  ---------- */
-        .user-badge{
-            position:fixed;
-            top:12px;left:12px;
-            display:flex;align-items:center;gap:8px;
-            z-index:10000;
-            background:#0006;
-            backdrop-filter:blur(4px);
-            padding:6px 12px;
-            border-radius:24px;
-            font-size:14px
+        .user-badge {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            padding: 6px 12px;
+            border-radius: 24px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .user-badge img{
-            width:32px;height:32px;border-radius:50%;object-fit:cover
+
+        .user-badge img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #0088cc;
         }
 
         /* ----------  LOADER  ---------- */
-        .loader-container{
-            position:fixed;
-            inset:0;
-            z-index:9999;
-            background:#000c;
-            display:flex;justify-content:center;align-items:center
+        .loader-container {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
         }
-        .loader{
-            border:16px solid #f3f3f3;
-            border-top:16px solid #3498db;
-            border-radius:50%;
-            width:120px;height:120px;
-            animation:spin 2s linear infinite
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #0088cc;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
         }
-        @keyframes spin{to{transform:rotate(360deg)}}
+
+        .loader-text {
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ----------  MAIN CONTENT  ---------- */
+        .main-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #fff, #0088cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
         /* ----------  NAV  ---------- */
-        nav ul{
-            list-style:none;display:flex;gap:20px;
-            justify-content:center;margin-top:20px
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            padding: 0 15px;
         }
-        nav a{
-            color:#fff;text-decoration:none;
-            padding:10px 20px;border:1px solid #fff;
-            border-radius:5px;transition:.3s
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            transition: all 0.3s;
+            display: inline-block;
+            font-weight: bold;
+            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.3);
+            min-width: 100px;
         }
-        nav a:hover{background:#fff2}
+
+        nav a:hover {
+            background: #0088cc;
+            border-color: #0088cc;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4);
+        }
 
         /* ----------  TG-BUTTONS  ---------- */
-        .tg-buttons{
-            position:fixed;
-            bottom:20px;right:20px;
-            display:flex;gap:10px;z-index:1000
+        .tg-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
         }
-        .tg-btn{
-            background:#0088cc;color:#fff;border:none;
-            padding:10px 18px;border-radius:6px;cursor:pointer
+
+        .tg-btn {
+            background: #0088cc;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .tg-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .tg-btn.secondary {
+            background: #666;
+        }
+
+        /* ----------  WELCOME CARD  ---------- */
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .welcome-card h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #0088cc;
+        }
+
+        .welcome-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .stats-preview {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0088cc;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Анимация появления */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-content {
+            animation: fadeIn 0.5s ease-out;
         }
     </style>
 </head>
@@ -82,98 +236,193 @@
 <!-- ==========  LOADER  ========== -->
 <div id="loader-container" class="loader-container">
     <div class="loader"></div>
+    <div class="loader-text">Загрузка игры...</div>
 </div>
-
-<!-- ==========  MAIN  ========== -->
-<section id="content-section" style="display:none">
-    <h1 style="text-align:center">Кирюха спи</h1>
-
-    <nav>
-        <ul>
-            <li><a href="menu.html">Меню</a></li>
-            <li><a href="shop.html">Магазин</a></li>
-            <li><a href="garage.html">Гараж</a></li>
-            <li><a href="race.html">Заезд</a></li>
-            <li><a href="rating.html">Рейтинг</a></li>
-        </ul>
-    </nav>
-</section>
 
 <!-- ==========  USER BADGE  ========== -->
-<div id="userBadge" class="user-badge">
-    <img id="userAvatar" src="" alt="">
-    <span id="userName">Игрок</span>
+<div id="userBadge" class="user-badge" style="display: none;">
+    <img id="userAvatar" src="" alt="Avatar">
+    <span id="userName">Загрузка...</span>
 </div>
+
+<!-- ==========  MAIN CONTENT  ========== -->
+<section id="content-section" style="display:none">
+    <div class="main-content">
+        <h1>🏁 КИРЮХА СПИ RACING 🏁</h1>
+        
+        <div class="welcome-card">
+            <h2>Добро пожаловать в игру!</h2>
+            <p>Приготовься к захватывающим гонкам, улучшай свой автомобиль и стань лучшим гонщиком!</p>
+            
+            <div class="stats-preview">
+                <div class="stat">
+                    <div class="stat-value" id="player-level">1</div>
+                    <div class="stat-label">Уровень</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="player-money">1000</div>
+                    <div class="stat-label">Монет</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="player-races">0</div>
+                    <div class="stat-label">Гонок</div>
+                </div>
+            </div>
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="menu.html">📋 Меню</a></li>
+                <li><a href="shop.html">🛒 Магазин</a></li>
+                <li><a href="garage.html">🚗 Гараж</a></li>
+                <li><a href="race.html">🏁 Заезд</a></li>
+                <li><a href="rating.html">📊 Рейтинг</a></li>
+            </ul>
+        </nav>
+    </div>
+</section>
 
 <!-- ==========  TG-BUTTONS  ========== -->
 <div class="tg-buttons" id="tgButtons" style="display:none">
-    <button class="tg-btn" onclick="shareStory()">Поделиться</button>
-    <button class="tg-btn" onclick="closeApp()">✖</button>
+    <button class="tg-btn" onclick="shareStory()">📤 Поделиться</button>
+    <button class="tg-btn secondary" onclick="openMainButton()">🏠 Главная</button>
+    <button class="tg-btn" onclick="closeApp()">✖ Выход</button>
 </div>
 
 <script>
-/* ----------------------------------
-   UTILS
----------------------------------- */
+// ==========  TELEGRAM ИНИЦИАЛИЗАЦИЯ  ==========
 const $ = id => document.getElementById(id);
+let tg = null;
+let playerData = {
+    level: 1,
+    money: 1000,
+    races: 0
+};
 
-function fillBadge(){
-    const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
-    if(!user) return;
-
-    $('userAvatar').src = user.photo_url ||
-                          'https://i.ibb.co/3sN2YMc/default-ava.png';
-    $('userName').textContent = user.first_name ||
-                                user.username ||
-                                'Игрок';
+// Инициализация Telegram
+if (window.Telegram?.WebApp) {
+    tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand(); // Разворачиваем на весь экран
+    
+    // Устанавливаем тему
+    const theme = tg.colorScheme || 'dark';
+    document.body.setAttribute('data-theme', theme);
+    
+    // Заполняем данные пользователя
+    const user = tg.initDataUnsafe?.user;
+    if (user) {
+        $('userAvatar').src = user.photo_url || 'https://via.placeholder.com/32';
+        $('userName').textContent = user.first_name || 'Игрок';
+        $('userBadge').style.display = 'flex';
+    }
+    
+    // Показываем кнопки
+    $('tgButtons').style.display = 'flex';
+    
+    // Настраиваем главную кнопку
+    tg.MainButton.setText('СТАРТ');
+    tg.MainButton.show();
+    tg.MainButton.onClick(function() {
+        window.location.href = 'race.html';
+    });
+    
+    // Настраиваем кнопку "Назад"
+    tg.BackButton.show();
+    tg.BackButton.onClick(function() {
+        history.back();
+    });
 }
 
-/* ----------------------------------
-   LOADER & INIT
----------------------------------- */
-function startLoader(){
-    setTimeout(() => {
-        $('loader-container').style.display = 'none';
-        $('content-section').style.display = 'block';
-
-        /* Telegram */
-        if(window.Telegram?.WebApp){
-            window.Telegram.WebApp.ready();
-            fillBadge();               // бейдж
-            $('tgButtons').style.display = 'flex'; // показываем кнопки
-        }else{
-            /* вне Telegram – показываем заглушку */
-            $('userName').textContent = 'Offline';
+// ==========  ЗАГРУЗКА ДАННЫХ  ==========
+function loadPlayerData() {
+    if (tg?.initDataUnsafe?.user?.id) {
+        try {
+            // Пытаемся загрузить из localStorage
+            const saved = localStorage.getItem(`player_${tg.initDataUnsafe.user.id}`);
+            if (saved) {
+                playerData = JSON.parse(saved);
+            }
+        } catch (e) {
+            console.error('Ошибка загрузки:', e);
         }
-    }, 2000);
+    }
+    
+    // Обновляем отображение
+    $('player-level').textContent = playerData.level;
+    $('player-money').textContent = playerData.money;
+    $('player-races').textContent = playerData.races;
 }
 
-/* ----------------------------------
-   TG ACTIONS
----------------------------------- */
-function closeApp(){
-    if(window.Telegram?.WebApp) window.Telegram.WebApp.close();
-    else window.close();                 // fallback для браузера
-}
-
-function shareStory(){
-    if(!window.Telegram?.WebApp) return alert('Вне Telegram нельзя');
-    const url = window.location.href;
-    const text = 'Гоняю в Кирюха-спи!';
-
-    /* WebApp.shareToStory (>=6.10) или shareUrl (старый API) */
-    const tg = window.Telegram.WebApp;
-    if(typeof tg.shareToStory === 'function'){
-        tg.shareToStory(url, {text});
-    }else if(tg.shareUrl){
-        tg.shareUrl(url, text);
-    }else{
-        alert('Поделиться не удалось');
+// ==========  ДЕЙСТВИЯ TELEGRAM  ==========
+function closeApp() {
+    if (tg) {
+        tg.close();
+    } else {
+        window.close();
     }
 }
 
-/* Запускаем */
+function shareStory() {
+    if (!tg) {
+        alert('Доступно только в Telegram');
+        return;
+    }
+    
+    const shareText = `Мой уровень в игре: ${playerData.level}, монет: ${playerData.money}! Присоединяйся!`;
+    
+    // Пробуем разные методы шаринга
+    if (typeof tg.shareToStory === 'function') {
+        tg.shareToStory(window.location.href, { text: shareText });
+    } else if (tg.shareUrl) {
+        tg.shareUrl(window.location.href, shareText);
+    } else {
+        tg.showAlert('Поделиться пока нельзя :(');
+    }
+}
+
+function openMainButton() {
+    window.location.href = window.location.pathname;
+}
+
+// ==========  СОХРАНЕНИЕ ДАННЫХ  ==========
+function savePlayerData() {
+    if (tg?.initDataUnsafe?.user?.id) {
+        localStorage.setItem(
+            `player_${tg.initDataUnsafe.user.id}`, 
+            JSON.stringify(playerData)
+        );
+    }
+}
+
+// ==========  ЗАГРУЗЧИК  ==========
+function startLoader() {
+    // Загружаем данные
+    loadPlayerData();
+    
+    // Имитация загрузки ресурсов
+    setTimeout(() => {
+        // Скрываем загрузчик
+        $('loader-container').style.display = 'none';
+        
+        // Показываем контент
+        $('content-section').style.display = 'block';
+        
+        // Вибрация при запуске (если поддерживается)
+        if (tg?.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+        
+        // Сохраняем данные при выходе
+        window.addEventListener('beforeunload', function() {
+            savePlayerData();
+        });
+        
+    }, 2000);
+}
+
+// ==========  ЗАПУСК  ==========
 startLoader();
 </script>
 </body>
-  </html>
+    </html>
