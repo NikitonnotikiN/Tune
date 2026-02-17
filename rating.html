@@ -1,105 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рейтинг</title>
-    <style>
-        body {
-            background-image: url('https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/Screenshot_20260216-205604_Gallery.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: white;
-            font-family: Arial, sans-serif;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Контейнер загрузки */
-        .loader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Анимация загрузки */
-        .loader {
-            border: 16px solid #f3f3f3;
-            border-top: 16px solid #3498db;
-            border-radius: 50%;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite;
-        }
-
-        /* Ключевая анимация вращения */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Навигационная панель */
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: white;
-            padding: 10px 20px;
-            border: 1px solid #fff;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        nav a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Рейтинг</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;color:#fff;background:#0f0f1a;padding:12px}
+    h2{text-align:center;margin:10px 0}
+    .row{display:flex;align-items:center;padding:10px;border-radius:8px;background:#1c1c27;margin-bottom:6px}
+    .num{width:30px;font-weight:700}
+    .ava{width:36px;height:36px;border-radius:50%;margin:0 10px}
+    .name{flex:1}
+    .coins{font-weight:600;color:#ffd700}
+  </style>
 </head>
-<body onload="startLoader();">
-    <!-- Экран загрузки -->
-    <div id="loader-container" class="loader-container">
-        <div class="loader"></div>
-    </div>
+<body>
+  <h2>🏆 Рейтинг</h2>
+  <div id="list">загрузка…</div>
 
-    <!-- Основное содержание -->
-    <section style="display:none;" id="content-section">
-        <h1>Если ты член Пивнева ты на первом месте</h1></h1>
-        <nav>
-            <ul>
-                <li><a href="menu.html">Меню</a></li>
-                <li><a href="shop.html">Магазин</a></li>
-                <li><a href="garage.html">Гараж</a></li>
-                <li><a href="race.html">Заезд</a></li>
-                <li><a href="rating.html">Рейтинг</a></li>
-            </ul>
-        </nav>
-    </section>
+  <script>
+    // 1️⃣ Telegram WebApp
+    const tg = window.Telegram.WebApp;
+    tg.ready();          // разрешаем кнопку "Назад"
+    tg.BackButton.show();
+    tg.BackButton.onClick(() => window.location = 'index.html');
 
-    <!-- Скрипт для управления загрузкой -->
-    <script>
-        function startLoader() {
-            setTimeout(function () {
-                document.querySelector('#loader-container').style.display = 'none';
-                document.querySelector('#content-section').style.display = 'block';
-            }, 2000); // Время анимации (2 секунды)
-        }
-    </script>
+    // 2️⃣ Забираем топ
+    fetch('/top')
+      .then(r => r.json())
+      .then(data => {
+        list.innerHTML = '';
+        data.forEach((u, i) => {
+          const div = document.createElement('div');
+          div.className = 'row';
+          div.innerHTML = `
+            <div class="num">${i+1}</div>
+            <img class="ava" src="https://tg-images.handler.ru/${u.tg_id}/small.jpg"
+                 onerror="this.src='https://i.ibb.co/3sWfBgX/ava.png'">
+            <div class="name">${u.name}</div>
+            <div class="coins">${u.coins}💰</div>`;
+          list.appendChild(div);
+        });
+      })
+      .catch(() => list.innerText = 'ошибка');
+  </script>
 </body>
-    </html>
+</html>
