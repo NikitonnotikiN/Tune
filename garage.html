@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ton Racing – Гараж 3D</title>
+    <title>Ton Racing – 3D Гараж</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -15,58 +15,35 @@
         body {
             font-family: 'Racing Sans One', 'Segoe UI', system-ui, sans-serif;
             background: #0c0c0c;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 16px;
-            position: relative;
             color: white;
-            overflow-x: hidden;
-            perspective: 1000px;
+            overflow: hidden;
         }
 
-        /* Карбоновый фон с 3D-уклоном */
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: repeating-linear-gradient(45deg, rgba(30,30,30,0.8) 0px, rgba(30,30,30,0.8) 2px, 
-                      rgba(20,20,20,0.8) 2px, rgba(20,20,20,0.8) 4px);
-            transform: rotate(5deg) scale(1.5);
-            z-index: -1;
-        }
-
-        /* Шашечная полоса */
-        .checkered-top {
-            position: fixed;
+        #ui-container {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 8px;
-            background: repeating-linear-gradient(90deg, #fff, #fff 20px, #000 20px, #000 40px);
-            z-index: 1001;
-            box-shadow: 0 0 20px rgba(255,255,255,0.5);
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
         }
 
+        /* Верхняя шапка */
         .header {
-            position: fixed;
-            top: 8px;
-            left: 0;
-            right: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
-            border-bottom: 2px solid #e10600;
-            box-shadow: 0 0 30px rgba(225,6,0,0.5);
-            z-index: 1000;
-            transform: translateZ(20px);
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #e10600;
+            padding: 12px 20px;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            pointer-events: auto;
+            backdrop-filter: blur(5px);
         }
 
         .back-to-menu {
@@ -81,213 +58,128 @@
         }
 
         .back-to-menu:active {
-            transform: translateY(2px);
             background: #e10600;
             color: black;
         }
 
         .coins-header {
             background: linear-gradient(135deg, #e10600, #ff4d4d);
-            padding: 8px 16px;
-            color: white;
+            padding: 8px 20px;
             font-weight: bold;
             font-size: 18px;
             clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
-            box-shadow: 0 0 20px #e10600;
         }
 
-        .title {
-            text-align: center;
-            margin: 80px 0 20px;
-            transform: translateZ(30px);
-        }
-
-        .title h1 {
-            font-size: 48px;
-            color: white;
-            text-shadow: 4px 4px 0 #e10600, 8px 8px 0 rgba(0,0,0,0.5);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-        }
-
-        /* Панель характеристик (как табло) */
-        .stats-panel {
-            width: 100%;
-            max-width: 800px;
-            background: rgba(0,0,0,0.7);
-            border: 2px solid #e10600;
-            padding: 20px;
-            margin-bottom: 20px;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
-            backdrop-filter: blur(5px);
-            transform: rotateX(2deg) translateZ(20px);
-            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.8);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .stat-card {
-            background: rgba(255,255,255,0.05);
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #e10600;
-        }
-
-        .stat-icon { font-size: 24px; }
-        .stat-name { font-size: 12px; color: #e10600; }
-        .stat-value { font-size: 18px; font-weight: bold; color: white; }
-
-        /* Основной контейнер с 3D */
-        .garage-3d {
-            width: 100%;
-            max-width: 1000px;
-            background: rgba(0,0,0,0.5);
-            border: 2px solid #e10600;
-            padding: 30px 20px;
-            margin-bottom: 20px;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
-            transform: rotateX(3deg) translateZ(40px);
-            box-shadow: 0 30px 40px -15px black, inset 0 0 50px rgba(225,6,0,0.2);
-            position: relative;
-        }
-
-        /* Внутренняя тень для глубины */
-        .garage-3d::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(145deg, rgba(0,0,0,0.3) 0%, transparent 30%);
-            pointer-events: none;
-        }
-
-        /* Контейнер машины (центр) */
-        .car-wrapper {
+        /* Навигационное меню (иконки) */
+        .nav-menu {
             display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .car-container {
-            position: relative;
-            display: inline-block;
-            max-width: 350px;
-            width: 100%;
-            transition: transform 0.3s;
-            transform-style: preserve-3d;
-        }
-
-        .car-container:hover {
-            transform: translateZ(20px);
-        }
-
-        .car-container img {
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-
-        .car-part {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: auto;
-            pointer-events: none;
-        }
-
-        /* Панель активных кубов (снаряжённые) */
-        .active-cubes-panel {
-            background: rgba(0,0,0,0.6);
-            border: 2px solid #e10600;
-            padding: 15px;
-            margin: 20px 0;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
-            transform: translateZ(15px);
-        }
-
-        .active-cubes-title {
-            color: #e10600;
-            font-size: 18px;
-            text-align: center;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .active-cubes-grid {
-            display: flex;
-            justify-content: center;
             gap: 15px;
-            flex-wrap: wrap;
+            justify-content: center;
+            margin: 10px 0;
+            pointer-events: auto;
         }
 
-        .active-cube {
-            width: 70px;
-            height: 70px;
-            background: rgba(20,20,20,0.9);
+        .nav-item {
+            width: 50px;
+            height: 50px;
+            background: rgba(0,0,0,0.8);
             border: 2px solid #e10600;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
-            box-shadow: 0 5px 0 #7a0300;
+            font-size: 24px;
+            text-decoration: none;
+            color: white;
+            clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+            transition: 0.2s;
         }
 
-        .active-cube.empty {
-            border-color: #333;
-            box-shadow: none;
-            opacity: 0.5;
+        .nav-item:hover {
+            background: #e10600;
+            color: black;
         }
 
-        .active-cube .cube {
-            width: 85%;
-            height: 85%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+        .nav-item.active {
+            background: #e10600;
+            color: black;
+            box-shadow: 0 0 20px #e10600;
+        }
+
+        /* Панель характеристик */
+        .stats-panel {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #e10600;
+            padding: 15px 25px;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            pointer-events: auto;
+            backdrop-filter: blur(5px);
+            max-width: 800px;
+            margin: 10px auto;
+            width: fit-content;
+        }
+
+        .stats-grid {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stat-label {
+            color: #e10600;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
         }
 
         /* Инвентарь */
-        .inventory {
-            width: 100%;
-            max-width: 900px;
-            background: rgba(0,0,0,0.7);
+        .inventory-panel {
+            background: rgba(0,0,0,0.8);
             border: 2px solid #e10600;
             padding: 20px;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            pointer-events: auto;
             backdrop-filter: blur(5px);
-            transform: rotateX(1deg) translateZ(10px);
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
         }
 
-        .inventory h2 {
+        .inventory-title {
             color: #e10600;
             text-align: center;
             margin-bottom: 15px;
             font-size: 24px;
+            text-transform: uppercase;
         }
 
         .inventory-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
 
         .inventory-slot {
             aspect-ratio: 1;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.1);
             border: 2px solid #e10600;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+            clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
             transition: 0.2s;
+            position: relative;
         }
 
         .inventory-slot:hover {
@@ -295,12 +187,25 @@
             transform: scale(1.02);
         }
 
-        /* Кубы */
+        .inventory-slot.active {
+            border-color: #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        .inventory-slot.active::after {
+            content: '✓';
+            position: absolute;
+            top: 2px;
+            right: 5px;
+            color: #00ff00;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
         .cube {
             width: 85%;
             height: 85%;
-            cursor: pointer;
-            transition: 0.2s;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
         }
@@ -332,35 +237,6 @@
         .cube.purple { background: linear-gradient(145deg, #ff44ff, #cc00cc); }
         .cube.green { background: linear-gradient(145deg, #44ff44, #00cc00); }
 
-        /* Телеметрия */
-        .f1-telemetry {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            gap: 8px;
-            background: rgba(0,0,0,0.8);
-            border: 1px solid #e10600;
-            padding: 10px 20px;
-            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
-            z-index: 100;
-            transform: translateZ(30px);
-        }
-
-        .telemetry-dot {
-            width: 16px;
-            height: 16px;
-            transform: rotate(45deg);
-            box-shadow: 0 0 10px currentColor;
-        }
-
-        .telemetry-dot.red { background: #ff4444; }
-        .telemetry-dot.green { background: #44ff44; }
-        .telemetry-dot.blue { background: #4444ff; }
-        .telemetry-dot.yellow { background: #ffff44; }
-        .telemetry-dot.orange { background: #ff8844; }
-        .telemetry-dot.purple { background: #ff44ff; }
-
         .exit-btn {
             position: fixed;
             bottom: 20px;
@@ -379,7 +255,7 @@
             font-size: 14px;
             z-index: 100;
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
-            transform: translateZ(30px);
+            pointer-events: auto;
         }
 
         .exit-btn:hover {
@@ -402,375 +278,399 @@
             white-space: nowrap;
             box-shadow: 0 0 30px #e10600;
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+            pointer-events: none;
         }
 
-        .notification.show { display: block; animation: slideIn 0.3s; }
-        @keyframes slideIn { from { transform: translateX(-50%) translateY(-100%); } }
-        .notification.error { background: #f0f; }
+        .notification.show {
+            display: block;
+            animation: slideIn 0.3s;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-50%) translateY(-100%); }
+            to { transform: translateX(-50%) translateY(0); }
+        }
     </style>
 </head>
 <body>
-    <div class="checkered-top"></div>
+    <!-- 3D сцена -->
+    <div id="canvas-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;"></div>
 
-    <div class="header">
-        <a href="index.html" class="back-to-menu">← МЕНЮ</a>
-        <div class="coins-header" id="coinsDisplay">1000 🪙</div>
-    </div>
+    <!-- Интерфейс поверх 3D -->
+    <div id="ui-container">
+        <!-- Верхняя панель -->
+        <div>
+            <div class="header">
+                <a href="index.html" class="back-to-menu">← МЕНЮ</a>
+                <div class="coins-header" id="coinsDisplay">1000 🪙</div>
+            </div>
 
-    <div class="title"><h1>🔧 ГАРАЖ 3D</h1></div>
-
-    <!-- Панель характеристик -->
-    <div class="stats-panel">
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-name">СКОРОСТЬ</div><div class="stat-value" id="speedVal">0</div></div>
-            <div class="stat-card"><div class="stat-icon">🚀</div><div class="stat-name">УСКОРЕНИЕ</div><div class="stat-value" id="accelVal">0</div></div>
-            <div class="stat-card"><div class="stat-icon">💨</div><div class="stat-name">МАКС. СКОР</div><div class="stat-value" id="maxSpeedVal">0</div></div>
-        </div>
-    </div>
-
-    <!-- 3D-гараж -->
-    <div class="garage-3d">
-        <!-- Машина -->
-        <div class="car-wrapper">
-            <figure class="car-container">
-                <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png" alt="base" id="carBase" style="opacity:0.3">
-                <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png"  id="part_body"    class="car-part" alt="body">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_spoiler" class="car-part" alt="spoiler">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_hood"    class="car-part" alt="hood">
-                <img src="https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png" id="part_wheels"  class="car-part" alt="wheels">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_lights"  class="car-part" alt="lights">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" id="part_exhaust" class="car-part" alt="exhaust">
-            </figure>
+            <!-- Навигационные иконки -->
+            <div class="nav-menu">
+                <a href="garage.html" class="nav-item active">🔧</a>
+                <a href="race.html" class="nav-item">🏁</a>
+                <a href="shop.html" class="nav-item">🛒</a>
+                <a href="rating.html" class="nav-item">📊</a>
+            </div>
         </div>
 
-        <!-- Активные кубы (снаряжённые) -->
-        <div class="active-cubes-panel">
-            <div class="active-cubes-title">⚙️ СНАРЯЖЕНИЕ</div>
-            <div class="active-cubes-grid" id="activeCubesContainer">
-                <!-- будут созданы 6 ячеек для цветов -->
+        <!-- Центральная часть с характеристиками и инвентарём -->
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px;">
+            <!-- Панель характеристик -->
+            <div class="stats-panel">
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-item">
+                        <div class="stat-label">СКОРОСТЬ</div>
+                        <div class="stat-value" id="statSpeed">50</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">СЦЕПЛЕНИЕ</div>
+                        <div class="stat-value" id="statGrip">50</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">РАЗГОН</div>
+                        <div class="stat-value" id="statAccel">5</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">МАКС. СКОР</div>
+                        <div class="stat-value" id="statMaxSpeed">100</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">РЫВОК</div>
+                        <div class="stat-value" id="statLuck">0%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">МОЩНОСТЬ</div>
+                        <div class="stat-value" id="statPower">100%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Инвентарь 5x6 -->
+            <div class="inventory-panel">
+                <div class="inventory-title">📦 ИНВЕНТАРЬ</div>
+                <div id="inventoryGrid" class="inventory-grid"></div>
             </div>
         </div>
     </div>
 
-    <!-- Инвентарь -->
-    <section class="inventory">
-        <h2>📦 ИНВЕНТАРЬ</h2>
-        <div id="inventoryGrid" class="inventory-grid"></div>
-    </section>
-
-    <!-- Телеметрия -->
-    <div class="f1-telemetry" id="statsPreview">
-        <div class="telemetry-dot red" title="Скорость"></div>
-        <div class="telemetry-dot green" title="Ускорение"></div>
-        <div class="telemetry-dot blue" title="Макс скорость"></div>
-        <div class="telemetry-dot yellow" title="Удача"></div>
-        <div class="telemetry-dot orange" title="Турбо"></div>
-        <div class="telemetry-dot purple" title="Защита"></div>
-    </div>
-
+    <!-- Кнопка выхода -->
     <a href="#" class="exit-btn" onclick="window.Telegram?.WebApp?.close()">✖ ВЫХОД</a>
+
+    <!-- Уведомление -->
     <div id="notification" class="notification"></div>
 
-    <script>
-        // ========== НАСТРОЙКИ ==========
-        const COINS_KEY = 'playerCoins';
-        const INVENTORY_KEY = 'playerInventory';
-        const ACTIVE_CUBES_KEY = 'activeCubes'; // массив из 6 элементов {color, rarity} или null
+    <!-- Подключаем Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
 
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js';
+
+        // --- 3D СЦЕНА (как в предыдущей версии) ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111122);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(3, 2, 5);
+        camera.lookAt(0, 0.5, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Освещение
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(2, 5, 3);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 1024;
+        dirLight.shadow.mapSize.height = 1024;
+        const d = 5;
+        dirLight.shadow.camera.left = -d;
+        dirLight.shadow.camera.right = d;
+        dirLight.shadow.camera.top = d;
+        dirLight.shadow.camera.bottom = -d;
+        dirLight.shadow.camera.near = 1;
+        dirLight.shadow.camera.far = 10;
+        scene.add(dirLight);
+
+        const backLight = new THREE.PointLight(0x4466ff, 0.5);
+        backLight.position.set(-2, 1, -3);
+        scene.add(backLight);
+        
+        const bottomLight = new THREE.PointLight(0xff66aa, 0.3);
+        bottomLight.position.set(0, -1, 2);
+        scene.add(bottomLight);
+
+        // Пол
+        const planeGeometry = new THREE.CircleGeometry(5, 32);
+        const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x222233, roughness: 0.4, metalness: 0.1 });
+        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.rotation.x = -Math.PI / 2;
+        plane.position.y = -0.2;
+        plane.receiveShadow = true;
+        scene.add(plane);
+
+        const gridHelper = new THREE.GridHelper(10, 20, 0xe10600, 0x333344);
+        gridHelper.position.y = -0.19;
+        scene.add(gridHelper);
+
+        // Группа машины
+        const carGroup = new THREE.Group();
+        scene.add(carGroup);
+
+        // Детали
+        const bodyGeo = new THREE.BoxGeometry(1.2, 0.4, 2.0);
+        const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff4444, roughness: 0.3, metalness: 0.1 });
+        const body = new THREE.Mesh(bodyGeo, bodyMat);
+        body.castShadow = true;
+        body.receiveShadow = true;
+        body.position.set(0, 0.3, 0);
+        carGroup.add(body);
+
+        const hoodGeo = new THREE.BoxGeometry(0.8, 0.2, 0.8);
+        const hoodMat = new THREE.MeshStandardMaterial({ color: 0xff8844 });
+        const hood = new THREE.Mesh(hoodGeo, hoodMat);
+        hood.castShadow = true;
+        hood.receiveShadow = true;
+        hood.position.set(0, 0.6, 0.5);
+        carGroup.add(hood);
+
+        const spoilerGeo = new THREE.BoxGeometry(1.0, 0.2, 0.2);
+        const spoilerMat = new THREE.MeshStandardMaterial({ color: 0xffff44 });
+        const spoiler = new THREE.Mesh(spoilerGeo, spoilerMat);
+        spoiler.castShadow = true;
+        spoiler.receiveShadow = true;
+        spoiler.position.set(0, 0.7, -0.9);
+        carGroup.add(spoiler);
+
+        const wheelGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 24);
+        const wheelMat = new THREE.MeshStandardMaterial({ color: 0x4444ff });
+        const positions = [
+            [-0.7, 0.2, 0.7],
+            [0.7, 0.2, 0.7],
+            [-0.7, 0.2, -0.7],
+            [0.7, 0.2, -0.7]
+        ];
+        const wheels = [];
+        positions.forEach((pos) => {
+            const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+            wheel.rotation.z = Math.PI/2;
+            wheel.position.set(pos[0], pos[1], pos[2]);
+            wheel.castShadow = true;
+            wheel.receiveShadow = true;
+            carGroup.add(wheel);
+            wheels.push(wheel);
+        });
+
+        const exhaustGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.6);
+        const exhaustMat = new THREE.MeshStandardMaterial({ color: 0x44ff44 });
+        const exhaust = new THREE.Mesh(exhaustGeo, exhaustMat);
+        exhaust.rotation.x = Math.PI/2;
+        exhaust.position.set(-0.5, 0.15, -0.9);
+        exhaust.castShadow = true;
+        exhaust.receiveShadow = true;
+        carGroup.add(exhaust);
+
+        const lightGeo = new THREE.SphereGeometry(0.15);
+        const lightMat = new THREE.MeshStandardMaterial({ color: 0xff44ff, emissive: 0x330033 });
+        const lightLeft = new THREE.Mesh(lightGeo, lightMat);
+        lightLeft.position.set(-0.4, 0.4, 1.05);
+        lightLeft.castShadow = true;
+        carGroup.add(lightLeft);
+        
+        const lightRight = new THREE.Mesh(lightGeo, lightMat);
+        lightRight.position.set(0.4, 0.4, 1.05);
+        lightRight.castShadow = true;
+        carGroup.add(lightRight);
+
+        // Управление камерой
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 1.0;
+        controls.enableZoom = true;
+        controls.maxPolarAngle = Math.PI / 2;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- ЛОГИКА ИНВЕНТАРЯ И АКТИВНЫХ КУБОВ (как в предыдущей версии) ---
         const colorList = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
-
-        // Бонусы (как в магазине)
-        const bonuses = {
-            red:    { speed: 30, acceleration: 0, maxSpeed: 0 },
-            green:  { speed: 0, acceleration: 3, maxSpeed: 0 },
-            blue:   { speed: 0, acceleration: 0, maxSpeed: 30 },
-            yellow: { speed: 0, acceleration: 0, maxSpeed: 0 }, // luck
-            orange: { speed: 0, acceleration: 0, maxSpeed: 0 }, // turbo
-            purple: { speed: 0, acceleration: 0, maxSpeed: 0 }  // defense
+        const cubeStats = {
+            red:    [30, 0, 0, 0, 0, 0],
+            green:  [0, 20, 0, 0, 0, 0],
+            blue:   [0, 0, 0, 30, 0, 0],
+            yellow: [0, 0, 0, 0, 0.2, 0],
+            orange: [0, 0, 3, 0, 0, 0],
+            purple: [0, 0, 0, 0, 0, 20]
         };
 
-        let selectedCube = null; // для выделения (опционально)
+        let activeCubes = {
+            red: null,
+            green: null,
+            blue: null,
+            yellow: null,
+            orange: null,
+            purple: null
+        };
 
-        // ========== МОНЕТЫ ==========
-        function getCoins() { return parseInt(localStorage.getItem(COINS_KEY)) || 1000; }
-        function setCoins(amount) { localStorage.setItem(COINS_KEY, amount); updateCoinsDisplay(); }
-        function updateCoinsDisplay() { document.getElementById('coinsDisplay').textContent = getCoins() + ' 🪙'; }
-        function addCoins(amount) { setCoins(getCoins() + amount); showNotification(`+${amount} монет`); }
+        const coinsDisplay = document.getElementById('coinsDisplay');
+        const inventoryGrid = document.getElementById('inventoryGrid');
+        const statElements = {
+            speed: document.getElementById('statSpeed'),
+            grip: document.getElementById('statGrip'),
+            accel: document.getElementById('statAccel'),
+            maxSpeed: document.getElementById('statMaxSpeed'),
+            luck: document.getElementById('statLuck'),
+            power: document.getElementById('statPower')
+        };
 
-        function showNotification(text, isError = false) {
+        function getCoins() { return parseInt(localStorage.getItem('playerCoins')) || 1000; }
+        function setCoins(amount) { localStorage.setItem('playerCoins', amount); updateCoinsDisplay(); }
+        function updateCoinsDisplay() { coinsDisplay.textContent = getCoins() + ' 🪙'; }
+
+        let inventory = JSON.parse(localStorage.getItem('playerInventory')) || [];
+
+        function saveInventory() {
+            localStorage.setItem('playerInventory', JSON.stringify(inventory));
+        }
+
+        function initInventory() {
+            if (inventory.length === 0) {
+                colorList.forEach(color => {
+                    inventory.push({ color, rarity: 'common' });
+                    inventory.push({ color, rarity: 'common' });
+                });
+                inventory.push({ color: 'red', rarity: 'rare' });
+                inventory.push({ color: 'blue', rarity: 'rare' });
+                saveInventory();
+            }
+            renderInventory();
+        }
+
+        function renderInventory() {
+            inventoryGrid.innerHTML = '';
+            for (let i = 0; i < 30; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'inventory-slot';
+                slot.dataset.index = i;
+                
+                if (i < inventory.length) {
+                    const item = inventory[i];
+                    const cube = document.createElement('div');
+                    cube.className = `cube ${item.color} ${item.rarity}`;
+                    cube.dataset.color = item.color;
+                    cube.dataset.rarity = item.rarity;
+                    cube.dataset.index = i;
+                    slot.appendChild(cube);
+                    
+                    if (activeCubes[item.color] === i) {
+                        slot.classList.add('active');
+                    }
+                }
+                
+                slot.addEventListener('click', (e) => {
+                    const index = parseInt(slot.dataset.index);
+                    if (index >= inventory.length) return;
+                    
+                    const item = inventory[index];
+                    const color = item.color;
+                    
+                    if (activeCubes[color] !== null) {
+                        const oldIndex = activeCubes[color];
+                        const oldSlot = document.querySelector(`.inventory-slot[data-index="${oldIndex}"]`);
+                        if (oldSlot) oldSlot.classList.remove('active');
+                    }
+                    
+                    activeCubes[color] = index;
+                    slot.classList.add('active');
+                    
+                    updateCarColor(color);
+                    updateStats();
+                    
+                    showNotification(`Активирован ${color} куб`);
+                });
+                
+                inventoryGrid.appendChild(slot);
+            }
+        }
+
+        function updateCarColor(color) {
+            switch(color) {
+                case 'red': body.material.color.setHex(0xff4444); break;
+                case 'green': exhaust.material.color.setHex(0x44ff44); break;
+                case 'blue': wheels.forEach(w => w.material.color.setHex(0x4444ff)); break;
+                case 'yellow': spoiler.material.color.setHex(0xffff44); break;
+                case 'orange': hood.material.color.setHex(0xff8844); break;
+                case 'purple':
+                    lightLeft.material.color.setHex(0xff44ff);
+                    lightRight.material.color.setHex(0xff44ff);
+                    break;
+            }
+        }
+
+        function updateStats() {
+            let speed = 50;
+            let grip = 50;
+            let accel = 5;
+            let maxSpeed = 100;
+            let luck = 0;
+            let power = 100;
+
+            for (let color in activeCubes) {
+                if (activeCubes[color] !== null) {
+                    const stats = cubeStats[color];
+                    speed += stats[0];
+                    grip += stats[1];
+                    accel += stats[2];
+                    maxSpeed += stats[3];
+                    luck += stats[4];
+                    power += stats[5];
+                }
+            }
+
+            statElements.speed.textContent = speed;
+            statElements.grip.textContent = grip;
+            statElements.accel.textContent = accel;
+            statElements.maxSpeed.textContent = maxSpeed;
+            statElements.luck.textContent = Math.round(luck * 100) + '%';
+            statElements.power.textContent = power + '%';
+        }
+
+        function showNotification(text) {
             const n = document.getElementById('notification');
-            n.textContent = isError ? '❌ ' + text : '✨ ' + text;
-            n.className = `notification ${isError ? 'error' : ''} show`;
+            n.textContent = '✨ ' + text;
+            n.classList.add('show');
             setTimeout(() => n.classList.remove('show'), 2000);
         }
 
-        // ========== СОЗДАНИЕ КУБА ==========
-        function createCube(color, rarity = 'common') {
-            const cube = document.createElement('div');
-            cube.className = `cube ${color} ${rarity}`;
-            cube.dataset.color = color;
-            cube.dataset.rarity = rarity;
-            cube.title = rarity === 'rare' ? '⭐ Редкий куб' : 'Обычный куб';
-            return cube;
-        }
+        updateCoinsDisplay();
+        initInventory();
+        updateStats();
 
-        // ========== ИНИЦИАЛИЗАЦИЯ ИНВЕНТАРЯ ==========
-        function initInventory() {
-            const grid = document.getElementById('inventoryGrid');
-            grid.innerHTML = '';
-            for (let i = 0; i < 30; i++) {
-                const s = document.createElement('div');
-                s.className = 'inventory-slot';
-                s.dataset.index = i;
-                s.dataset.filled = 'false';
-                grid.appendChild(s);
-            }
-
-            const savedInventory = JSON.parse(localStorage.getItem(INVENTORY_KEY)) || [];
-            savedInventory.forEach((item, idx) => {
-                if (idx < 30) {
-                    const slot = grid.children[idx];
-                    const cube = createCube(item.color, item.rarity);
-                    slot.appendChild(cube);
-                    slot.dataset.filled = 'true';
-                }
-            });
-        }
-
-        function saveInventory() {
-            const inv = [];
-            document.querySelectorAll('.inventory-slot').forEach(slot => {
-                const cube = slot.querySelector('.cube');
-                if (cube) {
-                    inv.push({
-                        color: cube.dataset.color,
-                        rarity: cube.dataset.rarity || 'common'
-                    });
-                }
-            });
-            localStorage.setItem(INVENTORY_KEY, JSON.stringify(inv));
-        }
-
-        // ========== АКТИВНЫЕ КУБЫ ==========
-        function initActiveCubes() {
-            const container = document.getElementById('activeCubesContainer');
-            container.innerHTML = '';
-            for (let i = 0; i < 6; i++) {
-                const div = document.createElement('div');
-                div.className = 'active-cube empty';
-                div.dataset.color = colorList[i];
-                div.dataset.filled = 'false';
-                container.appendChild(div);
-            }
-
-            const savedActive = JSON.parse(localStorage.getItem(ACTIVE_CUBES_KEY)) || [];
-            savedActive.forEach((item, idx) => {
-                if (item) {
-                    setActiveCube(idx, item.color, item.rarity);
-                }
-            });
-        }
-
-        function setActiveCube(index, color, rarity) {
-            const container = document.getElementById('activeCubesContainer');
-            const cell = container.children[index];
-            cell.innerHTML = '';
-            cell.classList.remove('empty');
-            const cube = createCube(color, rarity);
-            cell.appendChild(cube);
-            cell.dataset.filled = 'true';
-        }
-
-        function clearActiveCube(index) {
-            const container = document.getElementById('activeCubesContainer');
-            const cell = container.children[index];
-            cell.innerHTML = '';
-            cell.classList.add('empty');
-            cell.dataset.filled = 'false';
-        }
-
-        function saveActiveCubes() {
-            const active = [];
-            document.querySelectorAll('.active-cube').forEach(cell => {
-                if (cell.dataset.filled === 'true') {
-                    const cube = cell.querySelector('.cube');
-                    active.push({ color: cube.dataset.color, rarity: cube.dataset.rarity });
-                } else {
-                    active.push(null);
-                }
-            });
-            localStorage.setItem(ACTIVE_CUBES_KEY, JSON.stringify(active));
-        }
-
-        // ========== ОБНОВЛЕНИЕ ХАРАКТЕРИСТИК ==========
-        function updateStats() {
-            let speed = 50;
-            let acceleration = 5;
-            let maxSpeed = 100;
-
-            document.querySelectorAll('.active-cube').forEach(cell => {
-                if (cell.dataset.filled === 'true') {
-                    const cube = cell.querySelector('.cube');
-                    const color = cube.dataset.color;
-                    const bonus = bonuses[color];
-                    if (bonus) {
-                        speed += bonus.speed;
-                        acceleration += bonus.acceleration;
-                        maxSpeed += bonus.maxSpeed;
-                    }
-                }
-            });
-
-            document.getElementById('speedVal').textContent = speed;
-            document.getElementById('accelVal').textContent = acceleration;
-            document.getElementById('maxSpeedVal').textContent = maxSpeed;
-        }
-
-        // ========== ОБРАБОТКА КЛИКОВ (НОВАЯ МЕХАНИКА) ==========
-        document.addEventListener('click', (e) => {
-            const cube = e.target.closest('.cube');
-            const invSlot = e.target.closest('.inventory-slot');
-
-            // Клик по кубу в инвентаре
-            if (cube && cube.closest('.inventory-slot')) {
-                const color = cube.dataset.color;
-                const colorIndex = colorList.indexOf(color);
-                if (colorIndex === -1) return;
-
-                // Проверяем, есть ли уже активный куб такого цвета
-                const activeCell = document.querySelector(`.active-cube[data-color="${color}"]`);
-                const isActiveFilled = activeCell.dataset.filled === 'true';
-
-                if (!isActiveFilled) {
-                    // Слота пуст – просто перемещаем из инвентаря в активные
-                    const slot = cube.closest('.inventory-slot');
-                    slot.removeChild(cube);
-                    slot.dataset.filled = 'false';
-
-                    setActiveCube(colorIndex, color, cube.dataset.rarity);
-                    saveInventory();
-                    saveActiveCubes();
-                    updateStats();
-                    showNotification(`${color} куб снаряжён`);
-                } else {
-                    // Слот занят – меняем местами
-                    const activeCube = activeCell.querySelector('.cube');
-                    const activeColor = activeCube.dataset.color;
-                    const activeRarity = activeCube.dataset.rarity;
-
-                    // Удаляем активный куб из ячейки
-                    activeCell.innerHTML = '';
-                    activeCell.classList.add('empty');
-                    activeCell.dataset.filled = 'false';
-
-                    // Вставляем новый куб из инвентаря
-                    const slot = cube.closest('.inventory-slot');
-                    slot.removeChild(cube);
-                    slot.dataset.filled = 'false';
-
-                    setActiveCube(colorIndex, color, cube.dataset.rarity);
-
-                    // Старый активный куб помещаем в инвентарь (в первый свободный слот)
-                    const inventorySlots = document.querySelectorAll('.inventory-slot');
-                    let placed = false;
-                    for (let s of inventorySlots) {
-                        if (s.dataset.filled === 'false') {
-                            const newCube = createCube(activeColor, activeRarity);
-                            s.appendChild(newCube);
-                            s.dataset.filled = 'true';
-                            placed = true;
-                            break;
-                        }
-                    }
-                    if (!placed) {
-                        // Если нет свободных слотов – можно, например, отказаться от замены
-                        // Но лучше вернуть как было (отмена)
-                        // Для простоты покажем ошибку
-                        showNotification('Нет места в инвентаре!', true);
-                        // Откат: вернём старый активный и не трогаем новый
-                        activeCell.innerHTML = '';
-                        setActiveCube(colorIndex, activeColor, activeRarity);
-                        slot.appendChild(cube);
-                        slot.dataset.filled = 'true';
-                        return;
-                    }
-
-                    saveInventory();
-                    saveActiveCubes();
-                    updateStats();
-                    showNotification(`Замена: ${color} вместо ${activeColor}`);
-                }
-                return;
-            }
-
-            // Клик по активному кубу – можно реализовать снятие (опционально)
-            // По заданию не требуется, но можно добавить двойной клик для снятия
-        });
-
-        // ========== ОБНОВЛЕНИЕ ДЕТАЛЕЙ МАШИНЫ (кузов, колёса) ==========
-        function updateCarParts() {
-            // Используем активные кубы для визуала
-            const bodyIndex = 0; // красный цвет для кузова
-            const wheelsIndex = 3; // синий цвет для колёс
-
-            const activeCubes = JSON.parse(localStorage.getItem(ACTIVE_CUBES_KEY)) || [];
-
-            const baseUrl = 'https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/';
-
-            // Кузов
-            const bodyImg = document.getElementById('part_body');
-            if (bodyImg) {
-                const bodyCube = activeCubes[bodyIndex];
-                if (bodyCube && bodyCube.color === 'red') {
-                    bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%812.png';
-                } else {
-                    bodyImg.src = baseUrl + '%D0%9A%D0%BE%D1%80%D0%BF%D1%83%D1%81.png';
-                }
-            }
-
-            // Колёса
-            const wheelsImg = document.getElementById('part_wheels');
-            if (wheelsImg) {
-                const wheelsCube = activeCubes[wheelsIndex];
-                if (wheelsCube && wheelsCube.color === 'blue') {
-                    wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B05.png';
-                } else {
-                    wheelsImg.src = baseUrl + '%D0%9A%D0%BE%D0%BB%D0%B5%D1%81%D0%B0.png';
-                }
-            }
-        }
-
-        // ========== ТОЧКИ ТЕЛЕМЕТРИИ ==========
-        function updateTelemetry() {
-            const activeCubes = JSON.parse(localStorage.getItem(ACTIVE_CUBES_KEY)) || [];
-            const dots = document.querySelectorAll('.telemetry-dot');
-            dots.forEach((dot, index) => {
-                if (activeCubes[index]) {
-                    dot.style.opacity = '1';
-                    dot.style.boxShadow = '0 0 20px currentColor';
-                } else {
-                    dot.style.opacity = '0.3';
-                    dot.style.boxShadow = 'none';
-                }
-            });
-        }
-
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
-        function init() {
-            initInventory();
-            initActiveCubes();
-            updateCoinsDisplay();
-            updateStats();
-            updateCarParts();
-            updateTelemetry();
-        }
-
-        init();
-
-        // Сохраняем всё при уходе
         window.addEventListener('beforeunload', () => {
             saveInventory();
-            saveActiveCubes();
         });
     </script>
 </body>
