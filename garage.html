@@ -84,22 +84,11 @@
       overflow: hidden;
     }
 
-    .coins-container::after {
-      content: '💰';
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 20px;
-      opacity: 0.3;
-    }
-
     #coinsDisplay {
       font-weight: 800;
       font-size: 22px;
       color: #fff;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      letter-spacing: 1px;
     }
 
     /* Основная сетка */
@@ -191,10 +180,6 @@
       transition: all 0.3s;
     }
 
-    .car.complete img {
-      filter: drop-shadow(0 0 30px #f1c40f);
-    }
-
     /* Инвентарь */
     .inventory {
       grid-column: 1 / -1;
@@ -213,7 +198,6 @@
       text-transform: uppercase;
       letter-spacing: 2px;
       opacity: 0.9;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
 
     .inventory-grid {
@@ -232,28 +216,17 @@
       justify-content: center;
       transition: all 0.2s;
       cursor: pointer;
-      position: relative;
     }
 
     .inventory-slot:hover {
       background: rgba(255, 255, 255, 0.12);
       transform: scale(1.03);
-      border-color: rgba(255, 255, 255, 0.2);
     }
 
     .inventory-slot.selected {
       border-color: #f1c40f;
       box-shadow: 0 0 25px rgba(241, 196, 15, 0.6);
       background: rgba(241, 196, 15, 0.1);
-    }
-
-    .inventory-slot::after {
-      content: attr(data-index);
-      position: absolute;
-      bottom: 2px;
-      right: 5px;
-      font-size: 9px;
-      color: rgba(255, 255, 255, 0.2);
     }
 
     /* Кубы */
@@ -289,7 +262,7 @@
       z-index: 100;
     }
 
-    /* Цвета кубов с улучшенными градиентами */
+    /* Цвета кубов */
     .red { background: linear-gradient(145deg, #ff6b6b, #c0392b); }
     .green { background: linear-gradient(145deg, #2ecc71, #27ae60); }
     .blue { background: linear-gradient(145deg, #3498db, #2980b9); }
@@ -311,8 +284,6 @@
       transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       z-index: 1000;
       box-shadow: 0 10px 30px rgba(46, 204, 113, 0.4);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      font-size: 14px;
     }
 
     .notification.show {
@@ -338,8 +309,6 @@
       transition: all 0.3s;
       z-index: 100;
       box-shadow: 0 5px 20px rgba(0, 136, 204, 0.4);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      font-size: 14px;
     }
 
     .back-btn:hover {
@@ -357,6 +326,7 @@
       .car-slots {
         flex-direction: row;
         justify-content: center;
+        flex-wrap: wrap;
       }
       
       .car {
@@ -383,9 +353,9 @@
 <main class="main-grid">
   <!-- Левые слоты машины -->
   <section class="car-slots">
-    <div class="car-slot" data-color="red" data-filled="false" title="Красный слот"></div>
-    <div class="car-slot" data-color="green" data-filled="false" title="Зеленый слот"></div>
-    <div class="car-slot" data-color="blue" data-filled="false" title="Синий слот"></div>
+    <div class="car-slot" data-color="red" data-filled="false"></div>
+    <div class="car-slot" data-color="green" data-filled="false"></div>
+    <div class="car-slot" data-color="blue" data-filled="false"></div>
   </section>
 
   <!-- Машина -->
@@ -396,9 +366,9 @@
 
   <!-- Правые слоты машины -->
   <section class="car-slots">
-    <div class="car-slot" data-color="yellow" data-filled="false" title="Желтый слот"></div>
-    <div class="car-slot" data-color="orange" data-filled="false" title="Оранжевый слот"></div>
-    <div class="car-slot" data-color="purple" data-filled="false" title="Фиолетовый слот"></div>
+    <div class="car-slot" data-color="yellow" data-filled="false"></div>
+    <div class="car-slot" data-color="orange" data-filled="false"></div>
+    <div class="car-slot" data-color="purple" data-filled="false"></div>
   </section>
 
   <!-- Инвентарь 5x6 -->
@@ -408,13 +378,12 @@
   </section>
 </main>
 
-<button class="back-btn" onclick="window.location.href='menu.html'">← В ГАРАЖ</button>
+<button class="back-btn" onclick="window.location.href='menu.html'">← В МЕНЮ</button>
 
 <script>
   // ========== МОНЕТЫ ==========
   const COINS_KEY = 'playerCoins';
   let selectedCube = null;
-  let selectedSlot = null;
   
   function getCoins() { 
     return parseInt(localStorage.getItem(COINS_KEY)) || 1000; 
@@ -431,18 +400,18 @@
   
   function addCoins(amount) { 
     setCoins(getCoins() + amount); 
-    showNotification(`+${amount} монет`, 'success');
+    showNotification(`+${amount} монет`);
   }
 
-  function showNotification(text, type = 'success') {
+  function showNotification(text, isError = false) {
     const notif = document.getElementById('notification');
-    notif.textContent = '✨ ' + text;
-    notif.className = `notification ${type}`;
+    notif.textContent = isError ? '❌ ' + text : '✨ ' + text;
+    notif.className = `notification ${isError ? 'error' : ''}`;
     notif.classList.add('show');
     setTimeout(() => notif.classList.remove('show'), 2000);
   }
 
-  // ========== СОЗДАНИЕ ИНВЕНТАРЯ 5x6 ==========
+  // ========== СОЗДАНИЕ ИНВЕНТАРЯ ==========
   const COLORS = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
   const inventoryGrid = document.getElementById('inventoryGrid');
   
@@ -455,7 +424,7 @@
     inventoryGrid.appendChild(slot);
   }
 
-  // Заполняем первые 6 слотов кубами (по одному каждого цвета)
+  // Заполняем первые 6 слотов кубами
   COLORS.forEach((color, index) => {
     const slot = inventoryGrid.children[index];
     const cube = createCube(color);
@@ -470,123 +439,134 @@
     return cube;
   }
 
-  // ========== ВЫДЕЛЕНИЕ КУБА ==========
-  document.addEventListener('click', (e) => {
+  // ========== ЕДИНЫЙ ОБРАБОТЧИК КЛИКОВ ==========
+  document.addEventListener('click', function(e) {
     const cube = e.target.closest('.cube');
     const inventorySlot = e.target.closest('.inventory-slot');
     const carSlot = e.target.closest('.car-slot');
     
-    // Клик по кубу в инвентаре
+    console.log('Click:', { cube: !!cube, inventorySlot: !!inventorySlot, carSlot: !!carSlot });
+    
+    // СЛУЧАЙ 1: Клик по кубу в инвентаре - выделение
     if (cube && cube.closest('.inventory-slot')) {
-      // Снимаем выделение со всего
+      e.stopPropagation();
+      
+      // Если кликнули на уже выделенный куб - снимаем выделение
+      if (selectedCube === cube) {
+        clearSelection();
+        return;
+      }
+      
+      // Снимаем предыдущее выделение
       clearSelection();
       
-      // Выделяем куб
+      // Выделяем новый куб
       cube.classList.add('selected');
       cube.closest('.inventory-slot').classList.add('selected');
       selectedCube = cube;
-      selectedSlot = cube.closest('.inventory-slot');
       
       // Подсвечиваем доступные слоты на машине
-      highlightAvailableCarSlots(cube.dataset.color);
+      document.querySelectorAll('.car-slot').forEach(slot => {
+        if (slot.dataset.filled === 'false' && slot.dataset.color === cube.dataset.color) {
+          slot.classList.add('available');
+        }
+      });
       
       return;
     }
     
-    // Клик по пустому месту - снимаем выделение
-    if (!cube && !inventorySlot && !carSlot) {
+    // СЛУЧАЙ 2: Клик по пустому слоту инвентаря (с выделенным кубом)
+    if (inventorySlot && selectedCube && inventorySlot.dataset.filled === 'false') {
+      e.stopPropagation();
+      
+      // Перемещаем куб в пустой слот
+      const oldSlot = selectedCube.closest('.inventory-slot');
+      
+      oldSlot.removeChild(selectedCube);
+      oldSlot.dataset.filled = 'false';
+      oldSlot.classList.remove('selected');
+      
+      inventorySlot.appendChild(selectedCube);
+      inventorySlot.dataset.filled = 'true';
+      
       clearSelection();
-    }
-  });
-
-  // ========== ПЕРЕМЕЩЕНИЕ ПО ИНВЕНТАРЮ ==========
-  document.addEventListener('click', (e) => {
-    const targetSlot = e.target.closest('.inventory-slot');
-    if (!targetSlot || !selectedCube) return;
-    
-    // Если кликнули на тот же слот - снимаем выделение
-    if (targetSlot === selectedSlot) {
-      clearSelection();
+      showNotification('Куб перемещен');
       return;
     }
     
-    const targetCube = targetSlot.querySelector('.cube');
-    
-    // Если целевой слот пустой
-    if (targetSlot.dataset.filled === 'false') {
-      // Просто перемещаем куб
-      selectedSlot.removeChild(selectedCube);
-      selectedSlot.dataset.filled = 'false';
+    // СЛУЧАЙ 3: Клик по слоту инвентаря с кубом (меняем местами)
+    if (inventorySlot && selectedCube && inventorySlot.dataset.filled === 'true') {
+      e.stopPropagation();
       
-      targetSlot.appendChild(selectedCube);
-      targetSlot.dataset.filled = 'true';
-      
-      clearSelection();
-      showNotification('Куб перемещен', 'success');
-    }
-    // Если в целевом слоте есть куб - меняем местами
-    else if (targetCube && targetCube !== selectedCube) {
-      // Меняем кубы местами
-      selectedSlot.removeChild(selectedCube);
-      targetSlot.removeChild(targetCube);
-      
-      selectedSlot.appendChild(targetCube);
-      targetSlot.appendChild(selectedCube);
-      
-      // Обновляем data-filled (они и так true)
-      clearSelection();
-      showNotification('Кубы поменялись местами', 'success');
-    }
-  });
-
-  // ========== ПЕРЕМЕЩЕНИЕ НА МАШИНУ ==========
-  document.addEventListener('click', (e) => {
-    const carSlot = e.target.closest('.car-slot');
-    if (!carSlot || !selectedCube) return;
-    
-    // Проверяем подходит ли цвет
-    if (carSlot.dataset.color !== selectedCube.dataset.color) {
-      showNotification('❌ Этот цвет не подходит для этого слота!', 'error');
-      return;
-    }
-    
-    // Проверяем свободен ли слот
-    if (carSlot.dataset.filled === 'true') {
-      // Если в слоте уже есть куб, меняем их местами
-      const carCube = carSlot.querySelector('.cube');
-      if (carCube) {
-        // Меняем местами куб из инвентаря с кубом на машине
-        const inventorySlot = selectedCube.closest('.inventory-slot');
+      const targetCube = inventorySlot.querySelector('.cube');
+      if (targetCube && targetCube !== selectedCube) {
+        const oldSlot = selectedCube.closest('.inventory-slot');
         
-        inventorySlot.removeChild(selectedCube);
-        carSlot.removeChild(carCube);
+        // Меняем кубы местами
+        oldSlot.removeChild(selectedCube);
+        inventorySlot.removeChild(targetCube);
         
-        inventorySlot.appendChild(carCube);
-        carSlot.appendChild(selectedCube);
-        
-        // Обновляем статусы
-        inventorySlot.dataset.filled = 'true';
-        carSlot.dataset.filled = 'true';
+        oldSlot.appendChild(targetCube);
+        inventorySlot.appendChild(selectedCube);
         
         clearSelection();
-        addCoins(5); // Бонус за замену
-        checkAllSlotsFilled();
+        showNotification('Кубы поменялись местами');
       }
       return;
     }
     
-    // Слот свободен - перемещаем куб из инвентаря
-    const inventorySlot = selectedCube.closest('.inventory-slot');
+    // СЛУЧАЙ 4: Клик по слоту машины (с выделенным кубом)
+    if (carSlot && selectedCube) {
+      e.stopPropagation();
+      
+      // Проверяем цвет
+      if (carSlot.dataset.color !== selectedCube.dataset.color) {
+        showNotification('Неподходящий цвет!', true);
+        return;
+      }
+      
+      const inventorySlot = selectedCube.closest('.inventory-slot');
+      
+      // Если слот машины пустой
+      if (carSlot.dataset.filled === 'false') {
+        inventorySlot.removeChild(selectedCube);
+        inventorySlot.dataset.filled = 'false';
+        
+        carSlot.appendChild(selectedCube);
+        carSlot.dataset.filled = 'true';
+        
+        clearSelection();
+        addCoins(10);
+        checkAllSlotsFilled();
+        return;
+      }
+      
+      // Если в слоте машины есть куб - меняем местами
+      if (carSlot.dataset.filled === 'true') {
+        const carCube = carSlot.querySelector('.cube');
+        if (carCube) {
+          inventorySlot.removeChild(selectedCube);
+          carSlot.removeChild(carCube);
+          
+          inventorySlot.appendChild(carCube);
+          carSlot.appendChild(selectedCube);
+          
+          // Обновляем статусы
+          inventorySlot.dataset.filled = 'true';
+          carSlot.dataset.filled = 'true';
+          
+          clearSelection();
+          addCoins(5);
+          checkAllSlotsFilled();
+        }
+        return;
+      }
+    }
     
-    inventorySlot.removeChild(selectedCube);
-    inventorySlot.dataset.filled = 'false';
-    
-    carSlot.appendChild(selectedCube);
-    carSlot.dataset.filled = 'true';
-    
-    clearSelection();
-    addCoins(10);
-    checkAllSlotsFilled();
+    // СЛУЧАЙ 5: Клик по пустому месту - снимаем выделение
+    if (!cube && !inventorySlot && !carSlot) {
+      clearSelection();
+    }
   });
 
   // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
@@ -595,15 +575,6 @@
     document.querySelectorAll('.inventory-slot').forEach(s => s.classList.remove('selected'));
     document.querySelectorAll('.car-slot').forEach(s => s.classList.remove('available'));
     selectedCube = null;
-    selectedSlot = null;
-  }
-
-  function highlightAvailableCarSlots(color) {
-    document.querySelectorAll('.car-slot').forEach(slot => {
-      if (slot.dataset.filled === 'false' && slot.dataset.color === color) {
-        slot.classList.add('available');
-      }
-    });
   }
 
   function checkAllSlotsFilled() {
@@ -611,17 +582,13 @@
     const allFilled = Array.from(carSlots).every(slot => slot.dataset.filled === 'true');
     
     if (allFilled) {
-      showNotification('🎉 МАШИНА ПОЛНОСТЬЮ ПРОКАЧАНА! +100 МОНЕТ', 'success');
+      showNotification('МАШИНА ПОЛНОСТЬЮ ПРОКАЧАНА! +100 МОНЕТ');
       addCoins(100);
       
       // Анимация машины
       const car = document.querySelector('.car');
-      car.classList.add('complete');
       car.style.transform = 'scale(1.1)';
-      setTimeout(() => {
-        car.style.transform = '';
-        setTimeout(() => car.classList.remove('complete'), 500);
-      }, 500);
+      setTimeout(() => car.style.transform = '', 500);
     }
   }
 
@@ -632,15 +599,9 @@
     }
   });
 
-  // ========== СОХРАНЕНИЕ СОСТОЯНИЯ ==========
-  function saveGarageState() {
-    // Здесь можно добавить сохранение состояния гаража в localStorage
-    // Но это уже по желанию
-  }
-
   // Инициализация
   updateCoinsDisplay();
 </script>
 
 </body>
-  </html>
+</html>
