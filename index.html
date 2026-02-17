@@ -1,282 +1,179 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Racing App</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    /* ===== RESET ===== */
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      background:url(https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%91%D0%B5%D0%B7%20%D0%BD%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F284_20260215224953.jpg)
-               center/cover no-repeat #111;
-      color:#fff;font-family:Arial,Helvetica,sans-serif;
-      height:100vh;padding-top:60px
-    }
-    /* --- USER BADGE --- */
-    .user-badge{
-      position:fixed;top:12px;left:12px;display:flex;align-items:center;gap:8px;
-      z-index:10000;background:#0006;backdrop-filter:blur(4px);
-      padding:6px 12px;border-radius:24px;font-size:14px
-    }
-    .user-badge img{width:32px;height:32px;border-radius:50%;object-fit:cover}
-    /* --- LOADER --- */
-    .loader-container{position:fixed;inset:0;z-index:9999;
-      background:#000c;display:flex;justify-content:center;align-items:center}
-    .loader{border:16px solid #f3f3f3;border-top:16px solid #3498db;
-      border-radius:50%;width:120px;height:120px;animation:spin 2s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    /* --- NAV --- */
-    nav ul{list-style:none;display:flex;gap:20px;justify-content:center;margin-top:20px}
-    nav a{color:#fff;text-decoration:none;padding:10px 20px;border:1px solid #fff;
-         border-radius:5px;transition:.3s}
-    nav a:hover{background:#fff2}
-    /* --- TG-BUTTONS --- */
-    .tg-buttons{position:fixed;bottom:20px;right:20px;display:flex;gap:10px;z-index:1000}
-    .tg-btn{background:#0088cc;color:#fff;border:none;padding:10px 18px;border-radius:6px;cursor:pointer}
-    /* --- VIEWPORT --- */
-    #viewport{width:100%;height:calc(100vh - 160px);border:0}
-  </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Racing App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        /* ==========  RESET  ========== */
+        *{box-sizing:border-box;margin:0;padding:0}
+
+        body{
+            background:url(https://raw.githubusercontent.com/NikitonnotikiN/Tune/refs/heads/NikitonnotikiN-patch-1/%D0%91%D0%B5%D0%B7%20%D0%BD%D0%B0%D0%B7%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F284_20260215224953.jpg)
+                     center/cover no-repeat #111;
+            color:#fff;
+            font-family:Arial,Helvetica,sans-serif;
+            height:100vh;
+            padding-top:60px;          /* отступ под шапку */
+        }
+
+        /* ----------  USER BADGE  ---------- */
+        .user-badge{
+            position:fixed;
+            top:12px;left:12px;
+            display:flex;align-items:center;gap:8px;
+            z-index:10000;
+            background:#0006;
+            backdrop-filter:blur(4px);
+            padding:6px 12px;
+            border-radius:24px;
+            font-size:14px
+        }
+        .user-badge img{
+            width:32px;height:32px;border-radius:50%;object-fit:cover
+        }
+
+        /* ----------  LOADER  ---------- */
+        .loader-container{
+            position:fixed;
+            inset:0;
+            z-index:9999;
+            background:#000c;
+            display:flex;justify-content:center;align-items:center
+        }
+        .loader{
+            border:16px solid #f3f3f3;
+            border-top:16px solid #3498db;
+            border-radius:50%;
+            width:120px;height:120px;
+            animation:spin 2s linear infinite
+        }
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* ----------  NAV  ---------- */
+        nav ul{
+            list-style:none;display:flex;gap:20px;
+            justify-content:center;margin-top:20px
+        }
+        nav a{
+            color:#fff;text-decoration:none;
+            padding:10px 20px;border:1px solid #fff;
+            border-radius:5px;transition:.3s
+        }
+        nav a:hover{background:#fff2}
+
+        /* ----------  TG-BUTTONS  ---------- */
+        .tg-buttons{
+            position:fixed;
+            bottom:20px;right:20px;
+            display:flex;gap:10px;z-index:1000
+        }
+        .tg-btn{
+            background:#0088cc;color:#fff;border:none;
+            padding:10px 18px;border-radius:6px;cursor:pointer
+        }
+    </style>
 </head>
 <body>
 
-<!-- ========= LOADER ========= -->
-<div id="loader-container" class="loader-container"><div class="loader"></div></div>
+<!-- ==========  LOADER  ========== -->
+<div id="loader-container" class="loader-container">
+    <div class="loader"></div>
+</div>
 
-<!-- ========= USER BADGE ======= -->
+<!-- ==========  MAIN  ========== -->
+<section id="content-section" style="display:none">
+    <h1 style="text-align:center">Кирюха спи</h1>
+
+    <nav>
+        <ul>
+            <li><a href="menu.html">Меню</a></li>
+            <li><a href="shop.html">Магазин</a></li>
+            <li><a href="garage.html">Гараж</a></li>
+            <li><a href="race.html">Заезд</a></li>
+            <li><a href="rating.html">Рейтинг</a></li>
+        </ul>
+    </nav>
+</section>
+
+<!-- ==========  USER BADGE  ========== -->
 <div id="userBadge" class="user-badge">
-  <img id="userAvatar" src="" alt="">
-  <span id="userName">Игрок</span>
+    <img id="userAvatar" src="" alt="">
+    <span id="userName">Игрок</span>
 </div>
 
-<!-- ========= TG BUTTONS ===== -->
-<div id="tgButtons" class="tg-buttons" style="display:none">
-  <button class="tg-btn" onclick="shareStory()">Поделиться</button>
-  <button class="tg-btn" onclick="closeApp()">✖</button>
+<!-- ==========  TG-BUTTONS  ========== -->
+<div class="tg-buttons" id="tgButtons" style="display:none">
+    <button class="tg-btn" onclick="shareStory()">Поделиться</button>
+    <button class="tg-btn" onclick="closeApp()">✖</button>
 </div>
-
-<!-- ========= TEMPLATES ======= -->
-<template id="tpl-menu">
-  <h2 style="text-align:center">Главное меню</h2>
-  <nav>
-    <ul>
-      <li><a href="#/shop">Магазин</a></li>
-      <li><a href="#/garage">Гараж</a></li>
-      <li><a href="#/race">Заезд</a></li>
-      <li><a href="#/rating">Рейтинг</a></li>
-    </ul>
-  </nav>
-</template>
-
-<template id="tpl-shop">
-  <h2>Магазин</h2><p>Здесь будут товары.</p>
-</template>
-
-<!-- =================  ГАРАЖ (исправленный)  ================= -->
-<template id="tpl-garage">
-  <style>
-    :root{
-      --clr-red:#e74c3c; --clr-green:#27ae60; --clr-blue:#2980b9;
-      --clr-yellow:#f1c40f; --clr-orange:#e67e22; --clr-purple:#8e44ad;
-      --radius:.6rem; --shadow:0 2px 7px rgba(0,0,0,.15);
-    }
-    .garage-body{
-      width:100%; max-width:900px; margin:0 auto; color:#fff;
-      background:#f0f0f0; background-image:linear-gradient(to top,#808080,#a0a0a0);
-      border-radius:var(--radius); padding:1rem 1.5rem 2rem; box-sizing:border-box;
-      position:relative; display:flex; flex-direction:column; align-items:center;
-    }
-    #coinsDisplay{font-weight:bold; font-size:18px; margin-bottom:20px}
-    .main-grid{
-      display:grid; gap:1.25rem; place-items:center;
-      grid-template-areas:"left car right"
-                        "inv inv inv"; width:100%;
-    }
-    .slots{display:flex; flex-direction:column; gap:.75rem}
-    .slots--left{grid-area:left}.slots--right{grid-area:right}
-    .car{grid-area:car}
-    .inventory{
-      grid-area:inv; display:grid;
-      grid-template-columns:repeat(auto-fit, 50px); gap:.6rem;
-    }
-    .slot{
-      width:50px; height:50px; border:2px dashed #666;
-      border-radius:var(--radius); background:#f7f7f7;
-      display:grid; place-content:center; position:relative;
-    }
-    .slot.drag-over{border-color:#2980b9; background:#d0e7ff}
-    .slot[data-filled=true]{border-style:solid}
-    .cube{width:46px; height:46px; border-radius:var(--radius);
-          cursor:grab; box-shadow:var(--shadow); transition:transform .15s}
-    .cube:active{cursor:grabbing; transform:scale(1.1)}
-    .red{background:var(--clr-red)} .green{background:var(--clr-green)}
-    .blue{background:var(--clr-blue)} .yellow{background:var(--clr-yellow)}
-    .orange{background:var(--clr-orange)} .purple{background:var(--clr-purple)}
-
-    /* Кнопка НАЗАД */
-    .back-btn{
-      position:absolute; top:.5rem; left:.7rem; background:#2980b9;
-      color:#fff; border:0; padding:.45rem .85rem; border-radius:.4rem;
-      font-size:14px; cursor:pointer; z-index:10;
-    }
-    .back-btn:hover{background:#1c6fa4}
-  </style>
-
-  <!-- кнопка «Назад» -->
-  <button class="back-btn" onclick="route('/')">◀ Назад</button>
-
-  <div class="garage-body">
-    <div id="coinsDisplay">Монеты: 0</div>
-
-    <main class="main-grid">
-      <section class="slots slots--left" aria-label="Левые цветовые слоты">
-        <div class="slot" data-allowed="red" tabindex="0" title="Красный слот"></div>
-        <div class="slot" data-allowed="green" tabindex="0" title="Зёленый слот"></div>
-        <div class="slot" data-allowed="blue" tabindex="0" title="Синий слот"></div>
-      </section>
-
-      <figure class="car">
-        <img src="https://astra-faq.ru/wp-content/uploads/2025/12/wx1-3207.png" alt="ВАЗ-2107" width="280"/>
-      </figure>
-
-      <section class="slots slots--right" aria-label="Правые цветовые слоты">
-        <div class="slot" data-allowed="yellow" tabindex="0" title="Жёлтый слот"></div>
-        <div class="slot" data-allowed="orange" tabindex="0" title="Оранжевый слот"></div>
-        <div class="slot" data-allowed="purple" tabindex="0" title="Фиолетовый слот"></div>
-      </section>
-
-      <section id="inventory" class="inventory" aria-label="Инвентарь кубов"></section>
-    </main>
-  </div>
-
-  <script>
-    (function(){
-      const COINS_KEY='playerCoins',
-            coinsDisplay=document.getElementById('coinsDisplay'),
-            getCoins = ()=>parseInt(localStorage.getItem(COINS_KEY))||0,
-            setCoins = v=>{localStorage.setItem(COINS_KEY,v); updateCoins()},
-            updateCoins = ()=>coinsDisplay.textContent=`Монеты: ${getCoins()}`,
-            addCoins = x=>setCoins(getCoins()+x);
-      updateCoins();
-
-      const COLORS=['red','green','blue','yellow','orange','purple'],
-            inv=document.getElementById('inventory');
-      let dragged=null;
-
-      /* 30 слотов инвентаря */
-      for(let i=0;i<30;i++){
-        const s=Object.assign(document.createElement('div'),{className:'slot',tabIndex:-1});
-        s.dataset.pos=i; inv.appendChild(s);
-      }
-      COLORS.forEach((c,i)=>inv.children[i].appendChild(makeCube(c)));
-
-      function makeCube(color){
-        const el=document.createElement('div');
-        el.className=`cube ${color}`; el.draggable=true;
-        el.dataset.color=color; el.title=`${color} куб`;
-        return el;
-      }
-
-      /* ---------- drag & drop ---------- */
-      document.addEventListener('dragstart',e=>{
-        if(!e.target.classList.contains('cube'))return;
-        dragged=e.target; e.dataTransfer.effectAllowed='move';
-        requestAnimationFrame(()=>dragged.style.visibility='hidden');
-      });
-      document.addEventListener('dragend',()=>{
-        if(!dragged)return;
-        dragged.style.visibility=''; dragged=null;
-      });
-      document.addEventListener('dragover',e=>{
-        const s=e.target.closest('.slot');
-        if(!s||s.dataset.filled==='true')return;
-        if(s.dataset.allowed&&s.dataset.allowed!==dragged.dataset.color)return;
-        e.preventDefault();
-        s.classList.add('drag-over');
-      });
-      document.addEventListener('dragleave',e=>e.target.closest('.slot')?.classList.remove('drag-over'));
-      document.addEventListener('drop',e=>{
-        const s=e.target.closest('.slot');
-        if(!s||s.dataset.filled==='true')return;
-        const need=s.dataset.allowed, have=dragged.dataset.color;
-        if(need&&need!==have)return;
-        dragged.parentElement.dataset.filled='false';
-        s.appendChild(dragged); s.dataset.filled='true';
-        s.classList.remove('drag-over');
-        addCoins(10);
-      });
-      /* ---------- /drag & drop ---------- */
-    })();
-  </script>
-</template>
-
-
-<template id="tpl-race">
-  <h2>Заезд</h2><p>Гонка начнётся скоро…</p>
-</template>
-
-<template id="tpl-rating">
-  <h2>Рейтинг</h2><p>Таблица лидеров.</p>
-</template>
-
-<!-- ========= VIEWPORT ======== -->
-<iframe id="viewport" style="display:none"></iframe>
 
 <script>
-/* ---------- UTILS ---------- */
+/* ----------------------------------
+   UTILS
+---------------------------------- */
 const $ = id => document.getElementById(id);
 
 function fillBadge(){
-  const u = window.Telegram?.WebApp?.initDataUnsafe?.user;
-  if(!u) return;
-  $('userAvatar').src = u.photo_url || 'https://i.ibb.co/3sN2YMc/default-ava.png';
-  $('userName').textContent = u.first_name || u.username || 'Игрок';
+    const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    if(!user) return;
+
+    $('userAvatar').src = user.photo_url ||
+                          'https://i.ibb.co/3sN2YMc/default-ava.png';
+    $('userName').textContent = user.first_name ||
+                                user.username ||
+                                'Игрок';
 }
 
-/* ---------- ROUTER ---------- */
-function route(){
-  const hash = location.hash.slice(1) || '/';          // #/shop  -> /shop
-  const page = hash.split('/')[1] || 'menu';           // /shop   -> shop
-  const tpl = $('tpl-'+page);
-  if(!tpl){view404(); return}
-  $('viewport').srcdoc = tpl.innerHTML;
+/* ----------------------------------
+   LOADER & INIT
+---------------------------------- */
+function startLoader(){
+    setTimeout(() => {
+        $('loader-container').style.display = 'none';
+        $('content-section').style.display = 'block';
+
+        /* Telegram */
+        if(window.Telegram?.WebApp){
+            window.Telegram.WebApp.ready();
+            fillBadge();               // бейдж
+            $('tgButtons').style.display = 'flex'; // показываем кнопки
+        }else{
+            /* вне Telegram – показываем заглушку */
+            $('userName').textContent = 'Offline';
+        }
+    }, 2000);
 }
 
-function view404(){
-  $('viewport').srcdoc = '<h2>404</h2><p>Страница не найдена. <a href="#/menu">В меню</a></p>';
-}
-
-/* ---------- TG ACTIONS ---------- */
+/* ----------------------------------
+   TG ACTIONS
+---------------------------------- */
 function closeApp(){
-  window.Telegram?.WebApp ? window.Telegram.WebApp.close() : window.close();
+    if(window.Telegram?.WebApp) window.Telegram.WebApp.close();
+    else window.close();                 // fallback для браузера
 }
+
 function shareStory(){
-  if(!window.Telegram?.WebApp) return alert('Вне Telegram нельзя');
-  const url = location.href.split('#')[0]+'#/race'; // ссылка на заезд
-  const tg = window.Telegram.WebApp;
-  tg.shareToStory ? tg.shareToStory(url,{text:'Гоняю в Кирюха-спи!'}) : alert('shareToStory не доступен');
+    if(!window.Telegram?.WebApp) return alert('Вне Telegram нельзя');
+    const url = window.location.href;
+    const text = 'Гоняю в Кирюха-спи!';
+
+    /* WebApp.shareToStory (>=6.10) или shareUrl (старый API) */
+    const tg = window.Telegram.WebApp;
+    if(typeof tg.shareToStory === 'function'){
+        tg.shareToStory(url, {text});
+    }else if(tg.shareUrl){
+        tg.shareUrl(url, text);
+    }else{
+        alert('Поделиться не удалось');
+    }
 }
 
-/* ---------- INIT ---------- */
-addEventListener('hashchange', route);
-addEventListener('DOMContentLoaded', () => {
-  /* loader off */
-  setTimeout(()=>{
-    $('loader-container').style.display='none';
-    $('viewport').style.display='block';
-
-    /* Telegram ready */
-    if(window.Telegram?.WebApp){
-      window.Telegram.WebApp.ready();
-      fillBadge();
-      $('tgButtons').style.display='flex';
-    }else{
-      $('userName').textContent='Offline';
-    }
-    route();          // первый рендер
-  },1500);
-});
+/* Запускаем */
+startLoader();
 </script>
 </body>
-</html>
+  </html>
