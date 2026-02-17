@@ -1,247 +1,1004 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Гонка с монетами</title>
-<style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #222;
-    color: #eee;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  header {
-    background: #111;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 24px;
-    font-weight: bold;
-  }
-  .coins-display {
-    font-size: 20px;
-    background: #27ae60;
-    padding: 5px 12px;
-    border-radius: 8px;
-    user-select: none;
-  }
-  nav {
-    background: #333;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 10px 0;
-  }
-  nav a {
-    color: #eee;
-    text-decoration: none;
-    font-size: 18px;
-    padding: 8px 16px;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-  }
-  nav a:hover {
-    background-color: #555;
-  }
-  main {
-    flex-grow: 1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .race-track {
-    background: #333;
-    border-radius: 10px;
-    flex-grow: 1;
-    position: relative;
-    overflow: hidden;
-  }
-  .lane {
-    height: 60px;
-    border-bottom: 2px solid #555;
-    position: relative;
-  }
-  .lane:last-child {
-    border-bottom: none;
-  }
-  .car {
-    position: absolute;
-    top: 10px;
-    width: 60px;
-    height: 40px;
-    transition: left 0.3s ease;
-  }
-  .car img {
-    width: 100%;
-    border-radius: 6px;
-  }
-  .controls {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
-  }
-  button {
-    padding: 12px 24px;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.25s ease;
-    background: #27ae60;
-    color: white;
-  }
-  button:active {
-    transform: scale(0.95);
-  }
-  button:disabled {
-    background: #555;
-    cursor: default;
-  }
-  .info {
-    margin-top: 10px;
-    text-align: center;
-    font-size: 20px;
-    min-height: 30px;
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🏁 КИРЮХА RACING — НОЧНАЯ ГОНКА</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      background: #0a0a0f;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ========== АНИМИРОВАННЫЙ ФОН С НЕОНОМ ========== */
+    .cyber-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .cyber-grid {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background-image: 
+        linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 255, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      transform: perspective(500px) rotateX(60deg);
+      animation: gridMove 20s linear infinite;
+      top: -50%;
+      left: -50%;
+    }
+
+    @keyframes gridMove {
+      0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+      100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+    }
+
+    .cyber-lights {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 50%, rgba(255, 0, 255, 0.2) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 50%, rgba(0, 255, 255, 0.2) 0%, transparent 50%);
+      animation: lightsPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes lightsPulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* ========== НАВИГАЦИЯ ========== */
+    .cyber-nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+    }
+
+    .cyber-nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 10px 25px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cyber-nav a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+      transition: left 0.5s;
+    }
+
+    .cyber-nav a:hover {
+      background: rgba(0, 255, 255, 0.2);
+      border-color: #0ff;
+      box-shadow: 0 0 20px #0ff;
+      transform: translateY(-2px);
+    }
+
+    .cyber-nav a:hover::before {
+      left: 100%;
+    }
+
+    /* ========== ОСНОВНОЙ КОНТЕЙНЕР ========== */
+    .race-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 20px;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* ========== ЗАГОЛОВОК С НЕОНОМ ========== */
+    .cyber-title {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .cyber-title h1 {
+      font-size: 64px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: transparent;
+      -webkit-text-stroke: 2px #0ff;
+      text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+      letter-spacing: 8px;
+      animation: titleFlicker 3s infinite;
+    }
+
+    .cyber-title h1::before,
+    .cyber-title h1::after {
+      content: '🏁';
+      position: absolute;
+      font-size: 40px;
+      filter: drop-shadow(0 0 10px #f0f);
+    }
+
+    .cyber-title h1::before {
+      left: 20%;
+      top: -20px;
+      animation: flagMove 2s infinite;
+    }
+
+    .cyber-title h1::after {
+      right: 20%;
+      bottom: -20px;
+      animation: flagMove 2s infinite reverse;
+    }
+
+    @keyframes titleFlicker {
+      0%, 100% { opacity: 1; }
+      95% { opacity: 1; }
+      96% { opacity: 0.5; }
+      97% { opacity: 1; }
+      98% { opacity: 0.3; }
+      99% { opacity: 1; }
+    }
+
+    @keyframes flagMove {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(10px) rotate(10deg); }
+    }
+
+    /* ========== БЛОК МОНЕТ ========== */
+    .coins-panel {
+      background: linear-gradient(135deg, #000, #1a0033);
+      border: 2px solid #f0f;
+      border-radius: 50px;
+      padding: 15px 40px;
+      margin: 0 auto 30px;
+      width: fit-content;
+      position: relative;
+      box-shadow: 0 0 50px rgba(255, 0, 255, 0.5);
+      animation: coinsPulse 2s infinite;
+    }
+
+    @keyframes coinsPulse {
+      0%, 100% { box-shadow: 0 0 50px rgba(255, 0, 255, 0.5); }
+      50% { box-shadow: 0 0 80px rgba(0, 255, 255, 0.5); }
+    }
+
+    .coins-panel span {
+      font-size: 32px;
+      font-weight: bold;
+      background: linear-gradient(45deg, #f0f, #0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ========== ТРАССЫ ========== */
+    .tracks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .track-card {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      border: 2px solid;
+      border-radius: 30px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .track-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transform: rotate(45deg);
+      animation: cardShine 6s infinite;
+    }
+
+    @keyframes cardShine {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      20% { transform: translateX(100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    .track-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .track-card.city {
+      border-color: #0ff;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+    }
+
+    .track-card.mountain {
+      border-color: #0f0;
+      box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+    }
+
+    .track-card.night {
+      border-color: #f0f;
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+    }
+
+    .track-emoji {
+      font-size: 80px;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 0 20px currentColor);
+      animation: emojiFloat 3s infinite;
+    }
+
+    @keyframes emojiFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .track-card h2 {
+      color: #fff;
+      font-size: 28px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .track-difficulty {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin: 15px 0;
+    }
+
+    .difficulty-dot {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .difficulty-dot.active {
+      background: #0ff;
+      box-shadow: 0 0 10px #0ff;
+    }
+
+    .track-reward {
+      font-size: 24px;
+      font-weight: bold;
+      background: linear-gradient(45deg, #f0f, #0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 15px 0;
+    }
+
+    .track-btn {
+      background: transparent;
+      border: 2px solid;
+      color: #fff;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 15px;
+    }
+
+    .track-card.city .track-btn { border-color: #0ff; }
+    .track-card.mountain .track-btn { border-color: #0f0; }
+    .track-card.night .track-btn { border-color: #f0f; }
+
+    .track-btn:hover {
+      background: currentColor;
+      color: #000;
+      box-shadow: 0 0 30px currentColor;
+    }
+
+    /* ========== ГОНОЧНАЯ АРЕНА ========== */
+    .race-arena {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border: 2px solid #0ff;
+      border-radius: 50px;
+      padding: 30px;
+      margin-top: 40px;
+      box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .race-arena::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+      animation: scanline 3s linear infinite;
+    }
+
+    @keyframes scanline {
+      0% { left: -100%; }
+      100% { left: 200%; }
+    }
+
+    .race-status {
+      text-align: center;
+      font-size: 24px;
+      color: #0ff;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      text-shadow: 0 0 20px #0ff;
+      animation: statusBlink 1.5s infinite;
+    }
+
+    @keyframes statusBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* ========== ГОНОЧНАЯ ПОЛОСА ========== */
+    .race-track {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(90deg, #1a1a2e, #16213e);
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .track-lines {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(90deg, 
+        transparent,
+        transparent 50px,
+        rgba(255, 255, 255, 0.1) 50px,
+        rgba(255, 255, 255, 0.1) 100px
+      );
+      animation: trackMove 1s linear infinite;
+    }
+
+    @keyframes trackMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 100px 0; }
+    }
+
+    .car-container {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      transition: left 0.1s linear;
+      filter: drop-shadow(0 0 20px #0ff);
+      animation: carShake 0.2s infinite;
+    }
+
+    @keyframes carShake {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-2px); }
+    }
+
+    .car-container svg {
+      width: 80px;
+      height: auto;
+    }
+
+    .finish-line {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 20px;
+      height: 100%;
+      background: repeating-linear-gradient(45deg, #fff, #fff 20px, #000 20px, #000 40px);
+      animation: finishGlow 1s infinite;
+    }
+
+    @keyframes finishGlow {
+      0%, 100% { box-shadow: 0 0 20px #fff; }
+      50% { box-shadow: 0 0 40px #ff0; }
+    }
+
+    .nitro-effect {
+      position: absolute;
+      right: -30px;
+      bottom: 15px;
+      width: 50px;
+      height: 30px;
+      background: linear-gradient(90deg, #ff0, #f0f, #0ff);
+      filter: blur(10px);
+      animation: nitroFire 0.2s infinite;
+    }
+
+    @keyframes nitroFire {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* ========== ИНФОРМАЦИЯ О ГОНКЕ ========== */
+    .race-info {
+      display: flex;
+      justify-content: space-around;
+      color: #fff;
+      font-size: 20px;
+      margin: 20px 0;
+    }
+
+    .info-item {
+      text-align: center;
+      padding: 15px 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+    }
+
+    .info-label {
+      color: #0ff;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .info-value {
+      font-size: 32px;
+      font-weight: bold;
+      background: linear-gradient(45deg, #f0f, #0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ========== КНОПКИ УПРАВЛЕНИЯ ========== */
+    .race-controls {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .race-control-btn {
+      background: transparent;
+      border: 2px solid;
+      color: #fff;
+      padding: 15px 40px;
+      border-radius: 40px;
+      font-weight: bold;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .race-control-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.3s;
+    }
+
+    .race-control-btn:hover::before {
+      left: 100%;
+    }
+
+    .race-control-btn.start {
+      border-color: #0f0;
+      box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+    }
+
+    .race-control-btn.start:hover {
+      background: #0f0;
+      color: #000;
+      box-shadow: 0 0 50px #0f0;
+    }
+
+    .race-control-btn.nitro {
+      border-color: #f0f;
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+    }
+
+    .race-control-btn.nitro:hover:not(:disabled) {
+      background: #f0f;
+      color: #000;
+      box-shadow: 0 0 50px #f0f;
+    }
+
+    .race-control-btn.nitro:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      border-color: #666;
+    }
+
+    /* ========== РЕЗУЛЬТАТЫ ========== */
+    .race-result {
+      text-align: center;
+      padding: 30px;
+      background: rgba(0, 0, 0, 0.9);
+      border-radius: 30px;
+      margin-top: 20px;
+      border: 2px solid;
+      animation: resultPop 0.5s;
+    }
+
+    @keyframes resultPop {
+      0% { transform: scale(0); }
+      80% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .result-win {
+      border-color: #0f0;
+      box-shadow: 0 0 50px #0f0;
+    }
+
+    .result-lose {
+      border-color: #f00;
+      box-shadow: 0 0 50px #f00;
+    }
+
+    .result-title {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .result-win .result-title {
+      color: #0f0;
+      text-shadow: 0 0 30px #0f0;
+    }
+
+    .result-lose .result-title {
+      color: #f00;
+      text-shadow: 0 0 30px #f00;
+    }
+
+    .result-reward {
+      font-size: 36px;
+      background: linear-gradient(45deg, #f0f, #0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ========== АНИМАЦИИ ========== */
+    .speed-particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #0ff;
+      border-radius: 50%;
+      animation: particleFly 1s linear infinite;
+    }
+
+    @keyframes particleFly {
+      0% { transform: translateX(0) translateY(0); opacity: 1; }
+      100% { transform: translateX(-100px) translateY(20px); opacity: 0; }
+    }
+
+    /* ========== КНОПКА НАЗАД ========== */
+    .back-btn {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background: transparent;
+      border: 2px solid #0ff;
+      color: #0ff;
+      padding: 12px 30px;
+      border-radius: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      z-index: 100;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      backdrop-filter: blur(10px);
+    }
+
+    .back-btn:hover {
+      background: #0ff;
+      color: #000;
+      box-shadow: 0 0 50px #0ff;
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 <body>
+  <div class="cyber-background">
+    <div class="cyber-grid"></div>
+    <div class="cyber-lights"></div>
+  </div>
 
-<header>
-  Гонка
-  <div class="coins-display" aria-live="polite" id="coinsDisplay">Монеты: 0</div>
-</header>
+  <nav class="cyber-nav">
+    <a href="menu.html">МЕНЮ</a>
+    <a href="garage.html">ГАРАЖ</a>
+    <a href="rating.html">РЕЙТИНГ</a>
+    <a href="shop.html">МАГАЗИН</a>
+  </nav>
 
-<nav aria-label="Навигация по сайту">
-  <a href="menu.html">Меню</a>
-  <a href="garage.html">Гараж</a>
-  <a href="rating.html">Рейтинг</a>
-  <a href="shop.html">Магазин</a>
-</nav>
+  <div class="race-container">
+    <div class="cyber-title">
+      <h1>НОЧНАЯ ГОНКА</h1>
+    </div>
 
-<main>
-  <div class="race-track" aria-label="Трасса гонки">
-    <!-- Машина игрока — номер 2 -->
-    <div class="lane" data-lane="1">
-      <div class="car" id="car1" title="Машина 1">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/VAZ_2110_front_20100615.jpg/120px-VAZ_2110_front_20100615.jpg" alt="Машина 1" />
+    <div class="coins-panel">
+      <span id="coinsDisplay">1000</span> МОНЕТ
+    </div>
+
+    <div class="tracks-grid">
+      <!-- Городская трасса -->
+      <div class="track-card city" onclick="selectTrack('city')">
+        <div class="track-emoji">🏙️</div>
+        <h2>CITY RUSH</h2>
+        <div class="track-difficulty">
+          <span class="difficulty-dot active"></span>
+          <span class="difficulty-dot"></span>
+          <span class="difficulty-dot"></span>
+        </div>
+        <div class="track-reward">+100 монет</div>
+        <button class="track-btn">ВЫБРАТЬ</button>
+      </div>
+
+      <!-- Горная трасса -->
+      <div class="track-card mountain" onclick="selectTrack('mountain')">
+        <div class="track-emoji">⛰️</div>
+        <h2>MOUNTAIN</h2>
+        <div class="track-difficulty">
+          <span class="difficulty-dot active"></span>
+          <span class="difficulty-dot active"></span>
+          <span class="difficulty-dot"></span>
+        </div>
+        <div class="track-reward">+200 монет</div>
+        <button class="track-btn">ВЫБРАТЬ</button>
+      </div>
+
+      <!-- Ночная трасса -->
+      <div class="track-card night" onclick="selectTrack('night')">
+        <div class="track-emoji">🌃</div>
+        <h2>NIGHT RACE</h2>
+        <div class="track-difficulty">
+          <span class="difficulty-dot active"></span>
+          <span class="difficulty-dot active"></span>
+          <span class="difficulty-dot active"></span>
+        </div>
+        <div class="track-reward">+300 монет</div>
+        <button class="track-btn">ВЫБРАТЬ</button>
       </div>
     </div>
-    <div class="lane" data-lane="2">
-      <div class="car" id="car2" title="Ваша машина (№2)">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Toyota_Corolla_E170_IMG_0033.jpg/120px-Toyota_Corolla_E170_IMG_0033.jpg" alt="Ваша машина (№2)" />
+
+    <div class="race-arena" id="raceArena">
+      <div class="race-status" id="raceStatus">ВЫБЕРИ ТРАССУ</div>
+      
+      <div class="race-track" id="raceTrack">
+        <div class="track-lines"></div>
+        <div class="car-container" id="car" style="left: 20px;">
+          <svg viewBox="0 0 100 40">
+            <rect x="20" y="10" width="60" height="20" rx="8" fill="#ff0000" filter="url(#glow)"/>
+            <circle cx="35" cy="30" r="6" fill="#333"/>
+            <circle cx="65" cy="30" r="6" fill="#333"/>
+            <rect x="25" y="5" width="10" height="8" fill="#0ff"/>
+            <rect x="45" y="5" width="10" height="8" fill="#0ff"/>
+            <defs>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+          </svg>
+          <div class="nitro-effect" id="nitroEffect" style="display: none;"></div>
+        </div>
+        <div class="finish-line"></div>
+        
+        <!-- Частицы скорости -->
+        <div class="speed-particles" id="particles"></div>
       </div>
-    </div>
-    <div class="lane" data-lane="3">
-      <div class="car" id="car3" title="Машина 3">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Mazda_3_Sport_Bj._2017_IMG_0045.jpg/120px-Mazda_3_Sport_Bj._2017_IMG_0045.jpg" alt="Машина 3" />
+
+      <div class="race-info">
+        <div class="info-item">
+          <div class="info-label">ТРАССА</div>
+          <div class="info-value" id="trackName">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">СКОРОСТЬ</div>
+          <div class="info-value" id="speed">0</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ПРОГРЕСС</div>
+          <div class="info-value" id="progress">0%</div>
+        </div>
       </div>
+
+      <div class="race-controls">
+        <button class="race-control-btn start" id="startRaceBtn" onclick="startRace()">🏁 СТАРТ</button>
+        <button class="race-control-btn nitro" id="nitroBtn" onclick="useNitro()" disabled>⚡ NITRO</button>
+      </div>
+
+      <div id="raceResult" style="display: none;"></div>
     </div>
   </div>
 
-  <div class="controls" role="group" aria-label="Управление гонкой">
-    <button id="startRaceBtn">Старт</button>
-  </div>
+  <button class="back-btn" onclick="window.location.href='menu.html'">← НАЗАД</button>
 
-  <div class="info" id="raceStatus" aria-live="polite"></div>
-</main>
+  <script>
+    // ========== МОНЕТЫ ==========
+    const COINS_KEY = 'playerCoins';
+    
+    function getCoins() { 
+      return parseInt(localStorage.getItem(COINS_KEY)) || 1000; 
+    }
+    
+    function setCoins(amount) { 
+      localStorage.setItem(COINS_KEY, amount); 
+      updateCoinsDisplay(); 
+    }
+    
+    function updateCoinsDisplay() { 
+      document.getElementById('coinsDisplay').textContent = getCoins(); 
+    }
+    
+    function addCoins(amount) { 
+      setCoins(getCoins() + amount); 
+    }
 
-<script>
-  const PLAYER_CAR_NUMBER = 2; // номер игрока (lane 2)
-  const COINS_KEY = 'playerCoins';
+    // ========== ПЕРЕМЕННЫЕ ГОНКИ ==========
+    let currentTrack = null;
+    let raceInterval = null;
+    let carPosition = 20;
+    let speed = 0;
+    let nitroCharges = 3;
+    let raceActive = false;
+    let particlesInterval = null;
 
-  const cars = [
-    document.getElementById('car1'),
-    document.getElementById('car2'), // игрок
-    document.getElementById('car3')
-  ];
-  const startBtn = document.getElementById('startRaceBtn');
-  const statusEl = document.getElementById('raceStatus');
-  const raceTrack = document.querySelector('.race-track');
-  const carWidth = 60;
-  let positions = [0, 0, 0];
-  let raceInterval = null;
-  let raceInProgress = false;
-  const coinsDisplay = document.getElementById('coinsDisplay');
-
-  // Получить монеты из localStorage или 0
-  function getCoins() {
-    return parseInt(localStorage.getItem(COINS_KEY)) || 0;
-  }
-
-  // Сохранить монеты
-  function setCoins(value) {
-    localStorage.setItem(COINS_KEY, value);
-    updateCoinsDisplay();
-  }
-
-  // Обновить отображение монет
-  function updateCoinsDisplay() {
-    const coins = getCoins();
-    coinsDisplay.textContent = `Монеты: ${coins}`;
-  }
-
-  function resetPositions() {
-    positions = [0, 0, 0];
-    cars.forEach(car => (car.style.left = '0px'));
-    statusEl.textContent = '';
-  }
-
-  function startRace() {
-    if (raceInProgress) return;
-    raceInProgress = true;
-    startBtn.disabled = true;
-    statusEl.textContent = 'Гонка началась!';
-
-    const trackWidth = raceTrack.clientWidth;
-
-    raceInterval = setInterval(() => {
-      for (let i = 0; i < cars.length; i++) {
-        let step = Math.floor(Math.random() * 11) + 5; // 5-15px
-        positions[i] += step;
-        if (positions[i] > trackWidth - carWidth) {
-          positions[i] = trackWidth - carWidth;
-        }
-        cars[i].style.left = positions[i] + 'px';
+    const tracks = {
+      city: {
+        name: 'CITY RUSH',
+        difficulty: 1,
+        reward: 100,
+        maxSpeed: 100,
+        color: '#0ff'
+      },
+      mountain: {
+        name: 'MOUNTAIN',
+        difficulty: 2,
+        reward: 200,
+        maxSpeed: 80,
+        color: '#0f0'
+      },
+      night: {
+        name: 'NIGHT RACE',
+        difficulty: 3,
+        reward: 300,
+        maxSpeed: 60,
+        color: '#f0f'
       }
+    };
 
-      const winnerIndex = positions.findIndex(pos => pos >= trackWidth - carWidth);
-      if (winnerIndex !== -1) {
-        clearInterval(raceInterval);
-        raceInProgress = false;
-        const winnerNum = winnerIndex + 1;
-        statusEl.textContent = `Победитель: Машина ${winnerNum} 🎉`;
+    // ========== ВЫБОР ТРАССЫ ==========
+    function selectTrack(trackId) {
+      if (raceActive) return;
+      
+      currentTrack = tracks[trackId];
+      document.getElementById('trackName').textContent = currentTrack.name;
+      document.getElementById('raceStatus').textContent = `ГОТОВ К ГОНКЕ: ${currentTrack.name}`;
+      document.getElementById('startRaceBtn').disabled = false;
+      
+      // Подсветка выбранной трассы
+      document.querySelectorAll('.track-card').forEach(card => {
+        card.style.transform = 'scale(1)';
+      });
+      event.currentTarget.style.transform = 'scale(1.05)';
+    }
 
-        if (winnerNum === PLAYER_CAR_NUMBER) {
-          let coins = getCoins();
-          coins += 1;
-          setCoins(coins);
-          statusEl.textContent += ` Вы получили 1 монету! 🪙`;
+    // ========== НАЧАЛО ГОНКИ ==========
+    function startRace() {
+      if (!currentTrack || raceActive) return;
+      
+      raceActive = true;
+      carPosition = 20;
+      speed = 0;
+      nitroCharges = 3;
+      document.getElementById('nitroBtn').disabled = false;
+      document.getElementById('startRaceBtn').disabled = true;
+      document.getElementById('raceResult').style.display = 'none';
+      
+      document.getElementById('raceStatus').textContent = 'ГОНКА НАЧАЛАСЬ! 💨';
+      
+      // Создаем частицы
+      startParticles();
+      
+      // Запускаем гонку
+      raceInterval = setInterval(() => {
+        if (!raceActive) return;
+        
+        // Увеличиваем скорость
+        speed = Math.min(speed + (Math.random() * 3), currentTrack.maxSpeed);
+        
+        // Двигаем машину
+        carPosition += speed / 20;
+        document.getElementById('car').style.left = carPosition + 'px';
+        
+        // Обновляем информацию
+        document.getElementById('speed').textContent = Math.floor(speed);
+        const progress = Math.min(Math.floor((carPosition / 500) * 100), 100);
+        document.getElementById('progress').textContent = progress + '%';
+        
+        // Проверяем финиш
+        if (carPosition >= 500) {
+          finishRace(true);
         }
+        
+        // Случайная остановка (поломка)
+        if (Math.random() < 0.01 && speed > 30) {
+          speed = 0;
+          document.getElementById('raceStatus').textContent = 'ПОЛОМКА! 🛠️';
+          setTimeout(() => {
+            document.getElementById('raceStatus').textContent = 'ГОНКА ПРОДОЛЖАЕТСЯ!';
+          }, 1000);
+        }
+      }, 100);
+    }
 
-        // Через 3 секунды сброс и активация кнопки
-        setTimeout(() => {
-          resetPositions();
-          startBtn.disabled = false;
-        }, 3000);
+    // ========== ИСПОЛЬЗОВАНИЕ NITRO ==========
+    function useNitro() {
+      if (!raceActive || nitroCharges <= 0) return;
+      
+      nitroCharges--;
+      if (nitroCharges <= 0) {
+        document.getElementById('nitroBtn').disabled = true;
       }
-    }, 100);
-  }
+      
+      // Эффект нитро
+      speed = Math.min(speed + 30, currentTrack.maxSpeed + 20);
+      document.getElementById('nitroEffect').style.display = 'block';
+      
+      // Визуальный эффект
+      document.getElementById('raceStatus').textContent = '⚡ NITRO АКТИВИРОВАН! ⚡';
+      
+      setTimeout(() => {
+        document.getElementById('nitroEffect').style.display = 'none';
+        document.getElementById('raceStatus').textContent = 'ГОНКА ПРОДОЛЖАЕТСЯ!';
+      }, 1000);
+      
+      // Тряска экрана
+      document.querySelector('.race-arena').style.transform = 'translateX(5px)';
+      setTimeout(() => {
+        document.querySelector('.race-arena').style.transform = 'translateX(-5px)';
+      }, 50);
+      setTimeout(() => {
+        document.querySelector('.race-arena').style.transform = 'translateX(0)';
+      }, 100);
+    }
 
-  startBtn.addEventListener('click', startRace);
+    // ========== ЗАВЕРШЕНИЕ ГОНКИ ==========
+    function finishRace(win) {
+      raceActive = false;
+      clearInterval(raceInterval);
+      stopParticles();
+      
+      const resultDiv = document.getElementById('raceResult');
+      resultDiv.style.display = 'block';
+      
+      if (win) {
+        // Расчет награды
+        let reward = currentTrack.reward;
+        if (speed > currentTrack.maxSpeed * 0.8) {
+          reward = Math.floor(reward * 1.5); // Бонус за скорость
+        }
+        
+        addCoins(reward);
+        
+        resultDiv.className = 'race-result result-win';
+        resultDiv.innerHTML = `
+          <div class="result-title">🏆 ПОБЕДА 🏆</div>
+          <div class="result-reward">+${reward} МОНЕТ</div>
+          <div style="color: #fff; margin-top: 20px;">Макс. скорость: ${Math.floor(speed)} км/ч</div>
+        `;
+        
+        document.getElementById('raceStatus').textContent = 'ТЫ ПОБЕДИЛ! 🎉';
+      } else {
+        resultDiv.className = 'race-result result-lose';
+        resultDiv.innerHTML = `
+          <div class="result-title">😢 ПОРАЖЕНИЕ</div>
+          <div style="color: #fff; margin-top: 20px;">Попробуй еще раз!</div>
+        `;
+        
+        document.getElementById('raceStatus').textContent = 'ПОПРОБУЙ СНОВА...';
+      }
+      
+      document.getElementById('startRaceBtn').disabled = false;
+    }
 
-  // Инициализация
-  updateCoinsDisplay();
-  resetPositions();
-</script>
+    // ========== ЧАСТИЦЫ СКОРОСТИ ==========
+    function startParticles() {
+      const particlesContainer = document.getElementById('particles');
+      
+      particlesInterval = setInterval(() => {
+        if (!raceActive) return;
+        
+        for (let i = 0; i < 3; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          particle.style.left = '480px';
+          particle.style.top = Math.random() * 200 + 'px';
+          particle.style.background = currentTrack ? currentTrack.color : '#0ff';
+          particlesContainer.appendChild(particle);
+          
+          setTimeout(() => {
+            particle.remove();
+          }, 1000);
+        }
+      }, 100);
+    }
 
-</body>
-      </html>
+    function stopParticles() {
+      clearInterval(particlesInterval);
+      document.getElementById('particles').innerHTML = '';
+    }
+
+    // ========== СБРОС ГОНКИ ==========
+    function resetRace() {
+      raceActive = false;
+      clearInterval(raceInterval);
+      stopParticles();
+      
+      carPosition = 20;
+      speed = 0;
+      document.getElementById('car').style.left = '20px';
+      document.getElementById('speed').textContent = '0';
