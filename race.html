@@ -433,6 +433,28 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
+
+    /* Стили для сундука */
+    .chest-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .chest {
+      font-size: 80px;
+      animation: chestFloat 1s infinite alternate;
+      cursor: pointer;
+      filter: drop-shadow(0 0 20px gold);
+    }
+    @keyframes chestFloat {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+    .chest-message {
+      color: gold;
+      font-size: 24px;
+      font-weight: bold;
+      text-shadow: 0 0 20px gold;
+    }
   </style>
 </head>
 <body>
@@ -564,6 +586,7 @@
     // ========== МОНЕТЫ ==========
     const COINS_KEY = 'playerCoins';
     const GARAGE_KEY = 'garageCubes';
+    const INVENTORY_KEY = 'playerInventory';
     
     function getCoins() { 
       return parseInt(localStorage.getItem(COINS_KEY)) || 1000; 
@@ -582,18 +605,45 @@
       setCoins(getCoins() + amount); 
     }
 
-    // ========== ЗАГРУЗКА МАШИНЫ ИЗ ГАРАЖА (ИСПРАВЛЕНО) ==========
+    // ========== ФУНКЦИЯ ДЛЯ ДОБАВЛЕНИЯ КУБА В ИНВЕНТАРЬ ==========
+    function addCubeToInventory(color, rarity = 'common') {
+      let inventory = JSON.parse(localStorage.getItem(INVENTORY_KEY)) || [];
+      inventory.push({ color, rarity });
+      localStorage.setItem(INVENTORY_KEY, JSON.stringify(inventory));
+    }
+
+    // ========== ПОКАЗ СУНДУКА ==========
+    function showChest() {
+      const arena = document.querySelector('.race-arena');
+      const chestDiv = document.createElement('div');
+      chestDiv.className = 'chest-container';
+      chestDiv.innerHTML = `
+        <div class="chest">🎁</div>
+        <div class="chest-message">ТЫ НАШЁЛ СУНДУК!</div>
+      `;
+      chestDiv.onclick = function() {
+        const colors = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        addCubeToInventory(randomColor, 'common');
+        
+        chestDiv.innerHTML = `
+          <div class="chest">✨</div>
+          <div class="chest-message">+1 ${randomColor} куб!</div>
+        `;
+        setTimeout(() => chestDiv.remove(), 2000);
+      };
+      arena.appendChild(chestDiv);
+    }
+
+    // ========== ЗАГРУЗКА МАШИНЫ ИЗ ГАРАЖА ==========
     function loadCarFromGarage() {
-      // Читаем массив из гаража (новый формат)
       const garageArray = JSON.parse(localStorage.getItem(GARAGE_KEY)) || [];
       
-      // Преобразуем массив в объект для обратной совместимости
       const garageData = {
         red: false, green: false, blue: false,
         yellow: false, orange: false, purple: false
       };
       
-      // Индексы: 0-red, 1-green, 2-blue, 3-yellow, 4-orange, 5-purple
       const colorIndices = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
       
       garageArray.forEach((color, index) => {
@@ -605,7 +655,6 @@
 
       console.log('Машина из гаража (объект):', garageData);
       
-      // База
       let speed = 50;
       let acceleration = 5;
       let maxSpeed = 100;
@@ -613,7 +662,6 @@
       let turbo = 0;
       let defense = 0;
       
-      // Красный - скорость
       if (garageData.red) {
         speed += 30;
         document.getElementById('redStat').textContent = '+30';
@@ -623,7 +671,6 @@
         document.getElementById('redStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
-      // Зеленый - ускорение
       if (garageData.green) {
         acceleration += 3;
         document.getElementById('greenStat').textContent = '+3';
@@ -633,7 +680,6 @@
         document.getElementById('greenStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
-      // Синий - макс скорость
       if (garageData.blue) {
         maxSpeed += 30;
         document.getElementById('blueStat').textContent = '+30';
@@ -643,7 +689,6 @@
         document.getElementById('blueStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
-      // Желтый - удача
       if (garageData.yellow) {
         luck = 0.2;
         document.getElementById('yellowStat').textContent = '20%';
@@ -653,7 +698,6 @@
         document.getElementById('yellowStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
-      // Оранжевый - турбо
       if (garageData.orange) {
         turbo = 1.5;
         document.getElementById('orangeStat').textContent = 'x1.5';
@@ -663,7 +707,6 @@
         document.getElementById('orangeStat').parentElement.style.borderColor = 'rgba(255,0,255,0.3)';
       }
       
-      // Фиолетовый - защита
       if (garageData.purple) {
         defense = 0.3;
         document.getElementById('purpleStat').textContent = '30%';
@@ -676,7 +719,6 @@
       document.getElementById('speedStat').textContent = speed;
       document.getElementById('accelStat').textContent = acceleration;
       
-      // Проверка: есть ли хоть один куб?
       const hasCubes = Object.values(garageData).some(v => v === true);
       
       return {
@@ -704,10 +746,8 @@
     function startRace() {
       if (raceActive) return;
       
-      // Загружаем машину
       playerStats = loadCarFromGarage();
       
-      // Проверяем, есть ли кубы
       if (!playerStats.hasCubes) {
         document.getElementById('warning').style.display = 'block';
         setTimeout(() => {
@@ -716,14 +756,12 @@
         return;
       }
       
-      // Генерируем противника
       const enemyStats = {
         speed: playerStats.speed + (Math.random() * 40 - 20),
         acceleration: playerStats.acceleration + (Math.random() * 4 - 2),
         maxSpeed: playerStats.maxSpeed + (Math.random() * 30 - 15)
       };
       
-      // Сброс
       playerPos = 20;
       enemyPos = 20;
       playerSpeed = 0;
@@ -745,43 +783,35 @@
         
         raceTime++;
         
-        // Игрок
         if (playerSpeed < playerStats.maxSpeed) {
           playerSpeed += playerStats.acceleration * (0.8 + Math.random() * 0.4);
         }
         
-        // Удача
         if (Math.random() < playerStats.luck) {
           playerSpeed *= 1.3;
         }
         
-        // Турбо
         if (raceTime % 20 === 0 && playerStats.turbo > 1) {
           playerSpeed *= playerStats.turbo;
         }
         
-        // Защита
         if (Math.random() < 0.05 * (1 - playerStats.defense)) {
           playerSpeed *= 0.5;
         }
         
-        // Противник
         if (enemySpeed < enemyStats.maxSpeed) {
           enemySpeed += enemyStats.acceleration * (0.7 + Math.random() * 0.6);
         }
         
-        // Случайности для противника
         if (Math.random() < 0.02) enemySpeed *= 0.3;
         if (Math.random() < 0.01) enemySpeed *= 1.5;
         
-        // Движение
         playerPos += playerSpeed / 20;
         enemyPos += enemySpeed / 20;
         
         playerPos = Math.min(playerPos, 570);
         enemyPos = Math.min(enemyPos, 570);
         
-        // Обновление UI
         document.getElementById('playerCar').style.left = playerPos + 'px';
         document.getElementById('enemyCar').style.left = enemyPos + 'px';
         
@@ -791,7 +821,6 @@
         const progress = Math.floor((playerPos / 570) * 100);
         document.getElementById('raceProgress').textContent = progress + '%';
         
-        // Финиш
         if (playerPos >= 570 || enemyPos >= 570) {
           finishRace();
         }
@@ -816,6 +845,10 @@
         const reward = 100 + Math.floor(Math.random() * 100);
         addCoins(reward);
         
+        if (Math.random() < 0.25) {
+          showChest();
+        }
+        
         resultDiv.className = 'race-result result-win';
         resultDiv.innerHTML = `
           <div class="result-title">🏆 ПОБЕДА 🏆</div>
@@ -835,6 +868,9 @@
       else {
         if (playerPos > enemyPos) {
           addCoins(50);
+          if (Math.random() < 0.25) {
+            showChest();
+          }
           resultDiv.className = 'race-result result-win';
           resultDiv.innerHTML = `
             <div class="result-title">🤝 ФОТОФИНИШ</div>
@@ -864,7 +900,6 @@
     updateCoinsDisplay();
     loadCarFromGarage();
     
-    // Обновление при возвращении из гаража
     window.addEventListener('storage', function(e) {
       if (e.key === GARAGE_KEY) {
         loadCarFromGarage();
@@ -872,4 +907,4 @@
     });
   </script>
 </body>
-</html>
+  </html>
