@@ -1,103 +1,247 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Гонка</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Гонка с монетами</title>
 <style>
-  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#222;color:#eee;display:flex;flex-direction:column;height:100vh}
-  header{background:#111;padding:12px 20px;display:flex;justify-content:space-between;font-size:24px;font-weight:bold}
-  .coins{background:#27ae60;padding:6px 14px;border-radius:8px}
-  nav{background:#333;display:flex;justify-content:center;gap:20px;padding:10px 0}
-  nav a{color:#eee;text-decoration:none;font-size:18px;padding:8px 16px;border-radius:6px;transition:background .3s}
-  nav a:hover{background:#555}
-  .track{background:#333;border-radius:10px;flex:1;position:relative;margin:20px;overflow:hidden}
-  .lane{height:60px;border-bottom:2px solid #555;position:relative}
-  .car{position:absolute;top:10px;width:60px;height:40px;transition:left .25s linear}
-  .car img{width:100%;border-radius:6px}
-  .controls{display:flex;justify-content:center;margin-bottom:20px}
-  button{padding:12px 24px;font-size:18px;border:none;border-radius:8px;background:#27ae60;color:#fff;cursor:pointer}
-  button:disabled{background:#555;cursor:default}
-  #status{text-align:center;font-size:20px;margin-bottom:20px}
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #222;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  header {
+    background: #111;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .coins-display {
+    font-size: 20px;
+    background: #27ae60;
+    padding: 5px 12px;
+    border-radius: 8px;
+    user-select: none;
+  }
+  nav {
+    background: #333;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 0;
+  }
+  nav a {
+    color: #eee;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+  }
+  nav a:hover {
+    background-color: #555;
+  }
+  main {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .race-track {
+    background: #333;
+    border-radius: 10px;
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .lane {
+    height: 60px;
+    border-bottom: 2px solid #555;
+    position: relative;
+  }
+  .lane:last-child {
+    border-bottom: none;
+  }
+  .car {
+    position: absolute;
+    top: 10px;
+    width: 60px;
+    height: 40px;
+    transition: left 0.3s ease;
+  }
+  .car img {
+    width: 100%;
+    border-radius: 6px;
+  }
+  .controls {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+  }
+  button {
+    padding: 12px 24px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.25s ease;
+    background: #27ae60;
+    color: white;
+  }
+  button:active {
+    transform: scale(0.95);
+  }
+  button:disabled {
+    background: #555;
+    cursor: default;
+  }
+  .info {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 20px;
+    min-height: 30px;
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <span>Вы vs Бот</span>
-  <span class="coins" id="coins">Монеты: 0</span>
+  Гонка
+  <div class="coins-display" aria-live="polite" id="coinsDisplay">Монеты: 0</div>
 </header>
 
-<nav>
+<nav aria-label="Навигация по сайту">
   <a href="menu.html">Меню</a>
   <a href="garage.html">Гараж</a>
   <a href="rating.html">Рейтинг</a>
   <a href="shop.html">Магазин</a>
 </nav>
 
-<div class="track">
-  <div class="lane">
-    <div class="car" id="botCar"><img src="https://i.imgur.com/8cM2bkP.png" alt="Бот"/></div>
+<main>
+  <div class="race-track" aria-label="Трасса гонки">
+    <!-- Машина игрока — номер 2 -->
+    <div class="lane" data-lane="1">
+      <div class="car" id="car1" title="Машина 1">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/VAZ_2110_front_20100615.jpg/120px-VAZ_2110_front_20100615.jpg" alt="Машина 1" />
+      </div>
+    </div>
+    <div class="lane" data-lane="2">
+      <div class="car" id="car2" title="Ваша машина (№2)">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Toyota_Corolla_E170_IMG_0033.jpg/120px-Toyota_Corolla_E170_IMG_0033.jpg" alt="Ваша машина (№2)" />
+      </div>
+    </div>
+    <div class="lane" data-lane="3">
+      <div class="car" id="car3" title="Машина 3">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Mazda_3_Sport_Bj._2017_IMG_0045.jpg/120px-Mazda_3_Sport_Bj._2017_IMG_0045.jpg" alt="Машина 3" />
+      </div>
+    </div>
   </div>
-  <div class="lane">
-    <div class="car" id="playerCar"><img src="https://i.imgur.com/Y7kZ7Fu.png" alt="Вы"/></div>
-  </div>
-</div>
 
-<div id="status">Нажмите «Старт»</div>
-<div class="controls"><button id="startBtn">Старт</button></div>
+  <div class="controls" role="group" aria-label="Управление гонкой">
+    <button id="startRaceBtn">Старт</button>
+  </div>
+
+  <div class="info" id="raceStatus" aria-live="polite"></div>
+</main>
 
 <script>
-  const COINS_KEY='coins';
-  const MIN_COINS=1, MAX_COINS=5;
+  const PLAYER_CAR_NUMBER = 2; // номер игрока (lane 2)
+  const COINS_KEY = 'playerCoins';
 
-  function getCoins(){return parseInt(localStorage.getItem(COINS_KEY))||0}
-  function setCoins(v){localStorage.setItem(COINS_KEY,v);updateUI()}
-  function updateUI(){document.getElementById('coins').textContent='Монеты: '+getCoins()}
+  const cars = [
+    document.getElementById('car1'),
+    document.getElementById('car2'), // игрок
+    document.getElementById('car3')
+  ];
+  const startBtn = document.getElementById('startRaceBtn');
+  const statusEl = document.getElementById('raceStatus');
+  const raceTrack = document.querySelector('.race-track');
+  const carWidth = 60;
+  let positions = [0, 0, 0];
+  let raceInterval = null;
+  let raceInProgress = false;
+  const coinsDisplay = document.getElementById('coinsDisplay');
 
-  const botCar   = document.getElementById('botCar');
-  const playerCar= document.getElementById('playerCar');
-  const status   = document.getElementById('status');
-  const startBtn = document.getElementById('startBtn');
-  const trackWidth=document.querySelector('.track').clientWidth-60;
-
-  let running=false, timer=null;
-
-  function reset(){
-    botCar.style.left='0px';
-    playerCar.style.left='0px';
-    status.textContent='Нажмите «Старт»';
-    startBtn.disabled=false;
+  // Получить монеты из localStorage или 0
+  function getCoins() {
+    return parseInt(localStorage.getItem(COINS_KEY)) || 0;
   }
 
-  function race(){
-    if(running)return;
-    running=true;
-    startBtn.disabled=true;
-    status.textContent='Гонка...';
+  // Сохранить монеты
+  function setCoins(value) {
+    localStorage.setItem(COINS_KEY, value);
+    updateCoinsDisplay();
+  }
 
-    let b=0, p=0;
-    timer=setInterval(()=>{
-      b+=5+Math.floor(Math.random()*11);
-      p+=5+Math.floor(Math.random()*11);
+  // Обновить отображение монет
+  function updateCoinsDisplay() {
+    const coins = getCoins();
+    coinsDisplay.textContent = `Монеты: ${coins}`;
+  }
 
-      botCar.style.left   =Math.min(b,trackWidth)+'px';
-      playerCar.style.left=Math.min(p,trackWidth)+'px';
+  function resetPositions() {
+    positions = [0, 0, 0];
+    cars.forEach(car => (car.style.left = '0px'));
+    statusEl.textContent = '';
+  }
 
-      if(b>=trackWidth||p>=trackWidth){
-        clearInterval(timer);
-        running=false;
-        const win=p>=b;
-        const coinsWin=win?MIN_COINS+Math.floor(Math.random()*(MAX_COINS-MIN_COINS+1)):0;
-        status.textContent=win?`Вы выиграли! +${coinsWin} монет`:'Бот победил 😔';
-        if(win)setCoins(getCoins()+coinsWin);
-        setTimeout(reset,2500);
+  function startRace() {
+    if (raceInProgress) return;
+    raceInProgress = true;
+    startBtn.disabled = true;
+    statusEl.textContent = 'Гонка началась!';
+
+    const trackWidth = raceTrack.clientWidth;
+
+    raceInterval = setInterval(() => {
+      for (let i = 0; i < cars.length; i++) {
+        let step = Math.floor(Math.random() * 11) + 5; // 5-15px
+        positions[i] += step;
+        if (positions[i] > trackWidth - carWidth) {
+          positions[i] = trackWidth - carWidth;
+        }
+        cars[i].style.left = positions[i] + 'px';
       }
-    },60);
+
+      const winnerIndex = positions.findIndex(pos => pos >= trackWidth - carWidth);
+      if (winnerIndex !== -1) {
+        clearInterval(raceInterval);
+        raceInProgress = false;
+        const winnerNum = winnerIndex + 1;
+        statusEl.textContent = `Победитель: Машина ${winnerNum} 🎉`;
+
+        if (winnerNum === PLAYER_CAR_NUMBER) {
+          let coins = getCoins();
+          coins += 1;
+          setCoins(coins);
+          statusEl.textContent += ` Вы получили 1 монету! 🪙`;
+        }
+
+        // Через 3 секунды сброс и активация кнопки
+        setTimeout(() => {
+          resetPositions();
+          startBtn.disabled = false;
+        }, 3000);
+      }
+    }, 100);
   }
 
-  startBtn.addEventListener('click',race);
-  updateUI();
+  startBtn.addEventListener('click', startRace);
+
+  // Инициализация
+  updateCoinsDisplay();
+  resetPositions();
 </script>
+
 </body>
-</html>
+      </html>
