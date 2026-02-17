@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>🏁 КИРЮХА RACING — ГОНКА</title>
   <style>
     * {
@@ -47,7 +47,6 @@
       100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
     }
 
-    /* Навигация */
     .nav {
       display: flex;
       justify-content: center;
@@ -79,7 +78,6 @@
       box-shadow: 0 0 40px #0ff;
     }
 
-    /* Заголовок */
     .cyber-title {
       text-align: center;
       margin: 30px 0;
@@ -101,7 +99,6 @@
       50% { text-shadow: 0 0 60px #0ff; }
     }
 
-    /* Монеты */
     .coins-panel {
       background: linear-gradient(135deg, #f0f, #0ff);
       padding: 15px 40px;
@@ -114,7 +111,6 @@
       box-shadow: 0 0 50px #f0f;
     }
 
-    /* Панель характеристик */
     .stats-panel {
       max-width: 1000px;
       margin: 0 auto 30px;
@@ -162,7 +158,6 @@
       color: #0ff;
     }
 
-    /* Арена */
     .race-arena {
       max-width: 1000px;
       margin: 0 auto;
@@ -191,7 +186,6 @@
       50% { opacity: 0.5; }
     }
 
-    /* Треки */
     .tracks {
       display: flex;
       flex-direction: column;
@@ -236,7 +230,6 @@
       100% { background-position: 100px 0; }
     }
 
-    /* Машины */
     .car {
       position: absolute;
       bottom: 20px;
@@ -280,7 +273,6 @@
       50% { box-shadow: 0 0 40px #ff0; }
     }
 
-    /* Инфо */
     .race-info {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -314,7 +306,6 @@
     .player .info-value { color: #0ff; }
     .enemy .info-value { color: #f0f; }
 
-    /* Кнопки */
     .race-controls {
       display: flex;
       justify-content: center;
@@ -362,7 +353,6 @@
       cursor: not-allowed;
     }
 
-    /* Результат */
     .race-result {
       text-align: center;
       padding: 30px;
@@ -405,7 +395,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Кнопка назад */
     .back-btn {
       position: fixed;
       bottom: 30px;
@@ -430,7 +419,6 @@
       box-shadow: 0 0 50px #f0f;
     }
 
-    /* Предупреждение */
     .warning {
       text-align: center;
       color: #f0f;
@@ -594,14 +582,28 @@
       setCoins(getCoins() + amount); 
     }
 
-    // ========== ЗАГРУЗКА МАШИНЫ ИЗ ГАРАЖА ==========
+    // ========== ЗАГРУЗКА МАШИНЫ ИЗ ГАРАЖА (ИСПРАВЛЕНО) ==========
     function loadCarFromGarage() {
-      const garageData = JSON.parse(localStorage.getItem(GARAGE_KEY)) || {
+      // Читаем массив из гаража (новый формат)
+      const garageArray = JSON.parse(localStorage.getItem(GARAGE_KEY)) || [];
+      
+      // Преобразуем массив в объект для обратной совместимости
+      const garageData = {
         red: false, green: false, blue: false,
         yellow: false, orange: false, purple: false
       };
       
-      console.log('Машина из гаража:', garageData);
+      // Индексы: 0-red, 1-green, 2-blue, 3-yellow, 4-orange, 5-purple
+      const colorIndices = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
+      
+      garageArray.forEach((color, index) => {
+        if (color && index < colorIndices.length) {
+          const colorName = colorIndices[index];
+          garageData[colorName] = true;
+        }
+      });
+
+      console.log('Машина из гаража (объект):', garageData);
       
       // База
       let speed = 50;
@@ -674,6 +676,9 @@
       document.getElementById('speedStat').textContent = speed;
       document.getElementById('accelStat').textContent = acceleration;
       
+      // Проверка: есть ли хоть один куб?
+      const hasCubes = Object.values(garageData).some(v => v === true);
+      
       return {
         speed,
         acceleration,
@@ -681,7 +686,7 @@
         luck,
         turbo,
         defense,
-        hasCubes: Object.values(garageData).some(v => v === true)
+        hasCubes
       };
     }
 
@@ -867,4 +872,4 @@
     });
   </script>
 </body>
-      </html>
+</html>
