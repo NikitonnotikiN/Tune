@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         /* Основная страница */
         body {
@@ -17,6 +18,28 @@
     margin: 0;
     padding: 0;
             }
+/* ----------  USER BADGE  ---------- */
+.user-badge {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    display: none;              /* покажем скриптом */
+    align-items: center;
+    gap: 8px;
+    z-index: 9999;
+    background: rgba(0,0,0,.35);
+    backdrop-filter: blur(4px);
+    padding: 6px 12px;
+    border-radius: 24px;
+    font-size: 14px;
+    color: #fff;
+}
+.user-badge img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
         /* Контейнер загрузки */
         .loader-container {
@@ -91,6 +114,12 @@
             </ul>
         </nav>
     </section>
+<!-- ----------  USER BADGE  ---------- -->
+<div id="userBadge" class="user-badge">
+    <img id="userAvatar" src="" alt="ava">
+    <span id="userName"></span>
+</div>
+<!-- ---------------------------------- -->
 
     <!-- Скрипт для управления загрузкой -->
     <script>
@@ -101,5 +130,30 @@
             }, 2000); // Время анимации (2 секунды)
         }
     </script>
+    <script>
+/* ----------  USER BADGE LOGIC  ---------- */
+function showUserBadge(){
+    const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    if(!user) return;               // вне Telegram или данных ещё нет
+
+    const badge  = document.getElementById('userBadge');
+    const avatar = document.getElementById('userAvatar');
+    const name   = document.getElementById('userName');
+
+    avatar.src = user.photo_url || 'https://i.ibb.co/3sN2YMc/default-ava.png';
+    name.textContent = user.first_name || user.username || 'Игрок';
+    badge.style.display = 'flex';
+}
+
+/* Telegram инициализируется асинхронно – ждём ready */
+window.addEventListener('DOMContentLoaded', () => {
+    if(window.Telegram && window.Telegram.WebApp){
+        window.Telegram.WebApp.ready();
+        showUserBadge();
+    }
+});
+/* ----------------------------------------- */
+</script>
+
 </body>
 </html>
