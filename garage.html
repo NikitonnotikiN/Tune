@@ -82,7 +82,86 @@
             clip-path: polygon(5px 0, 100% 0, 100% 100%, 0 100%, 0 5px);
         }
 
-        /* Панель характеристик (компактная строка) */
+        /* Ячейка смены модели (слева вверху) */
+        .model-selector {
+            position: absolute;
+            top: 70px;
+            left: 10px;
+            width: 90px;
+            height: 90px;
+            background: rgba(0,0,0,0.7);
+            border: 3px solid;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            cursor: pointer;
+            box-shadow: 0 0 30px;
+            z-index: 100;
+            transition: all 0.3s;
+            padding: 5px;
+        }
+
+        .model-selector:hover {
+            transform: scale(1.05);
+        }
+
+        .model-selector.limited {
+            border-color: gold;
+            box-shadow: 0 0 30px gold;
+            animation: limitedGlow 2s infinite;
+        }
+
+        @keyframes limitedGlow {
+            0% { box-shadow: 0 0 20px gold; }
+            50% { box-shadow: 0 0 40px gold, 0 0 60px #ffaa00; }
+        }
+
+        .model-selector .model-preview {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(145deg, #ff4444, #cc0000);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .model-selector .model-preview.mcqueen {
+            background: linear-gradient(145deg, #ff4444, #ff8800);
+        }
+
+        .model-selector .limited-badge {
+            font-size: 10px;
+            font-weight: bold;
+            color: gold;
+            text-transform: uppercase;
+            margin-top: 3px;
+            text-shadow: 0 0 10px gold;
+        }
+
+        .model-selector .price-tag {
+            font-size: 10px;
+            color: #ffaa00;
+            margin-top: 2px;
+        }
+
+        .model-selector.locked {
+            opacity: 0.5;
+            filter: grayscale(0.5);
+            cursor: not-allowed;
+        }
+
+        .model-selector.locked:hover {
+            transform: none;
+        }
+
+        /* Панель характеристик */
         .stats-bar {
             background: rgba(0,0,0,0.5);
             border: 1px solid #e10600;
@@ -331,6 +410,13 @@
             <div class="coins-header" id="coinsDisplay">1000 🪙</div>
         </div>
 
+        <!-- Ячейка смены модели (McQueen - лимитированная) -->
+        <div class="model-selector limited" id="modelSelector" onclick="toggleModel()">
+            <div class="model-preview mcqueen" id="modelPreview">⚡</div>
+            <div class="limited-badge">⭐ LIMITED ⭐</div>
+            <div class="price-tag" id="modelPrice">10 🪙</div>
+        </div>
+
         <div class="stats-bar" id="statsBar">
             <div class="stat-item">
                 <span class="stat-label">СКОР</span>
@@ -389,6 +475,7 @@
         import { OBJLoader } from 'https://unpkg.com/three@0.128.0/examples/jsm/loaders/OBJLoader.js';
         import { MTLLoader } from 'https://unpkg.com/three@0.128.0/examples/jsm/loaders/MTLLoader.js';
 
+        // --- 3D СЦЕНА ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x111122);
@@ -409,13 +496,6 @@
         dirLight.castShadow = true;
         dirLight.shadow.mapSize.width = 1024;
         dirLight.shadow.mapSize.height = 1024;
-        const d = 5;
-        dirLight.shadow.camera.left = -d;
-        dirLight.shadow.camera.right = d;
-        dirLight.shadow.camera.top = d;
-        dirLight.shadow.camera.bottom = -d;
-        dirLight.shadow.camera.near = 1;
-        dirLight.shadow.camera.far = 10;
         scene.add(dirLight);
 
         const backLight = new THREE.PointLight(0x4466ff, 0.5);
@@ -446,157 +526,248 @@
         const carGroup = new THREE.Group();
         scene.add(carGroup);
 
-        // Загрузка модели с правильными путями
-        const mtlLoader = new MTLLoader();
-        const objLoader = new OBJLoader();
+        // Переменные для моделей
+        let currentModel = 'vaz';
+        let vazModel = null;
+        let mcqueenModel = null;
+        let mcqueenUnlocked = false;
 
-        // Пробуем загрузить с материалами
-        mtlLoader.load(
-            'models/2107.mtl',  // изменено с VAZ2107.mtl на 2107.mtl
-            (materials) => {
-                materials.preload();
-                objLoader.setMaterials(materials);
-                
-                objLoader.load(
-                    'models/2107.obj',  // изменено с VAZ2107.obj на 2107.obj
-                    (object) => {
-                        console.log('Модель 2107 загружена');
-                        
-                        // Масштабируем модель
-                        object.scale.set(0.5, 0.5, 0.5);
-                        object.position.set(0, 0, 0);
-                        object.rotation.y = Math.PI;
-                        
-                        object.traverse((child) => {
-                            if (child.isMesh) {
-                                child.castShadow = true;
-                                child.receiveShadow = true;
+        // Загрузка модели ВАЗ-2107 с MTL материалами
+        function loadVAZ() {
+            const mtlLoader = new MTLLoader();
+            const objLoader = new OBJLoader();
+            
+            mtlLoader.load(
+                'models/2107.mtl',
+                (materials) => {
+                    materials.preload();
+                    objLoader.setMaterials(materials);
+                    
+                    objLoader.load(
+                        'models/2107.obj',
+                        (object) => {
+                            console.log('Модель ВАЗ-2107 с материалами загружена');
+                            
+                            object.scale.set(0.5, 0.5, 0.5);
+                            object.position.set(0, 0, 0);
+                            object.rotation.y = Math.PI;
+                            
+                            object.traverse((child) => {
+                                if (child.isMesh) {
+                                    child.castShadow = true;
+                                    child.receiveShadow = true;
+                                }
+                            });
+                            
+                            vazModel = object;
+                            
+                            if (currentModel === 'vaz') {
+                                carGroup.add(vazModel);
                             }
-                        });
-                        
-                        carGroup.add(object);
-                        
-                        // Центрируем камеру
-                        const box = new THREE.Box3().setFromObject(carGroup);
-                        const center = box.getCenter(new THREE.Vector3());
-                        const size = box.getSize(new THREE.Vector3());
-                        
-                        const maxDim = Math.max(size.x, size.y, size.z);
-                        const distance = maxDim * 2.5;
-                        camera.position.set(center.x + distance * 0.5, center.y + distance * 0.3, center.z + distance);
-                        controls.target.copy(center);
-                        controls.update();
-                    },
-                    (xhr) => {
-                        console.log((xhr.loaded / xhr.total * 100) + '% загружено');
-                    },
-                    (error) => {
-                        console.error('Ошибка загрузки OBJ:', error);
-                        createFallbackModel();
+                            
+                            updateCameraPosition();
+                        },
+                        (xhr) => {
+                            console.log('VAZ OBJ: ' + (xhr.loaded / xhr.total * 100) + '%');
+                        },
+                        (error) => {
+                            console.error('Ошибка загрузки VAZ OBJ:', error);
+                            loadVAZWithoutMaterials();
+                        }
+                    );
+                },
+                undefined,
+                (error) => {
+                    console.error('Ошибка загрузки VAZ MTL:', error);
+                    loadVAZWithoutMaterials();
+                }
+            );
+        }
+
+        // Загрузка ВАЗ без материалов (как запасной вариант)
+        function loadVAZWithoutMaterials() {
+            const objLoader = new OBJLoader();
+            objLoader.load(
+                'models/2107.obj',
+                (object) => {
+                    console.log('Модель ВАЗ-2107 без материалов загружена');
+                    
+                    object.scale.set(0.5, 0.5, 0.5);
+                    object.position.set(0, 0, 0);
+                    object.rotation.y = Math.PI;
+                    
+                    // Применяем базовый красный цвет
+                    object.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                            child.material = new THREE.MeshStandardMaterial({ color: 0xff4444 });
+                        }
+                    });
+                    
+                    vazModel = object;
+                    
+                    if (currentModel === 'vaz') {
+                        carGroup.add(vazModel);
                     }
-                );
-            },
-            undefined,
-            (error) => {
-                console.error('Ошибка загрузки MTL:', error);
-                // Пробуем загрузить без материалов
-                objLoader.load(
-                    'models/2107.obj',
-                    (object) => {
-                        console.log('Модель загружена без материалов');
-                        object.scale.set(0.5, 0.5, 0.5);
-                        object.position.set(0, 0, 0);
-                        object.rotation.y = Math.PI;
-                        
-                        object.traverse((child) => {
-                            if (child.isMesh) {
-                                child.castShadow = true;
-                                child.receiveShadow = true;
+                    
+                    updateCameraPosition();
+                },
+                (xhr) => {
+                    console.log('VAZ OBJ (fallback): ' + (xhr.loaded / xhr.total * 100) + '%');
+                },
+                (error) => {
+                    console.error('Ошибка загрузки VAZ (fallback):', error);
+                }
+            );
+        }
+
+        // Загрузка модели McQueen с MTL
+        function loadMcQueen() {
+            const mtlLoader = new MTLLoader();
+            const objLoader = new OBJLoader();
+            
+            mtlLoader.load(
+                'models/mcqueen.mtl',
+                (materials) => {
+                    materials.preload();
+                    objLoader.setMaterials(materials);
+                    
+                    objLoader.load(
+                        'models/mcqueen.obj',
+                        (object) => {
+                            console.log('Модель McQueen с материалами загружена');
+                            
+                            object.scale.set(0.5, 0.5, 0.5);
+                            object.position.set(0, 0, 0);
+                            object.rotation.y = Math.PI;
+                            
+                            object.traverse((child) => {
+                                if (child.isMesh) {
+                                    child.castShadow = true;
+                                    child.receiveShadow = true;
+                                }
+                            });
+                            
+                            mcqueenModel = object;
+                            
+                            if (currentModel === 'mcqueen') {
+                                carGroup.add(mcqueenModel);
                             }
-                        });
-                        
-                        carGroup.add(object);
-                        
-                        const box = new THREE.Box3().setFromObject(carGroup);
-                        const center = box.getCenter(new THREE.Vector3());
-                        const size = box.getSize(new THREE.Vector3());
-                        
-                        const maxDim = Math.max(size.x, size.y, size.z);
-                        const distance = maxDim * 2.5;
-                        camera.position.set(center.x + distance * 0.5, center.y + distance * 0.3, center.z + distance);
-                        controls.target.copy(center);
-                        controls.update();
-                    },
-                    undefined,
-                    (error) => {
-                        console.error('Ошибка загрузки OBJ без материалов:', error);
-                        createFallbackModel();
-                    }
-                );
+                            
+                            updateCameraPosition();
+                        },
+                        (xhr) => {
+                            console.log('McQueen OBJ: ' + (xhr.loaded / xhr.total * 100) + '%');
+                        },
+                        (error) => {
+                            console.error('Ошибка загрузки McQueen OBJ:', error);
+                        }
+                    );
+                },
+                undefined,
+                (error) => {
+                    console.error('Ошибка загрузки McQueen MTL:', error);
+                }
+            );
+        }
+
+        // Проверка, куплена ли модель McQueen
+        function checkMcQueenUnlocked() {
+            mcqueenUnlocked = localStorage.getItem('mcqueen_unlocked') === 'true';
+            const selector = document.getElementById('modelSelector');
+            
+            if (!mcqueenUnlocked) {
+                selector.classList.add('locked');
+                selector.style.pointerEvents = 'auto'; // всё равно можно нажать для покупки
+            } else {
+                selector.classList.remove('locked');
             }
-        );
+        }
 
-        // Запасная модель-заглушка (на случай если файлы не найдены)
-        function createFallbackModel() {
-            console.log('Создаём красивую заглушку');
+        // Функция переключения/покупки модели
+        window.toggleModel = function() {
+            checkMcQueenUnlocked();
             
-            // Кузов
-            const bodyGeo = new THREE.BoxGeometry(1.2, 0.4, 2.0);
-            const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff4444, roughness: 0.3, metalness: 0.1 });
-            const body = new THREE.Mesh(bodyGeo, bodyMat);
-            body.castShadow = true;
-            body.receiveShadow = true;
-            body.position.set(0, 0.3, 0);
-            carGroup.add(body);
-
-            // Капот
-            const hoodGeo = new THREE.BoxGeometry(0.8, 0.2, 0.8);
-            const hoodMat = new THREE.MeshStandardMaterial({ color: 0xff8844 });
-            const hood = new THREE.Mesh(hoodGeo, hoodMat);
-            hood.castShadow = true;
-            hood.receiveShadow = true;
-            hood.position.set(0, 0.6, 0.5);
-            carGroup.add(hood);
-
-            // Спойлер
-            const spoilerGeo = new THREE.BoxGeometry(1.0, 0.2, 0.2);
-            const spoilerMat = new THREE.MeshStandardMaterial({ color: 0xffff44 });
-            const spoiler = new THREE.Mesh(spoilerGeo, spoilerMat);
-            spoiler.castShadow = true;
-            spoiler.receiveShadow = true;
-            spoiler.position.set(0, 0.7, -0.9);
-            carGroup.add(spoiler);
-
-            // Колёса
-            const wheelGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 24);
-            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x4444ff });
-            const positions = [
-                [-0.7, 0.2, 0.7],
-                [0.7, 0.2, 0.7],
-                [-0.7, 0.2, -0.7],
-                [0.7, 0.2, -0.7]
-            ];
-            positions.forEach((pos) => {
-                const wheel = new THREE.Mesh(wheelGeo, wheelMat);
-                wheel.rotation.z = Math.PI/2;
-                wheel.position.set(pos[0], pos[1], pos[2]);
-                wheel.castShadow = true;
-                wheel.receiveShadow = true;
-                carGroup.add(wheel);
-            });
-
-            // Фары
-            const lightGeo = new THREE.SphereGeometry(0.15);
-            const lightMat = new THREE.MeshStandardMaterial({ color: 0xff44ff, emissive: 0x330033 });
-            const lightLeft = new THREE.Mesh(lightGeo, lightMat);
-            lightLeft.position.set(-0.4, 0.4, 1.05);
-            lightLeft.castShadow = true;
-            carGroup.add(lightLeft);
+            if (!mcqueenUnlocked) {
+                // Пытаемся купить
+                const coins = getCoins();
+                if (coins >= 10) {
+                    // Списываем монеты
+                    setCoins(coins - 10);
+                    localStorage.setItem('mcqueen_unlocked', 'true');
+                    mcqueenUnlocked = true;
+                    
+                    // Обновляем внешний вид
+                    const selector = document.getElementById('modelSelector');
+                    selector.classList.remove('locked');
+                    
+                    showNotification('🎉 McQueen куплен!');
+                    
+                    // Если сейчас выбрана VAZ, переключаем на McQueen
+                    if (currentModel === 'vaz') {
+                        switchToMcQueen();
+                    }
+                } else {
+                    showNotification('❌ Не хватает монет!', true);
+                }
+                return;
+            }
             
-            const lightRight = new THREE.Mesh(lightGeo, lightMat);
-            lightRight.position.set(0.4, 0.4, 1.05);
-            lightRight.castShadow = true;
-            carGroup.add(lightRight);
+            // Если уже куплено, просто переключаем
+            if (currentModel === 'vaz') {
+                switchToMcQueen();
+            } else {
+                switchToVAZ();
+            }
+        };
+
+        function switchToMcQueen() {
+            // Очищаем группу
+            while(carGroup.children.length > 0) {
+                carGroup.remove(carGroup.children[0]);
+            }
+            
+            currentModel = 'mcqueen';
+            document.getElementById('modelPreview').innerHTML = '⚡';
+            document.getElementById('modelPreview').style.background = 'linear-gradient(145deg, #ff4444, #ff8800)';
+            
+            if (mcqueenModel) {
+                carGroup.add(mcqueenModel);
+            } else {
+                loadMcQueen();
+            }
+            showNotification('McQueen активирован');
+        }
+
+        function switchToVAZ() {
+            // Очищаем группу
+            while(carGroup.children.length > 0) {
+                carGroup.remove(carGroup.children[0]);
+            }
+            
+            currentModel = 'vaz';
+            document.getElementById('modelPreview').innerHTML = '⚡';
+            document.getElementById('modelPreview').style.background = 'linear-gradient(145deg, #ff4444, #cc0000)';
+            
+            if (vazModel) {
+                carGroup.add(vazModel);
+            } else {
+                loadVAZ();
+            }
+            showNotification('ВАЗ-2107 активирован');
+        }
+
+        function updateCameraPosition() {
+            const box = new THREE.Box3().setFromObject(carGroup);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+            
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const distance = maxDim * 2.5;
+            camera.position.set(center.x + distance * 0.5, center.y + distance * 0.3, center.z + distance);
+            controls.target.copy(center);
+            controls.update();
         }
 
         // Управление камерой
@@ -621,7 +792,12 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Логика инвентаря и характеристик
+        // Загружаем модели
+        loadVAZ();
+        loadMcQueen();
+        checkMcQueenUnlocked();
+
+        // --- Логика инвентаря и характеристик ---
         const colorList = ['red', 'green', 'blue', 'yellow', 'orange', 'purple'];
         const cubeStats = {
             red:    [30, 0, 0, 0, 0, 0],
@@ -749,9 +925,9 @@
             statElements.power.textContent = power + '%';
         }
 
-        function showNotification(text) {
+        function showNotification(text, isError = false) {
             const n = document.getElementById('notification');
-            n.textContent = '✨ ' + text;
+            n.textContent = isError ? '❌ ' + text : '✨ ' + text;
             n.classList.add('show');
             setTimeout(() => n.classList.remove('show'), 2000);
         }
