@@ -622,23 +622,24 @@
             );
         }
 
-        // Загрузка модели McQueen с MTL
+        // Загрузка модели McQueen с MTL (с большой буквы M)
         function loadMcQueen() {
             const mtlLoader = new MTLLoader();
             const objLoader = new OBJLoader();
             
             mtlLoader.load(
-                'models/Mcqueen.mtl',
+                'models/Mcqueen.mtl',  // С большой буквы M
                 (materials) => {
                     materials.preload();
                     objLoader.setMaterials(materials);
                     
                     objLoader.load(
-                        'models/Mcqueen.obj',
+                        'models/Mcqueen.obj',  // С большой буквы M
                         (object) => {
                             console.log('Модель McQueen с материалами загружена');
                             
-                            object.scale.set(0.5, 0.5, 0.5);
+                            // Уменьшаем масштаб McQueen для соответствия ВАЗ-2107
+                            object.scale.set(0.3, 0.3, 0.3);
                             object.position.set(0, 0, 0);
                             object.rotation.y = Math.PI;
                             
