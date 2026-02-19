@@ -628,13 +628,13 @@
             const objLoader = new OBJLoader();
             
             mtlLoader.load(
-                'models/mcqueen.mtl',
+                'models/Mcqueen.mtl',
                 (materials) => {
                     materials.preload();
                     objLoader.setMaterials(materials);
                     
                     objLoader.load(
-                        'models/mcqueen.obj',
+                        'models/Mcqueen.obj',
                         (object) => {
                             console.log('Модель McQueen с материалами загружена');
                             
