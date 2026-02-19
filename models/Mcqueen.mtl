@@ -1,0 +1,103 @@
+# MTL file - created by a modified js OBJExporter
+
+newmtl Body
+Tr 0.0000
+Tf 1.0000 1.0000 1.0000
+illum 1
+Pm 1
+Pr 1
+Pds 1
+Pl 1
+Ka 1 1 1
+Kd 1 1 1
+Ke 0 0 0
+map_Kd Body.png
+map_Pm metalnessMap1.png
+map_Pr metalnessMap1.png
+norm normalMap1.png
+
+newmtl Eyelids
+Tr 0.0000
+Tf 1.0000 1.0000 1.0000
+illum 1
+Pds 1
+Pl 1
+Ka 1 1 1
+Kd 1 1 1
+Ke 0 0 0
+map_Kd Eyelids.png
+
+newmtl Eyes
+Tr 0.0000
+Tf 1.0000 1.0000 1.0000
+illum 1
+Pm 1
+Pr 1
+Pds 1
+Pl 1
+Ka 1 1 1
+Kd 1 1 1
+Ke 1 1 1
+map_Kd Eyes.png
+map_Ke emissiveMap3.png
+map_Pm metalnessMap3.png
+map_Pr metalnessMap3.png
+map_Ka ambientMap3.png
+
+newmtl Glass
+Tr 0.8212209939956665
+Tf 1.0000 1.0000 1.0000
+illum 1
+Pm 1
+Pr 0.13808099925518036
+Pds 1
+Pl 1
+Ka 1 1 1
+Kd 0.2573060095310211 0.2523699998855591 0.2523699998855591
+Ke 0 0 0
+
+newmtl Headlights_and_brakelights
+Tr 0.0000
+Tf 1.0000 1.0000 1.0000
+illum 1
+Pm 1
+Pr 1
+Pds 1
+Pl 1
+Ka 1 1 1
+Kd 1 1 1
+Ke 1 1 1
+map_Kd Headlights_and_brakelights.png
+map_Ke emissiveMap5.png
+map_Pm metalnessMap5.png
+map_Pr metalnessMap5.png
+map_Ka ambientMap5.png
+
+newmtl Headlights_and_brakelights_glass
+Tr 0.3909883499145508
+Tf 1.0000 1.0000 1.0000
+illum 1
+Pm 0.37064000964164734
+Pr 0.1438950002193451
+Pds 1
+Pl 1
+Ka 1 1 1
+Kd 1 1 1
+Ke 0 0 0
+map_Kd Headlights_and_brakelights_glass.png
+
+newmtl Wheels
+Tr 0.0000
+Tf 1.0000 1.0000 1.0000
+illum 1
+Pm 1
+Pr 1
+Pds 1
+Pl 1
+Ka 1 1 1
+Kd 1 1 1
+Ke 0 0 0
+map_Kd Wheels.png
+map_Pm metalnessMap7.png
+map_Pr metalnessMap7.png
+norm normalMap7.png
